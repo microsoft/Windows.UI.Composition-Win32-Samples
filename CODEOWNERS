@@ -5,4 +5,4 @@
 # the repo. Unless a later match takes precedence,
 # folks in the below list will be requested for
 # review when someone opens a pull request.
-*       @windows-ui, @KarlErickson, @jwmsft, @hickeys
+*       @windows-ui, @KarlErickson, @jwmsft, @bmitchell287, @JoshuaPartlow 
