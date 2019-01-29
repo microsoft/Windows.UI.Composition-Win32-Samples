@@ -3,6 +3,6 @@
 
 # These owners will be the default owners for everything in
 # the repo. Unless a later match takes precedence,
-# @global-owner1 and @global-owner2 will be requested for
+# folks in the below list will be requested for
 # review when someone opens a pull request.
 *       @windows-ui, @KarlErickson, @jwmsft, @hickeys
