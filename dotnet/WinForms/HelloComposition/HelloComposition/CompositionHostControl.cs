@@ -6,7 +6,6 @@ namespace HelloComposition
 {
     class CompositionHostControl : CompositionHost
     {
-
         public CompositionHostControl() : base()
         {
             containerVisual = compositor.CreateContainerVisual();
@@ -21,16 +20,18 @@ namespace HelloComposition
             visual.Offset = new Vector3(offsetX, offsetY, 0);
             containerVisual.Children.InsertAtTop(visual);
 
-            AnimateSquare(compositor, visual, offsetX);
+            AnimateSquare(visual, 3);
         }
 
-        private void AnimateSquare(Compositor compositor, SpriteVisual visual, float offset)
+        private void AnimateSquare(SpriteVisual visual, int delay)
         {
+            float offsetX = (float)(visual.Offset.X);
+
             Vector3KeyFrameAnimation animation = compositor.CreateVector3KeyFrameAnimation();
-            float windowBottom = Height - visual.Size.Y;
-            animation.InsertKeyFrame(1f, new Vector3(offset, windowBottom, 0f));
+            float bottom = Height - visual.Size.Y;
+            animation.InsertKeyFrame(1f, new Vector3(offsetX, bottom, 0f));
             animation.Duration = TimeSpan.FromSeconds(2);
-            animation.DelayTime = TimeSpan.FromSeconds(3);
+            animation.DelayTime = TimeSpan.FromSeconds(delay);
             visual.StartAnimation("Offset", animation);
         }
 

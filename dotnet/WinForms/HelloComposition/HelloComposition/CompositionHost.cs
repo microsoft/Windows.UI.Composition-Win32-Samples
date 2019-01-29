@@ -2,28 +2,29 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Windows.UI.Composition;
+
 namespace HelloComposition
 {
     public partial class CompositionHost : Control
     {
-        IntPtr hwndHost;
-        object dispatcherQueue;
-        protected ContainerVisual containerVisual;
-        protected Compositor compositor;
+    IntPtr hwndHost;
+    object dispatcherQueue;
+    protected ContainerVisual containerVisual;
+    protected Compositor compositor;
 
-        private ICompositionTarget compositionTarget;
+    private ICompositionTarget compositionTarget;
 
-        public Visual Child
+    public Visual Child
+    {
+        set
         {
-            set
+            if (compositor == null)
             {
-                if (compositor == null)
-                {
-                    InitComposition(hwndHost);
-                }
-                compositionTarget.Root = value;
+                InitComposition(hwndHost);
             }
+            compositionTarget.Root = value;
         }
+    }
 
         public CompositionHost()
         {
@@ -63,9 +64,6 @@ namespace HelloComposition
             compositionTarget = (ICompositionTarget)rawObject;
 
             if (raw == null) { throw new Exception("QI Failed"); }
-
-            //mainContainer = compositor.CreateContainerVisual();
-            //target.Root = mainContainer;
         }
 
         protected override void OnPaint(PaintEventArgs pe)
@@ -171,6 +169,5 @@ namespace HelloComposition
             set;
         }
     }
-
     #endregion COM Interop
 }
