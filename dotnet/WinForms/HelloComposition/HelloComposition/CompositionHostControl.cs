@@ -8,8 +8,7 @@ namespace HelloComposition
     {
         public CompositionHostControl() : base()
         {
-            containerVisual = compositor.CreateContainerVisual();
-            Child = containerVisual;
+
         }
 
         public void AddElement(float size, float offsetX, float offsetY)

@@ -7,34 +7,33 @@ namespace HelloComposition
 {
     public partial class CompositionHost : Control
     {
-    IntPtr hwndHost;
-    object dispatcherQueue;
-    protected ContainerVisual containerVisual;
-    protected Compositor compositor;
+        IntPtr hwndHost;
+        object dispatcherQueue;
+        protected ContainerVisual containerVisual;
+        protected Compositor compositor;
+        private ICompositionTarget compositionTarget;
 
-    private ICompositionTarget compositionTarget;
-
-    public Visual Child
-    {
-        set
+        public Visual Child
         {
-            if (compositor == null)
+            set
             {
-                InitComposition(hwndHost);
+                if (compositor == null)
+                {
+                    InitComposition(hwndHost);
+                }
+                compositionTarget.Root = value;
             }
-            compositionTarget.Root = value;
         }
-    }
 
         public CompositionHost()
         {
-            // Get the window handle
+            // Get the window handle.
             hwndHost = Handle;
 
-            // Create Dispatcher Queue
+            // Create dispatcher queue.
             dispatcherQueue = InitializeCoreDispatcher();
 
-            // Build Composition tree of content
+            // Build Composition tree of content.
             InitComposition(hwndHost);
         }
 
@@ -64,6 +63,9 @@ namespace HelloComposition
             compositionTarget = (ICompositionTarget)rawObject;
 
             if (raw == null) { throw new Exception("QI Failed"); }
+
+            containerVisual = compositor.CreateContainerVisual();
+            Child = containerVisual;
         }
 
         protected override void OnPaint(PaintEventArgs pe)
