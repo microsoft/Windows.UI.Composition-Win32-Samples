@@ -5,8 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HelloComposition"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
-        Loaded="Window_Loaded">
+        Title="MainWindow" Height="600" Width="840">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210"/>
@@ -23,7 +22,10 @@
         <TextBlock Text="Composition content" FontSize="20" 
                    Grid.Column="1" Margin="0,12,0,4"
                    HorizontalAlignment="Center"/>
-        <local:CompositionHostControl x:Name="ControlHostElement"
-                                      Grid.Row="1" Grid.Column="1"/>
+        <local:CompositionHostControl x:Name="CompositionHostControl1"
+                                      Grid.Row="1" Grid.Column="1"
+                                      VerticalAlignment="Top"
+                                      Width="600" Height="500"
+                                      BorderBrush="LightGray" BorderThickness="3"/>
     </Grid>
 </Window>

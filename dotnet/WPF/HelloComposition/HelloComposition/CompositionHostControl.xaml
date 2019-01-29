@@ -6,8 +6,5 @@
              xmlns:local="clr-namespace:HelloComposition"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Border Name="ControlHostElement"
-                Width="600" Height="500"
-                BorderBrush="LightGray"
-                BorderThickness="3"/>
+    <Border Name="CompositionHostElement"/>
 </UserControl>

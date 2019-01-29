@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Windows;
 using System.Windows.Interop;
 using Windows.UI.Composition;
 
@@ -15,6 +14,18 @@ namespace HelloComposition
 
         public Compositor Compositor { get; private set; }
 
+        public Visual Child
+        {
+            set
+            {
+                if (Compositor == null)
+                {
+                    InitComposition(hwndHost);
+                }
+                compositionTarget.Root = value;
+            }
+        }
+
         internal const int
           WS_CHILD = 0x40000000,
           WS_VISIBLE = 0x10000000,
@@ -28,18 +39,6 @@ namespace HelloComposition
         {
             hostHeight = (int)height;
             hostWidth = (int)width;
-        }
-
-        public Visual Child
-        {
-            set
-            {
-                if (Compositor == null)
-                {
-                    InitComposition(hwndHost);
-                }
-                compositionTarget.Root = value;
-            }
         }
 
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
@@ -218,5 +217,4 @@ namespace HelloComposition
     }
 
     #endregion COM Interop
-
 }
