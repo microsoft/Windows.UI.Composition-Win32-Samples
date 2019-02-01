@@ -1,7 +1,7 @@
 // HelloComposition.cpp : Defines the entry point for the application.
 //
 
-#include "stdafx.h"
+#include "pch.h"
 #include "HelloComposition.h"
 #include "CompositionHost.h"
 
@@ -108,7 +108,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    CompositionHost* compHost = CompositionHost::GetInstance();
    compHost->Initialize(hWnd);
-   compHost->CreateCompContent();
+   compHost->AddElement(150, 10, 10);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
