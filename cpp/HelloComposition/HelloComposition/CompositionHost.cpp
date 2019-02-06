@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "CompositionHost.h"
 
-CompositionHost* CompositionHost::s_instance;
+using namespace winrt;
+using namespace Windows::System;
+using namespace Windows::UI;
+using namespace Windows::UI::Composition;
+using namespace Windows::UI::Composition::Desktop;
+using namespace Windows::Foundation::Numerics;
 
 CompositionHost::CompositionHost()
 {
@@ -9,14 +14,12 @@ CompositionHost::CompositionHost()
 
 CompositionHost* CompositionHost::GetInstance()
 {
-	if (s_instance == NULL)
-		s_instance = new CompositionHost();
-	return s_instance;
+	static CompositionHost instance;
+	return &instance;
 }
 
 CompositionHost::~CompositionHost()
 {
-	delete s_instance;
 }
 
 void CompositionHost::Initialize(HWND hwnd)
@@ -37,10 +40,12 @@ void CompositionHost::EnsureDispatcherQueue()
 	
 	if (m_dispatcherQueueController == nullptr)
 	{
-		DispatcherQueueOptions options;
-		options.dwSize = sizeof(DispatcherQueueOptions);
-		options.threadType = DQTYPE_THREAD_CURRENT;
-		options.apartmentType = DQTAT_COM_ASTA;
+		DispatcherQueueOptions options
+		{
+			sizeof(DispatcherQueueOptions), /* dwSize */
+			DQTYPE_THREAD_CURRENT,          /* threadType */
+			DQTAT_COM_ASTA                  /* apartmentType */
+		};
 
 		Windows::System::DispatcherQueueController controller{ nullptr };
 		check_hresult(CreateDispatcherQueueController(options, reinterpret_cast<abi::IDispatcherQueueController**>(put_abi(controller))));
@@ -71,11 +76,9 @@ void CompositionHost::AddElement(float size, float x, float y)
 	if (m_target.Root())
 	{
 		auto visuals = m_target.Root().as<ContainerVisual>().Children();
+		auto visual = m_compositor.CreateSpriteVisual();
 
-		auto compositor = visuals.Compositor();
-		auto visual = compositor.CreateSpriteVisual();
-
-		visual.Brush(compositor.CreateColorBrush({ 0xDC, 0x5B, 0x9B, 0xD5 }));
+		visual.Brush(m_compositor.CreateColorBrush({ 0xDC, 0x5B, 0x9B, 0xD5 }));
 		visual.Size({ size, size });
 		visual.Offset({ x, y, 0.0f, });
 
