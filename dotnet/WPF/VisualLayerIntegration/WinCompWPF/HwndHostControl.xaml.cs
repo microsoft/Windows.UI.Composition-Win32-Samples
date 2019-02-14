@@ -11,15 +11,9 @@ namespace WinCompWPF
     /// </summary>
     public partial class HwndHostControl : HwndHost
     {
-        public IntPtr hwndHost
-        {
-            get; private set;
-        }
         object dispatcherQueue;
         int hostHeight, hostWidth;
         double hostDpiX, hostDpiY;
-        public Compositor Compositor { get; private set; }
-
         private ICompositionTarget compositionTarget;
         internal const int
             WS_CHILD = 0x40000000,
@@ -41,6 +35,8 @@ namespace WinCompWPF
                 compositionTarget.Root = value;
             }
         }
+        public IntPtr hwndHost { get; private set; }
+        public Compositor Compositor { get; private set; }
 
         public HwndHostControl(double height, double width, double dpiX, double dpiY)
         {
@@ -50,12 +46,10 @@ namespace WinCompWPF
             hostDpiY = (double)dpiY;
         }
 
-        /*
-         * Create window and content
-         */
+        // Create window and content
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
-            // Create Window
+            // Create Window.
             hwndHost = IntPtr.Zero;
             hwndHost = CreateWindowEx(0, "static", "",
                                       WS_CHILD | WS_VISIBLE,
@@ -67,27 +61,24 @@ namespace WinCompWPF
                                       IntPtr.Zero,
                                       0);
 
-            // Create Dispatcher Queue
+            // Create Dispatcher Queue.
             dispatcherQueue = InitializeCoreDispatcher();
 
-            // Build Composition Tree of content
+            // Build Composition Tree of content.
             InitComposition(hwndHost);
 
             return new HandleRef(this, hwndHost);
         }
 
-        /*
-         * Create dispatcher queue
-         */
+        // Create dispatcher queue
         private object InitializeCoreDispatcher()
         {
-            DispatcherQueueOptions options = new DispatcherQueueOptions();
+            var options = new DispatcherQueueOptions();
             options.apartmentType = DISPATCHERQUEUE_THREAD_APARTMENTTYPE.DQTAT_COM_STA;
             options.threadType = DISPATCHERQUEUE_THREAD_TYPE.DQTYPE_THREAD_CURRENT;
             options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
 
-            object queue = null;
-            CreateDispatcherQueueController(options, out queue);
+            CreateDispatcherQueueController(options, out object queue);
             return queue;
         }
 
@@ -98,11 +89,10 @@ namespace WinCompWPF
         {
             ICompositorDesktopInterop interop;
 
-            Compositor = new Compositor();
+            this.Compositor = new Compositor();
             object iunknown = Compositor as object;
             interop = (ICompositorDesktopInterop)iunknown;
-            IntPtr raw;
-            interop.CreateDesktopWindowTarget(hwndHost, true, out raw);
+            interop.CreateDesktopWindowTarget(hwndHost, true, out IntPtr raw);
 
             object rawObject = Marshal.GetObjectForIUnknown(raw);
             compositionTarget = (ICompositionTarget)rawObject;
@@ -158,6 +148,7 @@ namespace WinCompWPF
 
         #region PInvoke declarations
 
+        // Win32 enum we're duplicating.
         //typedef enum DISPATCHERQUEUE_THREAD_APARTMENTTYPE
         //{
         //    DQTAT_COM_NONE,
@@ -171,6 +162,7 @@ namespace WinCompWPF
             DQTAT_COM_STA = 2
         };
 
+        // Win32 enum we're duplicating.
         //typedef enum DISPATCHERQUEUE_THREAD_TYPE
         //{
         //    DQTYPE_THREAD_DEDICATED,
@@ -182,6 +174,7 @@ namespace WinCompWPF
             DQTYPE_THREAD_CURRENT = 2,
         };
 
+        // Win32 struct we're duplicating.
         //struct DispatcherQueueOptions
         //{
         //    DWORD dwSize;
@@ -200,6 +193,7 @@ namespace WinCompWPF
             public DISPATCHERQUEUE_THREAD_APARTMENTTYPE apartmentType;
         };
 
+        // Win32 method signature we're duplicating.
         //HRESULT CreateDispatcherQueueController(
         //  DispatcherQueueOptions options,
         //  ABI::Windows::System::IDispatcherQueueController** dispatcherQueueController
@@ -237,25 +231,24 @@ namespace WinCompWPF
         {
             this.point = point;
         }
-        public HwndMouseEventArgs(){        }
+        public HwndMouseEventArgs(){ }
     }
 
 
-#region COM Interop
+    #region COM Interop
 
-/*
-#undef INTERFACE
-#define INTERFACE ICompositorDesktopInterop
-    DECLARE_INTERFACE_IID_(ICompositorDesktopInterop, IUnknown, "29E691FA-4567-4DCA-B319-D0F207EB6807")
-    {
-        IFACEMETHOD(CreateDesktopWindowTarget)(
-            _In_ HWND hwndTarget,
-            _In_ BOOL isTopmost,
-            _COM_Outptr_ IDesktopWindowTarget * *result
-            ) PURE;
-    };
-*/
-[ComImport]
+    // COM interface we're duplicating.
+    //#undef INTERFACE
+    //#define INTERFACE ICompositorDesktopInterop
+    //    DECLARE_INTERFACE_IID_(ICompositorDesktopInterop, IUnknown, "29E691FA-4567-4DCA-B319-D0F207EB6807")
+    //    {
+    //        IFACEMETHOD(CreateDesktopWindowTarget)(
+    //            _In_ HWND hwndTarget,
+    //            _In_ BOOL isTopmost,
+    //            _COM_Outptr_ IDesktopWindowTarget * *result
+    //            ) PURE;
+    //    };
+    [ComImport]
     [Guid("29E691FA-4567-4DCA-B319-D0F207EB6807")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ICompositorDesktopInterop
@@ -263,6 +256,7 @@ namespace WinCompWPF
         void CreateDesktopWindowTarget(IntPtr hwndTarget, bool isTopmost, out IntPtr test);
     }
 
+    // COM interface we're duplicating.
     //[contract(Windows.Foundation.UniversalApiContract, 2.0)]
     //[exclusiveto(Windows.UI.Composition.CompositionTarget)]
     //[uuid(A1BEA8BA - D726 - 4663 - 8129 - 6B5E7927FFA6)]

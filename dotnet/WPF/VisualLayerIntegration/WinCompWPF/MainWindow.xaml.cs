@@ -68,15 +68,15 @@ namespace WinCompWPF
 
         private void HostControl_MouseLClick(object sender, HwndMouseEventArgs e)
         {
-            //show bar info in response to click event
+            //show bar info in response to click event.
             if (currentGraph != null)
             {
-                //Convert mouse position to DIP (is raised in physical pixels)
+                //Convert mouse position to DIP (is raised in physical pixels).
                 var posDip = GetPointInDIP(e.point);
 
                 Point adjustedTopLeft = GetControlPointInDIP(ControlHostElement);
 
-                //Get point relative to control
+                //Get point relative to control.
                 Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
 
                 //TODO get clicked element
@@ -86,18 +86,18 @@ namespace WinCompWPF
 
         private void HostControl_MouseMoved(object sender, HwndMouseEventArgs e)
         {
-            //Adjust light position
+            //Adjust light position.
             if (currentGraph != null)
             {
-                //Convert mouse position to DIP (is raised in physical pixels)
+                //Convert mouse position to DIP (is raised in physical pixels).
                 var posDip = GetPointInDIP(e.point);
 
                 Point adjustedTopLeft = GetControlPointInDIP(ControlHostElement);
 
-                //Get point relative to control
+                //Get point relative to control.
                 Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
 
-                //Update light position
+                //Update light position.
                 currentGraph.UpdateLight(relativePoint);
             }
         }
@@ -111,9 +111,9 @@ namespace WinCompWPF
 
         private Point GetControlPointInDIP(UIElement control)
         {
-            //Get bounds of hwnd host control
-            Point controlTopLeft = control.PointToScreen(new Point(0, 0));  //top left of control relative to screen
-            //Convert screen coord to DIP
+            //Get bounds of hwnd host control.
+            Point controlTopLeft = control.PointToScreen(new Point(0, 0));  //Top left of control relative to screen.
+            //Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);
             return new Point(adjustedX, adjustedY);
@@ -131,16 +131,14 @@ namespace WinCompWPF
 
         }
 
-        /*
-         * Handle Composition tree creation and updates
-         */
+        // Handle Composition tree creation and updates.
         public void UpdateGraph(Customer customer)
         {
             var graphTitle = customer.FirstName + " Investment History";
             var xAxisTitle = "Investment #";
             var yAxisTitle = "# Shares of Stock";
 
-            // If graph already exists update values. Else create new graph.
+            // If graph already exists update values. Otherwise create new graph.
             if (graphContainer.Children.Count > 0 && currentGraph != null)
             {
                 currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);
@@ -157,17 +155,13 @@ namespace WinCompWPF
             }
         }
 
-        /*
-         * Send customer info to the control on row select
-         */
+        // Send customer info to the control on row select.
         private void CustomerGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             UpdateGraph((Customer)CustomerGrid.SelectedItem);
         }
 
-        /*
-         * Generate random customer data
-         */
+        // Generate random customer data.
         private float[] GenerateRandomData()
         {
             var numDataPoints = 6;
@@ -181,9 +175,7 @@ namespace WinCompWPF
             return data;
         }
 
-        /*
-         * Generate random date to use for the customer info
-         */
+        // Generate random date to use for the customer info.
         private DateTime GenerateRandomDay()
         {
             DateTime start = new DateTime(1995, 1, 1);

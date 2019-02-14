@@ -102,7 +102,7 @@
                 <RowDefinition Height="8*"/>
                 <RowDefinition Height="6*"/>
             </Grid.RowDefinitions>
-            
+
             <StackPanel x:Name="DetailsPane" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock FontSize="25">Investment History</TextBlock>
                 <Border Name="ControlHostElement"
@@ -120,17 +120,42 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <TextBlock FontWeight="DemiBold"  FontStyle="Italic" FontFamily="Segoe" VerticalAlignment="Bottom" FontSize="15" Foreground="{StaticResource Gradient1Dark}" Margin="0,0" >Select a row to show data graph on the right.</TextBlock>
-                    <TextBlock FontStyle="Italic" FontFamily="Segoe" FontSize="13" VerticalAlignment="Bottom" Foreground="{StaticResource Gradient1Dark}" Margin="10,0,0,0" >Select another to see the graph animate from one data set to the next.</TextBlock>
+                    <TextBlock FontWeight="DemiBold"
+                               FontStyle="Italic"
+                               FontFamily="Segoe"
+                               VerticalAlignment="Bottom"
+                               FontSize="15"
+                               Foreground="{StaticResource Gradient1Dark}"
+                               Margin="0,0">
+                        Select a row to show data graph on the right.
+                    </TextBlock>
+                    <TextBlock FontStyle="Italic"
+                               FontFamily="Segoe"
+                               FontSize="13"
+                               VerticalAlignment="Bottom"
+                               Foreground="{StaticResource Gradient1Dark}"
+                               Margin="10,0,0,0">
+                        Select another to see the graph animate from one data set to the next.
+                    </TextBlock>
                 </StackPanel>
-             
-                <DataGrid x:Name="CustomerGrid" HorizontalAlignment="Stretch" Grid.Row="2" SelectionChanged="CustomerGrid_SelectionChanged" VerticalScrollBarVisibility="Auto" 
-                          GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="{StaticResource AccentColorLight}" CellStyle="{StaticResource CellStyleWithPadding}"
-                          IsReadOnly="False" ItemsSource="{Binding Customers}" CanUserSortColumns="True" ColumnHeaderStyle="{StaticResource GridHeaderStyle}"  ColumnWidth="*"
-                          AlternationCount="2" AutoGenerateColumns="True">
+
+                <DataGrid x:Name="CustomerGrid"
+                          HorizontalAlignment="Stretch"
+                          Grid.Row="2"
+                          SelectionChanged="CustomerGrid_SelectionChanged"
+                          VerticalScrollBarVisibility="Auto"
+                          GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="{StaticResource AccentColorLight}"
+                          CellStyle="{StaticResource CellStyleWithPadding}"
+                          IsReadOnly="False"
+                          ItemsSource="{Binding Customers}"
+                          CanUserSortColumns="True"
+                          ColumnHeaderStyle="{StaticResource GridHeaderStyle}"
+                          ColumnWidth="*"
+                          AlternationCount="2"
+                          AutoGenerateColumns="True">
                 </DataGrid>
             </Grid>
         </Grid>
     </DockPanel>
-
 </Window>
