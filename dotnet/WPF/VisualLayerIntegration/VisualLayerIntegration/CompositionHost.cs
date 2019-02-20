@@ -4,12 +4,9 @@ using System.Windows.Interop;
 using Windows.UI.Composition;
 using System.Windows;
 
-namespace WinCompWPF
+namespace VisualLayerIntegration
 {
-    /// <summary>
-    /// Interaction logic for HwndHostControl.xaml
-    /// </summary>
-    public partial class HwndHostControl : HwndHost
+    class CompositionHost : HwndHost
     {
         object dispatcherQueue;
         int hostHeight, hostWidth;
@@ -38,7 +35,7 @@ namespace WinCompWPF
         public IntPtr hwndHost { get; private set; }
         public Compositor Compositor { get; private set; }
 
-        public HwndHostControl(double height, double width, double dpiX, double dpiY)
+        public CompositionHost(double height, double width, double dpiX, double dpiY)
         {
             hostHeight = (int)height;
             hostWidth = (int)width;
@@ -103,7 +100,7 @@ namespace WinCompWPF
 
         protected override void DestroyWindowCore(HandleRef hwnd)
         {
-            if(compositionTarget.Root != null)
+            if (compositionTarget.Root != null)
             {
                 compositionTarget.Root.Dispose();
             }
@@ -115,7 +112,7 @@ namespace WinCompWPF
             const int WM_MOUSEMOVE = 0x0200;
             const int WM_LBUTTONDOWN = 0x0201;
             switch (msg)
-            {                
+            {
                 case WM_MOUSEMOVE:
                     var pos = PointToScreen(new Point((short)(((int)lParam) & 0xffff), (short)(((int)lParam) >> 16)));
                     RaiseHwndMouseMove(new HwndMouseEventArgs(pos));
@@ -231,7 +228,7 @@ namespace WinCompWPF
         {
             this.point = point;
         }
-        public HwndMouseEventArgs(){ }
+        public HwndMouseEventArgs() { }
     }
 
 
@@ -281,4 +278,3 @@ namespace WinCompWPF
     #endregion COM Interop
 
 }
-

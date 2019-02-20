@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WinCompWPF
+namespace VisualLayerIntegration
 {
     //Base customer object with a selection of data.
     public class Customer
