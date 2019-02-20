@@ -110,7 +110,7 @@ namespace VisualLayerIntegration
 
             if (this.ActualWidth > 0 && currentGraph != null)
             {
-                currentGraph.UpdateDPI(currentDpiX, currentDpiY, CompositionHostElement.Width, CompositionHostElement.Height);
+                currentGraph.UpdateDPI(currentDpiX, currentDpiY, CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight);
             }
         }
 
