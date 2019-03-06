@@ -1,4 +1,28 @@
-﻿using Windows.UI;
+﻿//  ---------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+//  The MIT License (MIT)
+// 
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+// 
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+// 
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//  ---------------------------------------------------------------------------------
+
+using Windows.UI;
 using Windows.UI.Composition;
 
 using SharpDX;
@@ -25,7 +49,7 @@ namespace BarGraphUtility
         private float barWidth, barSpacing;
         private float maxBarValue;
 
-        private GraphBarStyle _graphBarStyle;
+        private GraphBarStyle graphBarStyle;
         private List<Windows.UI.Color> graphBarColors;
 
         private Hashtable barValueMap;
@@ -69,7 +93,7 @@ namespace BarGraphUtility
         }
 
         // Constructor for bar graph.
-        // For now only does single bars, no grouping.
+        // For now, only does single bars, no grouping.
         // As of 12/6 to insert graph, call the constructor then use barGraph.Root to get the container to parent.
         public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel,     // required parameters
             string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data,// required parameters
@@ -89,10 +113,10 @@ namespace BarGraphUtility
             Title = title;
             XAxisLabel = xAxisLabel;
             YAxisLabel = yAxisLabel;
-            
-            _graphBarStyle = graphBarStyle;
 
-            if(barColors != null)
+            this.graphBarStyle = graphBarStyle;
+
+            if (barColors != null)
             {
                 graphBarColors = barColors;
             }
@@ -120,7 +144,7 @@ namespace BarGraphUtility
             BarRoot = this.compositor.CreateContainerVisual();
             GraphRoot.Children.InsertAtBottom(BarRoot);
 
-            // If data has been provided init bars and animations, otherwise leave graph empty.
+            // If data has been provided, initialize bars and animations; otherwise, leave graph empty.
             if (graphData.Length > 0)
             {
                 barValueMap = new Hashtable();
@@ -145,7 +169,7 @@ namespace BarGraphUtility
 
             shapeContainer.Offset = new System.Numerics.Vector3(shapeGraphOffsetX, shapeGraphOffsetY, 0);
             shapeContainer.Size = new System.Numerics.Vector2(shapeGraphContainerWidth, shapeGraphContainerHeight);
-            
+
             xAxisLine.Start = new System.Numerics.Vector2(0, shapeGraphContainerHeight - shapeGraphOffsetY);
             xAxisLine.End = new System.Numerics.Vector2(shapeGraphContainerWidth - shapeGraphOffsetX, shapeGraphContainerHeight - shapeGraphOffsetY);
 
@@ -159,7 +183,7 @@ namespace BarGraphUtility
 
             // Create shape tree to hold.
             shapeContainer = compositor.CreateShapeVisual();
-            
+
             xAxisLine = compositor.CreateLineGeometry();
             yAxisLine = compositor.CreateLineGeometry();
 
@@ -215,7 +239,7 @@ namespace BarGraphUtility
             textRenderTarget.Resize(new Size2((int)(newWidth * newDpiX / 96.0), (int)(newWidth * newDpiY / 96.0)));
             DrawText(textRenderTarget, Title, XAxisLabel, YAxisLabel, textSize);
         }
-       
+
         public void DrawText(WindowRenderTarget renderTarget, string titleText, string xAxisText, string yAxisText, float baseTextSize)
         {
             var sgOffsetY = graphTextHeight * 1 / 15;
@@ -228,12 +252,21 @@ namespace BarGraphUtility
 
             var FactoryDWrite = new SharpDX.DirectWrite.Factory();
 
-            textFormatTitle = new TextFormat(FactoryDWrite, "Segoe", baseTextSize*5/4) {
-                TextAlignment = TextAlignment.Center, ParagraphAlignment = ParagraphAlignment.Center };
-            textFormatHorizontal = new TextFormat(FactoryDWrite, "Segoe", baseTextSize) {
-                TextAlignment = TextAlignment.Center, ParagraphAlignment = ParagraphAlignment.Far };
-            textFormatVertical = new TextFormat(FactoryDWrite, "Segoe", baseTextSize) {
-                TextAlignment = TextAlignment.Center, ParagraphAlignment = ParagraphAlignment.Far };
+            textFormatTitle = new TextFormat(FactoryDWrite, "Segoe", baseTextSize * 5 / 4)
+            {
+                TextAlignment = TextAlignment.Center,
+                ParagraphAlignment = ParagraphAlignment.Center
+            };
+            textFormatHorizontal = new TextFormat(FactoryDWrite, "Segoe", baseTextSize)
+            {
+                TextAlignment = TextAlignment.Center,
+                ParagraphAlignment = ParagraphAlignment.Far
+            };
+            textFormatVertical = new TextFormat(FactoryDWrite, "Segoe", baseTextSize)
+            {
+                TextAlignment = TextAlignment.Center,
+                ParagraphAlignment = ParagraphAlignment.Far
+            };
 
             renderTarget.AntialiasMode = AntialiasMode.PerPrimitive;
             renderTarget.TextAntialiasMode = TextAntialiasMode.Cleartype;
@@ -249,7 +282,6 @@ namespace BarGraphUtility
             textSceneColorBrush.Color = black;
 
             //Draw title and x axis text.
-
             renderTarget.BeginDraw();
 
             renderTarget.Clear(white);
@@ -282,12 +314,12 @@ namespace BarGraphUtility
 
         private Bar[] CreateBars(float[] data)
         {
-            //Clear hashmap .
+            //Clear hashmap.
             barValueMap.Clear();
 
             var barBrushHelper = new BarGraphUtility.BarBrushHelper(compositor);
             var brushes = new CompositionBrush[data.Length];
-            switch (_graphBarStyle)
+            switch (graphBarStyle)
             {
                 case GraphBarStyle.Single:
                     brushes = barBrushHelper.GenerateSingleColorBrush(data.Length, graphBarColors[0]);
@@ -305,16 +337,16 @@ namespace BarGraphUtility
                     brushes = barBrushHelper.GenerateSingleColorBrush(data.Length, graphBarColors[0]);
                     break;
             }
-           
+
             var maxValue = maxBarValue = GetMaxBarValue(data);
             var bars = new Bar[data.Length];
-            for(int i=0; i<data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 var xOffset = shapeGraphOffsetX + barSpacing + (barWidth + barSpacing) * i;
                 var height = GetAdjustedBarHeight(maxValue, graphData[i]);
 
                 var bar = new BarGraphUtility.Bar(compositor, shapeGraphContainerHeight, height, barWidth, "something", graphData[i], brushes[i]);
-                bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, shapeGraphContainerHeight , 0);
+                bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, shapeGraphContainerHeight, 0);
                 bar.Root.Offset = new System.Numerics.Vector3(xOffset, shapeGraphContainerHeight, 0);
 
                 barValueMap.Add(i, bar);
@@ -331,7 +363,6 @@ namespace BarGraphUtility
             {
                 BarRoot.Children.InsertAtTop(bars[i].OutlineRoot);
                 BarRoot.Children.InsertAtTop(bars[i].Root);
-                
             }
 
             AddLight();
@@ -350,8 +381,8 @@ namespace BarGraphUtility
                 //TODO i dont think we need to transform bar offset??? size??? (actually probably do need to translate to DiP screencoords)
 
                 //If point is within bounds of the bar, mark as 
-         //       clickedBar = thingy
-         //         break
+                //       clickedBar = thingy
+                //         break
             }
 
             if (clickedBar != null)
@@ -363,7 +394,6 @@ namespace BarGraphUtility
             }
         }
 
-
         public void UpdateGraphData(string title, string xAxisTitle, string yAxisTitle, float[] newData)
         {
             // Update properties.
@@ -374,12 +404,12 @@ namespace BarGraphUtility
             // Update text.
             DrawText(textRenderTarget, Title, XAxisLabel, YAxisLabel, textSize);
 
-            // Generate bars .
-            // If the same number of data points, update bars with new data. OTherwise wipe and create new.
+            // Generate bars.
+            // If the same number of data points, update bars with new data. Otherwise, wipe and create new.
             if (graphData.Length == newData.Length)
             {
                 var maxValue = GetMaxBarValue(newData);
-                for (int i=0; i< graphData.Length; i++)
+                for (int i = 0; i < graphData.Length; i++)
                 {
                     // Animate bar height.
                     var oldBar = (Bar)(barValueMap[i]);
@@ -466,16 +496,15 @@ namespace BarGraphUtility
         // Adjust bar height relative to the max bar value.
         private float GetAdjustedBarHeight(float maxValue, float originalValue)
         {
-            return (shapeGraphContainerHeight-shapeGraphOffsetY) * (originalValue / maxValue);
+            return (shapeGraphContainerHeight - shapeGraphOffsetY) * (originalValue / maxValue);
         }
 
         // Return computed bar width for graph. Default spacing is 1/2 bar width.
         private float ComputeBarWidth()
         {
             var spacingUnits = (graphData.Length + 1) / 2;
-            
-            return ((shapeGraphContainerWidth - (2*shapeGraphOffsetX)) / (graphData.Length + spacingUnits));
-        }
 
+            return ((shapeGraphContainerWidth - (2 * shapeGraphOffsetX)) / (graphData.Length + spacingUnits));
+        }
     }
 }
