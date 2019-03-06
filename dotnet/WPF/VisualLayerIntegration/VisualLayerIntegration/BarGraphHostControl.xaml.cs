@@ -48,6 +48,12 @@ namespace VisualLayerIntegration
         {
             InitializeComponent();
             Loaded += BarGraphHostControl_Loaded;
+            DataContextChanged += BarGraphHostControl_DataContextChanged;
+        }
+
+        private void BarGraphHostControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateGraph();
         }
 
         private void BarGraphHostControl_Loaded(object sender, RoutedEventArgs e)
@@ -139,26 +145,85 @@ namespace VisualLayerIntegration
         }
 
         // Handle Composition tree creation and updates.
-        public void UpdateGraph(Customer customer)
+        //public void UpdateGraph(Customer customer)
+        //{
+        //    var graphTitle = customer.FirstName + " Investment History";
+        //    var xAxisTitle = "Investment #";
+        //    var yAxisTitle = "# Shares of Stock";
+
+        //    // If graph already exists update values. Otherwise create new graph.
+        //    if (graphContainer.Children.Count > 0 && currentGraph != null)
+        //    {
+        //        currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);
+        //    }
+        //    else
+        //    {
+        //        BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
+        //            (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data,
+        //            true, BarGraph.GraphBarStyle.PerBarLinearGradient,
+        //            new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
+
+        //        currentGraph = graph;
+        //        graphContainer.Children.InsertAtTop(graph.GraphRoot);
+        //    }
+        //}
+
+        public void UpdateGraph()
         {
-            var graphTitle = customer.FirstName + " Investment History";
-            var xAxisTitle = "Investment #";
-            var yAxisTitle = "# Shares of Stock";
-
-            // If graph already exists update values. Otherwise create new graph.
-            if (graphContainer.Children.Count > 0 && currentGraph != null)
+            Customer customer = DataContext as Customer;
+            if (customer != null)
             {
-                currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);
+
+                var graphTitle = customer.FirstName + " Investment History";
+                var xAxisTitle = "Investment #";
+                var yAxisTitle = "# Shares of Stock";
+
+                // If graph already exists update values. Otherwise create new graph.
+                if (graphContainer.Children.Count > 0 && currentGraph != null)
+                {
+                    currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);
+                }
+                else
+                {
+                    BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
+                        (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data,
+                        true, BarGraph.GraphBarStyle.PerBarLinearGradient,
+                        new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
+
+                    currentGraph = graph;
+                    graphContainer.Children.InsertAtTop(graph.GraphRoot);
+                }
             }
-            else
-            {
-                BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
-                    (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data,
-                    true, BarGraph.GraphBarStyle.PerBarLinearGradient,
-                    new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
+        }
 
-                currentGraph = graph;
-                graphContainer.Children.InsertAtTop(graph.GraphRoot);
+        private void CompositionHostElement_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (currentGraph != null)
+            {
+
+
+                var currentDpi = VisualTreeHelper.GetDpi(this);
+                currentDpiX = currentDpi.PixelsPerInchX;
+                currentDpiY = currentDpi.PixelsPerInchY;
+
+                currentDpi = VisualTreeHelper.GetDpi(this);
+
+                //graphContainer.Scale = new Vector3((float)(currentDpiX / 96.0), (float)(currentDpiY / 96.0), (float) 1.0);
+
+                //graphContainer.Scale = new Vector3((float)(e.NewSize.Height / e.PreviousSize.Height), (float)(e.NewSize.Width / e.PreviousSize.Width), (float) 1.0);
+
+                //compositionHost = new CompositionHost(CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight, currentDpiX, currentDpiY);
+                //CompositionHostElement.Child = compositionHost;
+                //compositor = compositionHost.Compositor;
+                //graphContainer = compositor.CreateContainerVisual();
+                //compositionHost.Child = graphContainer;
+
+                //compositionHost.MouseMoved += HostControl_MouseMoved;
+                //compositionHost.MouseLClick += HostControl_MouseLClick;
+
+                //graphContainer.Children.InsertAtTop(currentGraph.GraphRoot);
+                //UpdateGraph();
+                currentGraph.UpdateDPI(currentDpiX, currentDpiY, e.NewSize.Width, e.NewSize.Height);
             }
         }
     }

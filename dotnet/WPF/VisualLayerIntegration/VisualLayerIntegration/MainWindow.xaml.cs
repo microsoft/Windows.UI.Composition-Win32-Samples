@@ -64,7 +64,8 @@ namespace VisualLayerIntegration
         // Send customer info to the control on row select.
         private void CustomerGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            barGraphHost.UpdateGraph((Customer)CustomerGrid.SelectedItem);
+            //barGraphHost.UpdateGraph((Customer)CustomerGrid.SelectedItem);
+            barGraphHost.DataContext = (Customer)CustomerGrid.SelectedItem;
         }
 
         // Generate random customer data.

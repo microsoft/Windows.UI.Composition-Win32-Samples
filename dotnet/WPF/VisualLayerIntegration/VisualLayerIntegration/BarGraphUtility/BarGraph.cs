@@ -162,6 +162,9 @@ namespace BarGraphUtility
             textRectWidth = (int)shapeGraphContainerWidth;
             textRectHeight = (int)shapeGraphOffsetY;
 
+            graphTextWidth = (float)(graphWidth);
+            graphTextHeight = (float)(graphHeight);
+
             mainContainer.Offset = new System.Numerics.Vector3(shapeGraphOffsetX, shapeGraphOffsetY, 0);
 
             barWidth = ComputeBarWidth();
