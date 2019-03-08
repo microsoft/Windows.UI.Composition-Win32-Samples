@@ -140,7 +140,7 @@ namespace VisualLayerIntegration
 
             if (this.ActualWidth > 0 && currentGraph != null)
             {
-                currentGraph.UpdateDPI(currentDpiX, currentDpiY, CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight);
+                currentGraph.UpdateSize(currentDpiX, currentDpiY, CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight);
             }
         }
 
@@ -222,8 +222,8 @@ namespace VisualLayerIntegration
                 //compositionHost.MouseLClick += HostControl_MouseLClick;
 
                 //graphContainer.Children.InsertAtTop(currentGraph.GraphRoot);
-                //UpdateGraph();
-                currentGraph.UpdateDPI(currentDpiX, currentDpiY, e.NewSize.Width, e.NewSize.Height);
+                UpdateGraph();
+                currentGraph.UpdateSize(currentDpiX, currentDpiY, e.NewSize.Width, e.NewSize.Height);
             }
         }
     }

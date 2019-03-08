@@ -44,7 +44,6 @@ namespace BarGraphUtility
         private IntPtr hwnd;
 
         private float graphWidth, graphHeight;
-        private float graphTextWidth, graphTextHeight;
         private float shapeGraphContainerHeight, shapeGraphContainerWidth, shapeGraphOffsetY, shapeGraphOffsetX;
         private float barWidth, barSpacing;
         private float maxBarValue;
@@ -65,8 +64,6 @@ namespace BarGraphUtility
         private CompositionLineGeometry yAxisLine;
         private ContainerVisual mainContainer;
 
-        private int textRectWidth;
-        private int textRectHeight;
         private static SharpDX.Mathematics.Interop.RawColor4 black = new SharpDX.Mathematics.Interop.RawColor4(0, 0, 0, 255);
         private static SharpDX.Mathematics.Interop.RawColor4 white = new SharpDX.Mathematics.Interop.RawColor4(255, 255, 255, 255);
 
@@ -104,9 +101,6 @@ namespace BarGraphUtility
             this.hwnd = hwnd;
             this.graphWidth = (float)(width * dpiX / 96.0);
             this.graphHeight = (float)(height * dpiY / 96.0);
-
-            this.graphTextWidth = (float)(width);
-            this.graphTextHeight = (float)(height);
 
             this.graphData = data;
 
@@ -159,11 +153,6 @@ namespace BarGraphUtility
             shapeGraphOffsetX = graphWidth * 1 / 15;
             shapeGraphContainerHeight = graphHeight - shapeGraphOffsetY * 2;
             shapeGraphContainerWidth = graphWidth - shapeGraphOffsetX * 2;
-            textRectWidth = (int)shapeGraphContainerWidth;
-            textRectHeight = (int)shapeGraphOffsetY;
-
-            graphTextWidth = (float)(graphWidth);
-            graphTextHeight = (float)(graphHeight);
 
             mainContainer.Offset = new System.Numerics.Vector3(shapeGraphOffsetX, shapeGraphOffsetY, 0);
 
@@ -211,7 +200,7 @@ namespace BarGraphUtility
             return mainContainer;
         }
 
-        public void UpdateDPI(double newDpiX, double newDpiY, double newWidth, double newHeight)
+        public void UpdateSize(double newDpiX, double newDpiY, double newWidth, double newHeight)
         {
             var oldHeight = graphHeight;
             var oldWidth = graphWidth;
@@ -237,6 +226,8 @@ namespace BarGraphUtility
                 bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, shapeGraphContainerHeight, 0);
             }
 
+            // Scale text size.
+            textSize = textSize * graphHeight / oldHeight;
             // Update text render target and redraw text.
             textRenderTarget.DotsPerInch = new Size2F((float)newDpiX, (float)newDpiY);
             textRenderTarget.Resize(new Size2((int)(newWidth * newDpiX / 96.0), (int)(newWidth * newDpiY / 96.0)));
@@ -245,13 +236,12 @@ namespace BarGraphUtility
 
         public void DrawText(WindowRenderTarget renderTarget, string titleText, string xAxisText, string yAxisText, float baseTextSize)
         {
-            var sgOffsetY = graphTextHeight * 1 / 15;
-            var sgOffsetX = graphTextWidth * 1 / 15;
-            var containerHeight = graphTextHeight - sgOffsetY * 2;
-            var containerWidth = graphTextWidth - sgOffsetX * 2;
+            var sgOffsetY = renderTarget.Size.Height * 1 / 15;
+            var sgOffsetX = renderTarget.Size.Width * 1 / 15;
+            var containerHeight = renderTarget.Size.Height - sgOffsetY * 2;
+            var containerWidth = renderTarget.Size.Width - sgOffsetX * 2; // not used?
             var textWidth = (int)containerHeight;
             var textHeight = (int)sgOffsetY;
-
 
             var FactoryDWrite = new SharpDX.DirectWrite.Factory();
 
