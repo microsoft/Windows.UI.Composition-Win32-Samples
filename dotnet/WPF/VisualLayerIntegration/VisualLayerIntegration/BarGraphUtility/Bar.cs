@@ -113,7 +113,8 @@ namespace BarGraphUtility
 
             // Create rectangle geometry and shape for the bar.
             rectGeometry = compositor.CreateRectangleGeometry();
-            rectGeometry.Size = new Vector2(Height, Width); //reverse width and height since rect will be at a 90* angle
+            // Reverse width and height since rect will be at a 90* angle.
+            rectGeometry.Size = new Vector2(Height, Width);
             barVisual = compositor.CreateSpriteShape(rectGeometry);
             barVisual.FillBrush = Brush;
 

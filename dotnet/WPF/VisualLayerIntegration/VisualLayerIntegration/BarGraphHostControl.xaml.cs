@@ -81,18 +81,18 @@ namespace VisualLayerIntegration
 
         private void HostControl_MouseMoved(object sender, HwndMouseEventArgs e)
         {
-            //Adjust light position.
+            // Adjust light position.
             if (currentGraph != null)
             {
-                //Convert mouse position to DIP (is raised in physical pixels).
+                // Convert mouse position to DIP (is raised in physical pixels).
                 var posDip = GetPointInDIP(e.point);
 
                 Point adjustedTopLeft = GetControlPointInDIP(CompositionHostElement);
 
-                //Get point relative to control.
+                // Get point relative to control.
                 Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
 
-                //Update light position.
+                // Update light position.
                 currentGraph.UpdateLight(relativePoint);
             }
         }
@@ -106,10 +106,10 @@ namespace VisualLayerIntegration
 
         private Point GetControlPointInDIP(UIElement control)
         {
-            //Get bounds of hwnd host control.
-            //Top left of control relative to screen.
+            // Get bounds of hwnd host control.
+            // Top left of control relative to screen.
             Point controlTopLeft = control.PointToScreen(new Point(0, 0));
-            //Convert screen coord to DIP.
+            // Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);
             return new Point(adjustedX, adjustedY);
@@ -136,7 +136,7 @@ namespace VisualLayerIntegration
                 var xAxisTitle = "Investment #";
                 var yAxisTitle = "# Shares of Stock";
 
-                // If graph already exists update values. Otherwise create new graph.
+                // If graph already exists update values. Otherwise, create new graph.
                 if (graphContainer.Children.Count > 0 && currentGraph != null)
                 {
                     currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);

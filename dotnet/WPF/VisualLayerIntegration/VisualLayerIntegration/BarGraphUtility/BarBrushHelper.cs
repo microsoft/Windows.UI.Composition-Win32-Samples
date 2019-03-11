@@ -29,7 +29,7 @@ using Windows.UI.Composition;
 
 namespace BarGraphUtility
 {
-    //  Create brushes to fill the bars. 
+    // Create brushes to fill the bars. 
     public class BarBrushHelper
     {
         private Compositor compositor;
