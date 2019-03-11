@@ -76,25 +76,6 @@ namespace VisualLayerIntegration
                 compositionHost.Child = graphContainer;
 
                 compositionHost.MouseMoved += HostControl_MouseMoved;
-                compositionHost.MouseLClick += HostControl_MouseLClick;
-            }
-        }
-
-        private void HostControl_MouseLClick(object sender, HwndMouseEventArgs e)
-        {
-            //show bar info in response to click event.
-            if (currentGraph != null)
-            {
-                //Convert mouse position to DIP (is raised in physical pixels).
-                var posDip = GetPointInDIP(e.point);
-
-                Point adjustedTopLeft = GetControlPointInDIP(CompositionHostElement);
-
-                //Get point relative to control.
-                Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
-
-                //TODO get clicked element
-                //    currentGraph.UpdateLight(relativePoint);
             }
         }
 
@@ -126,7 +107,8 @@ namespace VisualLayerIntegration
         private Point GetControlPointInDIP(UIElement control)
         {
             //Get bounds of hwnd host control.
-            Point controlTopLeft = control.PointToScreen(new Point(0, 0));  //Top left of control relative to screen.
+            //Top left of control relative to screen.
+            Point controlTopLeft = control.PointToScreen(new Point(0, 0));
             //Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);

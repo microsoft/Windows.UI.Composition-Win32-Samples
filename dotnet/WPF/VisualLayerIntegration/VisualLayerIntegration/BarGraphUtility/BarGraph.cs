@@ -90,8 +90,7 @@ namespace BarGraphUtility
         }
 
         // Constructor for bar graph.
-        // For now, only does single bars, no grouping.
-        // As of 12/6 to insert graph, call the constructor then use barGraph.Root to get the container to parent.
+        // To insert graph, call the constructor then use barGraph.Root to get the container to parent.
         public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel,     // required parameters
             string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data,// required parameters
             bool AnimationsOn = true, GraphBarStyle graphBarStyle = GraphBarStyle.Single,        // optional parameters
@@ -359,32 +358,6 @@ namespace BarGraphUtility
             }
 
             AddLight();
-        }
-
-        public void GetClickedBar(Point point)
-        {
-            Bar clickedBar = null;
-            for (int i = 0; i < barValueMap.Count; i++)
-            {
-                Bar bar = (Bar)barValueMap[i];
-
-                var barOffset = bar.Root.Offset;
-                var barSize = bar.Root.Size;
-
-                //TODO i dont think we need to transform bar offset??? size??? (actually probably do need to translate to DiP screencoords)
-
-                //If point is within bounds of the bar, mark as 
-                //       clickedBar = thingy
-                //         break
-            }
-
-            if (clickedBar != null)
-            {
-                //TODO create visual to mimic a 
-
-                //TODO add shadow to visual
-
-            }
         }
 
         public void UpdateGraphData(string title, string xAxisTitle, string yAxisTitle, float[] newData)
