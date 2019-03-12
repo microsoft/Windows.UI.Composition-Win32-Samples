@@ -159,8 +159,6 @@ namespace VisualLayerIntegration
             if (currentGraph != null)
             {
                 var currentDpi = VisualTreeHelper.GetDpi(this);
-
-                UpdateGraph();
                 currentGraph.UpdateSize(currentDpi.PixelsPerInchX, currentDpi.PixelsPerInchY, e.NewSize.Width, e.NewSize.Height);
             }
         }
