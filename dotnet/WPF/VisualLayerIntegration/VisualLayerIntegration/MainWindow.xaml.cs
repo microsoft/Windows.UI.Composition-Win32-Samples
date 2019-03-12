@@ -26,8 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using BarGraphUtility;
-using System.Windows.Media;
 
 namespace VisualLayerIntegration
 {
@@ -46,9 +44,7 @@ namespace VisualLayerIntegration
             InitializeComponent();
         }
 
-        /*
-         * Generate customers, pass data to grid, and create host control
-         */
+        // Generate customers and pass data to grid.
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {          
             List<Customer> customers = new List<Customer>();
@@ -64,7 +60,7 @@ namespace VisualLayerIntegration
         // Send customer info to the control on row select.
         private void CustomerGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            barGraphHost.UpdateGraph((Customer)CustomerGrid.SelectedItem);
+            barGraphHost.DataContext = (Customer)CustomerGrid.SelectedItem;
         }
 
         // Generate random customer data.
@@ -77,7 +73,6 @@ namespace VisualLayerIntegration
             {
                 data[j] = random.Next(50, 300);
             }
-
             return data;
         }
 
@@ -88,6 +83,5 @@ namespace VisualLayerIntegration
             int range = (DateTime.Today - start).Days;
             return start.AddDays(random.Next(range));
         }
-
     }
 }

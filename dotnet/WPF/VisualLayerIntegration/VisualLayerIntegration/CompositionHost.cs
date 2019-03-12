@@ -82,16 +82,16 @@ namespace VisualLayerIntegration
                                       IntPtr.Zero,
                                       0);
 
-            // Create Dispatcher Queue.
+            // Create dispatcher queue.
             dispatcherQueue = InitializeCoreDispatcher();
 
-            // Build Composition Tree of content.
+            // Get compositor and target for hwnd.
             InitComposition(hwndHost);
 
             return new HandleRef(this, hwndHost);
         }
 
-        // Create dispatcher queue
+        // Create dispatcher queue.
         private object InitializeCoreDispatcher()
         {
             var options = new DispatcherQueueOptions();
@@ -103,9 +103,7 @@ namespace VisualLayerIntegration
             return queue;
         }
 
-        /*
-         * Get compositor and target for hwnd
-         */
+        // Get compositor and target for hwnd.
         private void InitComposition(IntPtr hwndHost)
         {
             ICompositorDesktopInterop interop;

@@ -48,6 +48,12 @@ namespace VisualLayerIntegration
         {
             InitializeComponent();
             Loaded += BarGraphHostControl_Loaded;
+            DataContextChanged += BarGraphHostControl_DataContextChanged;
+        }
+
+        private void BarGraphHostControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateGraph();
         }
 
         private void BarGraphHostControl_Loaded(object sender, RoutedEventArgs e)
@@ -70,42 +76,23 @@ namespace VisualLayerIntegration
                 compositionHost.Child = graphContainer;
 
                 compositionHost.MouseMoved += HostControl_MouseMoved;
-                compositionHost.MouseLClick += HostControl_MouseLClick;
-            }
-        }
-
-        private void HostControl_MouseLClick(object sender, HwndMouseEventArgs e)
-        {
-            //show bar info in response to click event.
-            if (currentGraph != null)
-            {
-                //Convert mouse position to DIP (is raised in physical pixels).
-                var posDip = GetPointInDIP(e.point);
-
-                Point adjustedTopLeft = GetControlPointInDIP(CompositionHostElement);
-
-                //Get point relative to control.
-                Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
-
-                //TODO get clicked element
-                //    currentGraph.UpdateLight(relativePoint);
             }
         }
 
         private void HostControl_MouseMoved(object sender, HwndMouseEventArgs e)
         {
-            //Adjust light position.
+            // Adjust light position.
             if (currentGraph != null)
             {
-                //Convert mouse position to DIP (is raised in physical pixels).
+                // Convert mouse position to DIP (is raised in physical pixels).
                 var posDip = GetPointInDIP(e.point);
 
                 Point adjustedTopLeft = GetControlPointInDIP(CompositionHostElement);
 
-                //Get point relative to control.
+                // Get point relative to control.
                 Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
 
-                //Update light position.
+                // Update light position.
                 currentGraph.UpdateLight(relativePoint);
             }
         }
@@ -119,9 +106,10 @@ namespace VisualLayerIntegration
 
         private Point GetControlPointInDIP(UIElement control)
         {
-            //Get bounds of hwnd host control.
-            Point controlTopLeft = control.PointToScreen(new Point(0, 0));  //Top left of control relative to screen.
-            //Convert screen coord to DIP.
+            // Get bounds of hwnd host control.
+            // Top left of control relative to screen.
+            Point controlTopLeft = control.PointToScreen(new Point(0, 0));
+            // Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);
             return new Point(adjustedX, adjustedY);
@@ -134,31 +122,44 @@ namespace VisualLayerIntegration
 
             if (this.ActualWidth > 0 && currentGraph != null)
             {
-                currentGraph.UpdateDPI(currentDpiX, currentDpiY, CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight);
+                currentGraph.UpdateSize(currentDpiX, currentDpiY, CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight);
             }
         }
 
         // Handle Composition tree creation and updates.
-        public void UpdateGraph(Customer customer)
+        public void UpdateGraph()
         {
-            var graphTitle = customer.FirstName + " Investment History";
-            var xAxisTitle = "Investment #";
-            var yAxisTitle = "# Shares of Stock";
-
-            // If graph already exists update values. Otherwise create new graph.
-            if (graphContainer.Children.Count > 0 && currentGraph != null)
+            Customer customer = DataContext as Customer;
+            if (customer != null)
             {
-                currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);
+                var graphTitle = customer.FirstName + " Investment History";
+                var xAxisTitle = "Investment #";
+                var yAxisTitle = "# Shares of Stock";
+
+                // If graph already exists update values. Otherwise, create new graph.
+                if (graphContainer.Children.Count > 0 && currentGraph != null)
+                {
+                    currentGraph.UpdateGraphData(graphTitle, xAxisTitle, yAxisTitle, customer.Data);
+                }
+                else
+                {
+                    BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
+                        (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data,
+                        true, BarGraph.GraphBarStyle.PerBarLinearGradient,
+                        new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
+
+                    currentGraph = graph;
+                    graphContainer.Children.InsertAtTop(graph.GraphRoot);
+                }
             }
-            else
-            {
-                BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
-                    (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data,
-                    true, BarGraph.GraphBarStyle.PerBarLinearGradient,
-                    new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
+        }
 
-                currentGraph = graph;
-                graphContainer.Children.InsertAtTop(graph.GraphRoot);
+        private void CompositionHostElement_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (currentGraph != null)
+            {
+                var currentDpi = VisualTreeHelper.GetDpi(this);
+                currentGraph.UpdateSize(currentDpi.PixelsPerInchX, currentDpi.PixelsPerInchY, e.NewSize.Width, e.NewSize.Height);
             }
         }
     }

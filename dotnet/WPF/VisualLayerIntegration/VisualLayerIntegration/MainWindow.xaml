@@ -124,17 +124,20 @@
 
         <Grid DockPanel.Dock="Bottom">
             <Grid.RowDefinitions>
+                <RowDefinition Height="34"/>
                 <RowDefinition Height="8*"/>
                 <RowDefinition Height="6*"/>
             </Grid.RowDefinitions>
+                
+            <TextBlock FontSize="25" HorizontalAlignment="Center">Investment History</TextBlock>
 
-            <StackPanel x:Name="DetailsPane" Grid.Row="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock FontSize="25">Investment History</TextBlock>
+            <Grid x:Name="DetailsPane" Grid.Row="1" HorizontalAlignment="Center">
                 <local:BarGraphHostControl x:Name="barGraphHost"
-                                           Height="500" Width="500"
+                                           Height="{Binding ActualHeight, ElementName=DetailsPane, Mode=OneWay}"
+                                           Width="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource Self}}"
                                            BorderBrush="LightGray"
                                            BorderThickness="3"/>
-            </StackPanel>
+            </Grid>
 
             <Grid Margin="50,0,50,20" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Row="2">
                 <Grid.RowDefinitions>
