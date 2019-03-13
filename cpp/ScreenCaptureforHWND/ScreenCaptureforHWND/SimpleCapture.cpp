@@ -38,10 +38,12 @@ SimpleCapture::SimpleCapture(
     auto d3dDevice = GetDXGIInterfaceFromObject<ID3D11Device>(m_device);
     d3dDevice->GetImmediateContext(m_d3dContext.put());
 
+	auto size = m_item.Size();
+
     m_swapChain = CreateDXGISwapChain(
         d3dDevice, 
-        (uint32_t)m_item.Size().Width, 
-        (uint32_t)m_item.Size().Height,
+		static_cast<uint32_t>(size.Width),
+		static_cast<uint32_t>(size.Height),
         static_cast<DXGI_FORMAT>(DirectXPixelFormat::B8G8R8A8UIntNormalized),
         2);
 
@@ -50,9 +52,9 @@ SimpleCapture::SimpleCapture(
         m_device,
         DirectXPixelFormat::B8G8R8A8UIntNormalized,
         2,
-        m_item.Size());
+		size);
     m_session = m_framePool.CreateCaptureSession(m_item);
-    m_lastSize = m_item.Size();
+    m_lastSize = size;
     m_framePool.FrameArrived({ this, &SimpleCapture::OnFrameArrived });
 
     WINRT_ASSERT(m_session != nullptr);
@@ -96,19 +98,20 @@ void SimpleCapture::OnFrameArrived(
 
     {
         auto frame = sender.TryGetNextFrame();
+		auto frameContentSize = frame.ContentSize();
 
-        if (frame.ContentSize().Width != m_lastSize.Width ||
-            frame.ContentSize().Height != m_lastSize.Height)
+        if (frameContentSize.Width != m_lastSize.Width ||
+			frameContentSize.Height != m_lastSize.Height)
         {
             // The thing we have been capturing has changed size.
             // We need to resize our swap chain first, then blit the pixels.
             // After we do that, retire the frame and then recreate our frame pool.
             newSize = true;
-            m_lastSize = frame.ContentSize();
+            m_lastSize = frameContentSize;
             m_swapChain->ResizeBuffers(
                 2, 
-                (uint32_t)m_lastSize.Width, 
-                (uint32_t)m_lastSize.Height, 
+				static_cast<uint32_t>(m_lastSize.Width),
+				static_cast<uint32_t>(m_lastSize.Height),
                 static_cast<DXGI_FORMAT>(DirectXPixelFormat::B8G8R8A8UIntNormalized), 
                 0);
         }

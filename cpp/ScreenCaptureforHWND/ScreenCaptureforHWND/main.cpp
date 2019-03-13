@@ -23,7 +23,6 @@ using namespace Windows::UI;
 using namespace Windows::UI::Composition;
 using namespace Windows::UI::Composition::Desktop;
 
-
 // Direct3D11CaptureFramePool requires a DispatcherQueue
 auto CreateDispatcherQueueController()
 {

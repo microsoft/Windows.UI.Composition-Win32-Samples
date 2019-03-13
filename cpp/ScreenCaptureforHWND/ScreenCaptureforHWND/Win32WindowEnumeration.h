@@ -5,7 +5,7 @@ struct Window
 {
 public:
     Window(nullptr_t) {}
-    Window(HWND hwnd, std::wstring& title, std::wstring& className)
+    Window(HWND hwnd, std::wstring const& title, std::wstring& className)
     {
         m_hwnd = hwnd;
         m_title = title;

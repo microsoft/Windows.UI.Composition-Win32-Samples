@@ -19,7 +19,7 @@ private:
         winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool const& sender,
         winrt::Windows::Foundation::IInspectable const& args);
 
-    inline void CheckClosed()
+    void CheckClosed()
     {
         if (m_closed.load() == true)
         {

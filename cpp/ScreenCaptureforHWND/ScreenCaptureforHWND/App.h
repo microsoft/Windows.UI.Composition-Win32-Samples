@@ -9,7 +9,7 @@ public:
     ~App() {}
 
     void Initialize(
-        winrt::Windows::UI::Composition::ContainerVisual root);
+        winrt::Windows::UI::Composition::ContainerVisual const& root);
 
     void StartCapture(HWND hwnd);
 
