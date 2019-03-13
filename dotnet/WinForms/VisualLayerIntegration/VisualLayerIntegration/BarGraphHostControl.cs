@@ -84,7 +84,7 @@ namespace VisualLayerIntegration
                 BarGraph graph = new BarGraph(compositor, hwnd, graphTitle, xAxisTitle, yAxisTitle,
                     (float)Width, (float)Height, currentDpiX, currentDpiY, customer.Data,   //TODO update DPI variable
                     true, BarGraph.GraphBarStyle.PerBarLinearGradient,
-                    new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 0, 85, 255), Windows.UI.Color.FromArgb(255, 0, 130, 4) });
+                    new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
 
                 containerVisual.Children.InsertAtTop(graph.GraphRoot);
                 currentGraph = graph;
