@@ -252,7 +252,7 @@ void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVis
 	float width = 500.0f, height = 300.0f;
 	SpriteVisual container = compositor.CreateSpriteVisual();
 	container.Size({ width, height });
-	container.Offset({ 0.0f, 300.0f, 1.0f });
+	container.Offset({ 0.0f, 350.0f, 1.0f });
 	root.Children().InsertAtTop(container);
 
 	AnimatedVisuals::Body_movin bmv;
@@ -267,7 +267,7 @@ void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVis
 	container.Children().InsertAtTop(visual);
 
 	//// Calculate a scale to make the animation fit into the specified visual size
-	container.Scale({ width / avptr.Size().x, height / avptr.Size().y, 1.0f });
+	container.Scale({ 0.5f, 0.5f, 1.0f });
 
 	auto playanimation = Play(compositor, visual);
 }
