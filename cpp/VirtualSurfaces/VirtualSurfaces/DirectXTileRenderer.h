@@ -34,17 +34,15 @@ struct Tile
 class DirectXTileRenderer
 {
 public:
-	DirectXTileRenderer();
-	~DirectXTileRenderer();
 	void Initialize(Compositor compositor, int tileSize);
-	void DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContext,com_ptr<::ID2D1SolidColorBrush> m_textBrush, Tile tile, POINT offset);
+	void DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContext,com_ptr<::ID2D1SolidColorBrush> textBrush, com_ptr<::ID2D1SolidColorBrush> tileBrush, Tile tile, POINT offset);
 	void Trim(Rect trimRect);
 	CompositionSurfaceBrush getSurfaceBrush();
 	bool DrawTileRange(Rect rect, std::list<Tile> tiles);
 
 private:
 	void DrawText( int tileRow, int tileColumn, D2D1_RECT_F rect, winrt::com_ptr<::ID2D1DeviceContext> m_d2dDeviceContext,
-		winrt::com_ptr<::ID2D1SolidColorBrush> m_textBrush);
+		winrt::com_ptr<::ID2D1SolidColorBrush> textBrush);
 	void InitializeTextLayout();
 	com_ptr<ID2D1Factory1> CreateFactory();
 	HRESULT CreateDevice(D3D_DRIVER_TYPE const type, com_ptr<ID3D11Device>& device);

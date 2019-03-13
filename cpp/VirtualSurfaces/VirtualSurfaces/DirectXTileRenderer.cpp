@@ -14,14 +14,6 @@
 #include "stdafx.h"
 #include "DirectXTileRenderer.h"
 
-DirectXTileRenderer::DirectXTileRenderer()
-{
-}
-
-DirectXTileRenderer::~DirectXTileRenderer()
-{
-}
-
 //
 //  FUNCTION: Initialize
 //
@@ -30,9 +22,9 @@ DirectXTileRenderer::~DirectXTileRenderer()
 void DirectXTileRenderer::Initialize(Compositor compositor, int tileSize) {
 	namespace abi = ABI::Windows::UI::Composition;
 
-	com_ptr<ID2D1Factory1> const& factory = CreateFactory();
-	com_ptr<ID3D11Device> const& device = CreateDevice();
-	com_ptr<IDXGIDevice> const dxdevice = device.as<IDXGIDevice>();
+	auto factory = CreateFactory();
+	auto device = CreateDevice();
+	auto dxdevice = device.as<IDXGIDevice>();
 
 	m_compositor = compositor;
 	m_tileSize = tileSize;
@@ -61,21 +53,31 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 {
 	POINT offset;
 	RECT updateRect = RECT{ static_cast<LONG>(rect.X),  static_cast<LONG>(rect.Y),  static_cast<LONG>(rect.X + rect.Width - 5),  static_cast<LONG>(rect.Y + rect.Height - 5) };
-	winrt::com_ptr<::ID2D1DeviceContext> m_d2dDeviceContext;
-	winrt::com_ptr<::ID2D1SolidColorBrush> m_textBrush;
-	std::list<Tile>::iterator it;
+	winrt::com_ptr<::ID2D1DeviceContext> d2dDeviceContext;
+	winrt::com_ptr<::ID2D1SolidColorBrush> textBrush;
+	winrt::com_ptr<::ID2D1SolidColorBrush> tileBrush;
 
 	// Begin our update of the surface pixels. Passing nullptr to this call will update the entire surface. We only update the rect area that needs to be rendered.
-	if (CheckForDeviceRemoved(m_surfaceInterop->BeginDraw(&updateRect, __uuidof(ID2D1DeviceContext), (void **)m_d2dDeviceContext.put(), &offset))) {
-		m_d2dDeviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Red, 0.f));
+	if (CheckForDeviceRemoved(m_surfaceInterop->BeginDraw(&updateRect, __uuidof(ID2D1DeviceContext), (void **)d2dDeviceContext.put(), &offset))) {
+		d2dDeviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Red, 0.f));
+
+		// Create a solid color brush for the text. A more sophisticated application might want
+		// to cache and reuse a brush across all text elements instead, taking care to recreate
+		// it in the event of device removed.
+		winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::DimGray, 1.0f), textBrush.put()));
+
+		//Create a solid color brus for the tiles and which will be set to a different color before rendering.
+		winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::Green, 1.0f), tileBrush.put()));
 
 		//get the offset difference that can be applied to every tile before drawing.
 		Tile firstTile= tiles.front();
-		POINT differenceOffset{ offset.x - firstTile.rect.X, offset.y - firstTile.rect.Y };
+		POINT differenceOffset{ (LONG)(offset.x - firstTile.rect.X), (LONG)(offset.y - firstTile.rect.Y) };
 
 		//iterate through the tiles and do DrawRectangle and DrawText calls on those.
-		for (it = tiles.begin(); it != tiles.end(); ++it) {
-			DrawTile(m_d2dDeviceContext, m_textBrush, *it, differenceOffset);
+		for (Tile& tile:tiles) {
+			DrawTile(d2dDeviceContext, textBrush, tileBrush,tile, differenceOffset);
 		}
 
 		m_surfaceInterop->EndDraw();
@@ -91,17 +93,13 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 //  PURPOSE: Core D2D/DWrite calls for drawing a rectangle and text on top of it.
 //  OPTIMIZATION: Pre-create the color brushes in the device instead of on every DrawTile call.
 //
-void DirectXTileRenderer::DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContext, com_ptr<::ID2D1SolidColorBrush> m_textBrush, Tile tile, POINT differenceOffset )
+void DirectXTileRenderer::DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContext, com_ptr<::ID2D1SolidColorBrush> textBrush, com_ptr<::ID2D1SolidColorBrush> tileBrush, Tile tile, POINT differenceOffset )
 {
-	// Create a solid color brush for the text. A more sophisticated application might want
-	// to cache and reuse a brush across all text elements instead, taking care to recreate
-	// it in the event of device removed.
-	winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
-		D2D1::ColorF(D2D1::ColorF::DimGray, 1.0f), m_textBrush.put()));
-
 	//Generating colors to distinguish each tile.
 	m_colorCounter = (int)(m_colorCounter + 8) % 192 + 8.0f;
 	D2D1::ColorF randomColor(m_colorCounter / 256, 1.0f, 0.0f, 0.5f);
+
+	tileBrush->SetColor(randomColor);
 
 	float offsetUpdatedX = tile.rect.X + differenceOffset.x;
 	float offsetUpdatedY = tile.rect.Y + differenceOffset.y;
@@ -109,13 +107,8 @@ void DirectXTileRenderer::DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContex
 
 	D2D1_RECT_F tileRectangle{ offsetUpdatedX ,  offsetUpdatedY, offsetUpdatedX+tile.rect.Width-borderMargin, offsetUpdatedY + tile.rect.Height-borderMargin };
 
-	winrt::com_ptr<::ID2D1SolidColorBrush> tilebrush;
-	//Draw the rectangle
-	winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
-		randomColor, tilebrush.put()));
-
-	d2dDeviceContext->FillRectangle(tileRectangle, tilebrush.get());
-	DrawText(tile.row, tile.column, tileRectangle, d2dDeviceContext, m_textBrush);
+	d2dDeviceContext->FillRectangle(tileRectangle, tileBrush.get());
+	DrawText(tile.row, tile.column, tileRectangle, d2dDeviceContext, textBrush);
 }
 
 //

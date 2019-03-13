@@ -33,8 +33,6 @@ public:
 
 	const static int TILESIZE = 250;
 
-
-
 private:
 	
 	Tile GetTileForCoordinates(int row, int column);

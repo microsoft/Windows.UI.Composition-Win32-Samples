@@ -19,9 +19,9 @@ WinComp* WinComp::s_instance;
 
 WinComp::WinComp() 
 {
-
 }
 
+//Making this a singleton cals because the CreateDispatcherQueue doesn't get called multiple times for a thread.
 WinComp* WinComp::GetInstance()
 {
 	if (s_instance == NULL)
