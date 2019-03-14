@@ -6,7 +6,7 @@ The Visual Layer APIs provide a high performance, retained-mode API for graphics
 
 This sample demonstrates how to set up the interop code needed to use these APIs in a Windows Forms app.
 
-![app gif](https://docs.microsoft.com/en-us/windows/uwp/composition/images/interop/wf-comp-interop-app-ui.png)
+![App user interface](app-ui-wf.png)
 
 ## Features
 
