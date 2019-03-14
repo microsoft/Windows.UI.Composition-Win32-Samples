@@ -24,7 +24,7 @@ using namespace Windows::UI::Composition;
 using namespace Windows::Graphics::Capture;
 
 void App::Initialize(
-    ContainerVisual root)
+    ContainerVisual const& root)
 {
     auto queue = DispatcherQueue::GetForCurrentThread();
 
@@ -56,7 +56,7 @@ void App::Initialize(
 
 void App::StartCapture(HWND hwnd)
 {
-	if (m_capture.get() != nullptr)
+	if (m_capture)
 	{
 		m_capture->Close();
 		m_capture = nullptr;
