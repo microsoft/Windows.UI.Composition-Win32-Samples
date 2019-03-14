@@ -19,7 +19,7 @@
 //
 //  PURPOSE: Initializes all the necessary devices and structures needed for a DirectX Surface rendering operation.
 //
-void DirectXTileRenderer::Initialize(Compositor compositor, int tileSize) {
+void DirectXTileRenderer::Initialize(Compositor const& compositor, int tileSize) {
 	namespace abi = ABI::Windows::UI::Composition;
 
 	auto factory = CreateFactory();
@@ -51,7 +51,7 @@ CompositionSurfaceBrush DirectXTileRenderer::getSurfaceBrush()
 //
 bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 {
-	POINT offset;
+	POINT offset{};
 	RECT updateRect = RECT{ static_cast<LONG>(rect.X),  static_cast<LONG>(rect.Y),  static_cast<LONG>(rect.X + rect.Width - 5),  static_cast<LONG>(rect.Y + rect.Height - 5) };
 	winrt::com_ptr<::ID2D1DeviceContext> d2dDeviceContext;
 	winrt::com_ptr<::ID2D1SolidColorBrush> textBrush;
@@ -61,9 +61,7 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 	if (CheckForDeviceRemoved(m_surfaceInterop->BeginDraw(&updateRect, __uuidof(ID2D1DeviceContext), (void **)d2dDeviceContext.put(), &offset))) {
 		d2dDeviceContext->Clear(D2D1::ColorF(D2D1::ColorF::Red, 0.f));
 
-		// Create a solid color brush for the text. A more sophisticated application might want
-		// to cache and reuse a brush across all text elements instead, taking care to recreate
-		// it in the event of device removed.
+		// Create a solid color brush for the text.
 		winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::DimGray, 1.0f), textBrush.put()));
 
@@ -77,7 +75,7 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 
 		//iterate through the tiles and do DrawRectangle and DrawText calls on those.
 		for (Tile& tile:tiles) {
-			DrawTile(d2dDeviceContext, textBrush, tileBrush,tile, differenceOffset);
+			DrawTile(d2dDeviceContext, textBrush, tileBrush, tile, differenceOffset);
 		}
 
 		m_surfaceInterop->EndDraw();
@@ -154,8 +152,8 @@ void DirectXTileRenderer::Trim(Rect trimRect)
 //
 //  PURPOSE: DirectWrite calls to draw the text "x,y" in the tile
 //
-void DirectXTileRenderer::DrawText(int tileRow, int tileColumn, D2D1_RECT_F rect, winrt::com_ptr<::ID2D1DeviceContext> m_d2dDeviceContext,
-	winrt::com_ptr<::ID2D1SolidColorBrush> m_textBrush)
+void DirectXTileRenderer::DrawText(int tileRow, int tileColumn, D2D1_RECT_F rect, winrt::com_ptr<::ID2D1DeviceContext> const& d2dDeviceContext,
+	winrt::com_ptr<::ID2D1SolidColorBrush> textBrush)
 {
 	std::wstring text{ std::to_wstring(tileRow) + L"," + std::to_wstring(tileColumn)  };
 
@@ -175,8 +173,8 @@ void DirectXTileRenderer::DrawText(int tileRow, int tileColumn, D2D1_RECT_F rect
 	// corner of our drawing surface. Notice we don't call BeginDraw on the D2D device
 	// context; this has already been done for us by the composition API.
 	// position the text in the center as much as possible.
-	m_d2dDeviceContext->DrawTextLayout(D2D1::Point2F((float)rect.left + (m_tileSize / 2 - 30), (float)rect.top+(m_tileSize/2-30)), textLayout.get(),
-		m_textBrush.get());
+	d2dDeviceContext->DrawTextLayout(D2D1::Point2F((float)rect.left + (m_tileSize / 2 - 30), (float)rect.top+(m_tileSize/2-30)), textLayout.get(),
+		textBrush.get());
 
 }
 
