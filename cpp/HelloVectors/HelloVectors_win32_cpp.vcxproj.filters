@@ -3,12 +3,12 @@
   <ItemGroup>
     <ClInclude Include="desktopcompositionwindow.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="0016.body_movin.h" />
+    <ClInclude Include="LottieLogo1.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HelloVectors_win32.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="0016.body_movin.cpp" />
+    <ClCompile Include="LottieLogo1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HelloVectors.exe.manifest" />
