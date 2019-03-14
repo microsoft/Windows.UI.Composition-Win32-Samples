@@ -6,9 +6,9 @@ The Visual Layer APIs provide a high performance, retained-mode API for graphics
 
 This sample demonstrates how to use these APIs to enhance an existing Windows Forms app UI. We use UWP hosting APIs to add a bar graph to a Windows Forms app and show a visual representation of data selected in a DataGrid.
 
-![app gif](https://media.giphy.com/media/ckzSDh68pZEgg8zXjt/giphy.gif)
+![App user interface](app-ui-wf.png)
 
-For an introduction to hosting Visual Layer APIs in a Windows Forms app, see the **Using the Visual Layer with Windows Forms** [tutorial](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-windows-forms) and [sample](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/hello-comp-winforms/dotnet/WinForms/HelloComposition). This sample builds on the code introduced there.
+For an introduction to hosting Visual Layer APIs in a Windows Forms app, see the **Using the Visual Layer with Windows Forms** [tutorial](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-windows-forms) and [sample](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WinForms/HelloComposition). This sample builds on the code introduced there.
 
 ## Features
 
