@@ -8,7 +8,7 @@ This sample demonstrates how to use these APIs to enhance an existing WPF app UI
 
 ![app gif](https://media.giphy.com/media/ckzSDh68pZEgg8zXjt/giphy.gif)
 
-For an introduction to hosting Visual Layer APIs in a WPF app, see the **Using the Visual Layer with WPF** [tutorial](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-wpf) and [sample](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/hello-comp-wpf/dotnet/WPF/HelloComposition). This sample builds on the code introduced there.
+For an introduction to hosting Visual Layer APIs in a WPF app, see the **Using the Visual Layer with WPF** [tutorial](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-wpf) and [sample](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/HelloComposition). This sample builds on the code introduced there.
 
 ## Features
 
