@@ -38,4 +38,5 @@ private:
     winrt::com_ptr<ID3D11DeviceContext> m_d3dContext{ nullptr };
 
     std::atomic<bool> m_closed = false;
+	winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool::FrameArrived_revoker m_frameArrived;
 };

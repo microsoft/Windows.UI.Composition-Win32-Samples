@@ -24,23 +24,21 @@ private:
 
 std::wstring GetClassName(HWND hwnd)
 {
-    const DWORD TITLE_SIZE = 1024;
-    WCHAR windowTitle[TITLE_SIZE];
+	std::array<WCHAR, 1024> className;
 
-    ::GetClassName(hwnd, windowTitle, TITLE_SIZE);
+    ::GetClassName(hwnd, className.data(), className.size());
 
-    std::wstring title(&windowTitle[0]);
+    std::wstring title(className.data());
     return title;
 }
 
 std::wstring GetWindowText(HWND hwnd)
 {
-    const DWORD TITLE_SIZE = 1024;
-    WCHAR windowTitle[TITLE_SIZE];
+	std::array<WCHAR, 1024> windowText;
 
-    ::GetWindowText(hwnd, windowTitle, TITLE_SIZE);
+    ::GetWindowText(hwnd, windowText.data(), windowText.size());
 
-    std::wstring title(&windowTitle[0]);
+    std::wstring title(windowText.data());
     return title;
 }
 

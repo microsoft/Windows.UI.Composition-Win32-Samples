@@ -55,9 +55,7 @@ SimpleCapture::SimpleCapture(
 		size);
     m_session = m_framePool.CreateCaptureSession(m_item);
     m_lastSize = size;
-    m_framePool.FrameArrived({ this, &SimpleCapture::OnFrameArrived });
-
-    WINRT_ASSERT(m_session != nullptr);
+	m_frameArrived = m_framePool.FrameArrived(auto_revoke, { this, &SimpleCapture::OnFrameArrived });
 }
 
 // Start sending capture frames
@@ -80,6 +78,7 @@ void SimpleCapture::Close()
     auto expected = false;
     if (m_closed.compare_exchange_strong(expected, true))
     {
+		m_frameArrived.revoke();
 		m_framePool.Close();
         m_session.Close();
 
