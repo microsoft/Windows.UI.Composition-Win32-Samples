@@ -72,5 +72,11 @@
     </dependentAssembly>
   </dependency>
   -->
+  <file name="GLTFLibraryComponent.dll">
+    <activatableClass
+        name="GLTFLibraryComponent.GLTFLoader"
+        threadingModel="both"
+        xmlns="urn:schemas-microsoft-com:winrt.v1" />
+  </file>
 
 </assembly>

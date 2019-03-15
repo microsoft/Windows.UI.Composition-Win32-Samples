@@ -31,6 +31,9 @@ using Windows.UI.Composition;
 using Windows.UI.Composition.Scenes;
 using Windows.Foundation;
 using System.Runtime.InteropServices;
+using GLTFLibraryComponent;
+using Windows.Storage.Streams;
+using Windows.Storage;
 
 namespace HelloComposition
 {
@@ -93,7 +96,7 @@ InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
             }
         }
 
-        public void AddElement(float size, float offsetX, float offsetY)
+        public async void AddElement(float size, float offsetX, float offsetY)
         {
             var visual = compositor.CreateSpriteVisual();
             visual.Size = new Vector2(size, size);
@@ -109,8 +112,9 @@ InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 
             containerVisual.Children.InsertAtTop(sceneVisual);
 
+
             var sceneMesh = SceneMesh.Create(compositor);
-            var rootNode = SceneNode.Create(compositor);
+//            var rootNode = SceneNode.Create(compositor);
 
             var meshRenderer = SceneMeshRendererComponent.Create(compositor);
             var material = SceneMetallicRoughnessMaterial.Create(compositor);
@@ -123,9 +127,19 @@ InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
             FillMeshWithSphere(sceneMesh, 10.0f, 100);
 
             sceneVisual.Offset = new Vector3(offsetX * (float)currentDpi.DpiScaleX, offsetY * (float)currentDpi.DpiScaleY, 0);
-            sceneVisual.Root = rootNode;
+            //          sceneVisual.Root = rootNode;
 
-            rootNode.Components.Add(meshRenderer);
+            //            rootNode.Components.Add(meshRenderer);
+
+            GLTFLoader loader = new GLTFLoader();
+
+//            var storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("pack://application:,,,/Box.gltf"));
+            var storageFile = await StorageFile.GetFileFromPathAsync("C:\\Data\\DamagedHelmet.gltf");
+            IBuffer buffer = await FileIO.ReadBufferAsync(storageFile);
+
+            sceneVisual.Root = loader.Load(buffer, compositor);
+
+//            GLTFLibraryComponent.
         }
 
         private void AnimateSquare(SpriteVisual visual, int delay)
