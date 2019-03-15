@@ -14,7 +14,7 @@
       <HintPath>..\..\..\..\..\..\..\..\..\..\Windows\Microsoft.NET\Framework\v4.0.30319\System.Runtime.WindowsRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Windows">
-      <HintPath>..\WPFCaptureSample\bin\Debug\Windows.winmd</HintPath>
+      <HintPath>..\ScreenCapture\bin\Debug\Windows.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>

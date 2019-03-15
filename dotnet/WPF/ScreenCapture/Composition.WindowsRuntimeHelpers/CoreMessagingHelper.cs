@@ -26,7 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 using Windows.System;
 
-namespace Robmikh.WindowsRuntimeHelpers
+namespace Composition.WindowsRuntimeHelpers
 {
     public static class CoreMessagingHelper
     {

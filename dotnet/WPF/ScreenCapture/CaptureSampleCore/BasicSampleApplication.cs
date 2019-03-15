@@ -22,7 +22,7 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
-using Robmikh.WindowsRuntimeHelpers;
+using Composition.WindowsRuntimeHelpers;
 using System;
 using System.Numerics;
 using Windows.Graphics.Capture;

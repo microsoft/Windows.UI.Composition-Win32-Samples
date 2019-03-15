@@ -123,9 +123,9 @@
       <Project>{502b19a1-292a-4e7f-9c19-b16ca42f1f82}</Project>
       <Name>CaptureSampleCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Robmikh.WindowsRuntimeHelpers\Robmikh.WindowsRuntimeHelpers.csproj">
+    <ProjectReference Include="..\Composition.WindowsRuntimeHelpers\Composition.WindowsRuntimeHelpers.csproj">
       <Project>{ec969287-3d35-410a-806c-0baaa7564911}</Project>
-      <Name>Robmikh.WindowsRuntimeHelpers</Name>
+      <Name>Composition.WindowsRuntimeHelpers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

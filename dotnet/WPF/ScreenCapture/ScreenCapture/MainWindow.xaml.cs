@@ -23,7 +23,7 @@
 //  ---------------------------------------------------------------------------------
 
 using CaptureSampleCore;
-using Robmikh.WindowsRuntimeHelpers;
+using Composition.WindowsRuntimeHelpers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

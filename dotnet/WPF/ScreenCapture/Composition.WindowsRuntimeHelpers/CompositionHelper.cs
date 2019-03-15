@@ -26,7 +26,7 @@ using System;
 using System.Runtime.InteropServices;
 using Windows.UI.Composition;
 
-namespace Robmikh.WindowsRuntimeHelpers
+namespace Composition.WindowsRuntimeHelpers
 {
     public static class CompositionHelper
     {
