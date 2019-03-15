@@ -32,7 +32,7 @@ void DirectXTileRenderer::Initialize(Compositor const& compositor, int tileSize)
 	com_ptr<ID2D1Device> d2device;
 	check_hresult(factory->CreateDevice(dxdevice.get(), d2device.put()));
 	check_hresult(interopCompositor->CreateGraphicsDevice(d2device.get(), reinterpret_cast<abi::ICompositionGraphicsDevice**>(put_abi(m_graphicsDevice))));
-	InitializeTextLayout();
+	InitializeTextFormat();
 }
 
 CompositionSurfaceBrush DirectXTileRenderer::getSurfaceBrush()
@@ -63,7 +63,7 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 
 		// Create a solid color brush for the text.
 		winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
-			D2D1::ColorF(D2D1::ColorF::DimGray, 1.0f), textBrush.put()));
+			D2D1::ColorF(D2D1::ColorF::DimGray, 0.5f), textBrush.put()));
 
 		//Create a solid color brus for the tiles and which will be set to a different color before rendering.
 		winrt::check_hresult(d2dDeviceContext->CreateSolidColorBrush(
@@ -75,7 +75,7 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 
 		//iterate through the tiles and do DrawRectangle and DrawText calls on those.
 		for (Tile& tile:tiles) {
-			DrawTile(d2dDeviceContext, textBrush, tileBrush, tile, differenceOffset);
+			DrawTile(d2dDeviceContext.get(), textBrush.get(), tileBrush.get(), tile, differenceOffset);
 		}
 
 		m_surfaceInterop->EndDraw();
@@ -91,7 +91,7 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> tiles)
 //  PURPOSE: Core D2D/DWrite calls for drawing a rectangle and text on top of it.
 //  OPTIMIZATION: Pre-create the color brushes in the device instead of on every DrawTile call.
 //
-void DirectXTileRenderer::DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContext, com_ptr<::ID2D1SolidColorBrush> textBrush, com_ptr<::ID2D1SolidColorBrush> tileBrush, Tile tile, POINT differenceOffset )
+void DirectXTileRenderer::DrawTile(ID2D1DeviceContext* d2dDeviceContext, ID2D1SolidColorBrush* textBrush, ID2D1SolidColorBrush* tileBrush, Tile tile, POINT differenceOffset )
 {
 	//Generating colors to distinguish each tile.
 	m_colorCounter = (int)(m_colorCounter + 8) % 192 + 8.0f;
@@ -105,7 +105,7 @@ void DirectXTileRenderer::DrawTile(com_ptr<::ID2D1DeviceContext> d2dDeviceContex
 
 	D2D1_RECT_F tileRectangle{ offsetUpdatedX ,  offsetUpdatedY, offsetUpdatedX+tile.rect.Width-borderMargin, offsetUpdatedY + tile.rect.Height-borderMargin };
 
-	d2dDeviceContext->FillRectangle(tileRectangle, tileBrush.get());
+	d2dDeviceContext->FillRectangle(tileRectangle, tileBrush);
 	DrawText(tile.row, tile.column, tileRectangle, d2dDeviceContext, textBrush);
 }
 
@@ -152,38 +152,30 @@ void DirectXTileRenderer::Trim(Rect trimRect)
 //
 //  PURPOSE: DirectWrite calls to draw the text "x,y" in the tile
 //
-void DirectXTileRenderer::DrawText(int tileRow, int tileColumn, D2D1_RECT_F rect, winrt::com_ptr<::ID2D1DeviceContext> const& d2dDeviceContext,
-	winrt::com_ptr<::ID2D1SolidColorBrush> textBrush)
+void DirectXTileRenderer::DrawText(int tileRow, int tileColumn, D2D1_RECT_F rect, ID2D1DeviceContext*  d2dDeviceContext,
+	ID2D1SolidColorBrush* textBrush)
 {
 	std::wstring text{ std::to_wstring(tileRow) + L"," + std::to_wstring(tileColumn)  };
 
-	winrt::com_ptr<::IDWriteTextLayout> textLayout;
-	winrt::check_hresult(
-		m_dWriteFactory->CreateTextLayout(
-			text.c_str(),
-			(uint32_t)text.size(),
-			m_textFormat.get(),
-			60,
-			30,
-			textLayout.put()
-		)
-	);
+	std::wstring row{ std::to_wstring(tileRow) };
+	std::wstring column{ std::to_wstring(tileColumn) };
 
-	// Draw the line of text at the specified offset, which corresponds to the top-left
-	// corner of our drawing surface. Notice we don't call BeginDraw on the D2D device
-	// context; this has already been done for us by the composition API.
-	// position the text in the center as much as possible.
-	d2dDeviceContext->DrawTextLayout(D2D1::Point2F((float)rect.left + (m_tileSize / 2 - 30), (float)rect.top+(m_tileSize/2-30)), textLayout.get(),
-		textBrush.get());
+	D2D1_RECT_F bottomLeftRect { rect.left +10 ,  rect.top + (rect.bottom-rect.top)*2/3, rect.right-(rect.right-rect.left)/3, rect.bottom};
+
+	d2dDeviceContext->DrawText(row.c_str(), (uint32_t)row.size(),m_textFormat.get(), bottomLeftRect, textBrush);
+
+	D2D1_RECT_F topRightRect{ rect.left + (rect.right - rect.left)*2/3 ,  rect.top , rect.right  , rect.bottom - (rect.bottom - rect.top) /3 };
+
+	d2dDeviceContext->DrawText(column.c_str(), (uint32_t)column.size(), m_textFormat.get(), topRightRect, textBrush);
 
 }
 
 //
-//  FUNCTION:InitializeTextLayout
+//  FUNCTION:InitializeTextFormat
 //
-//  PURPOSE: Creates the text layout
+//  PURPOSE: Creates the text format
 //
-void DirectXTileRenderer::InitializeTextLayout()
+void DirectXTileRenderer::InitializeTextFormat()
 {
 	winrt::check_hresult(
 		::DWriteCreateFactory(
@@ -197,10 +189,10 @@ void DirectXTileRenderer::InitializeTextLayout()
 		m_dWriteFactory->CreateTextFormat(
 			L"Segoe UI",
 			nullptr,
-			DWRITE_FONT_WEIGHT_REGULAR,
+			DWRITE_FONT_WEIGHT_BOLD,
 			DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			30.f,
+			60.f,
 			L"en-US",
 			m_textFormat.put()
 		)
@@ -225,7 +217,6 @@ com_ptr<ID2D1Factory1> DirectXTileRenderer::CreateFactory()
 
 	return factory;
 }
-
 
 //
 //  FUNCTION:CreateDevice
@@ -301,7 +292,6 @@ CompositionSurfaceBrush DirectXTileRenderer::CreateVirtualDrawingSurfaceBrush()
 
 	surfaceBrush.HorizontalAlignmentRatio(0);
 	surfaceBrush.VerticalAlignmentRatio(0);
-	//surfaceBrush.TransformMatrix = System::Numerics::Matrix3x2.CreateTranslation(20.0f, 20.0f);
 	surfaceBrush.TransformMatrix(make_float3x2_translation(20.0f, 20.0f));
 
 	return surfaceBrush;
