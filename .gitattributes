@@ -8,7 +8,7 @@
 #
 # This is need for earlier builds of msysgit that does not have it on by
 # default for csharp files.
-# Note: This is only used by command line
+# Note: This is only used by command line.
 ###############################################################################
 #*.cs     diff=csharp
 
@@ -21,6 +21,7 @@
 # file extensions to fail to load in VS. An alternative would be to treat
 # these files as binary and thus will always conflict and require user
 # intervention with every merge. To do so, just uncomment the entries below
+# intervention with every merge. To do so, just uncomment the entries below.
 ###############################################################################
 #*.sln       merge=binary
 #*.csproj    merge=binary
@@ -36,16 +37,16 @@
 #*.wwaproj   merge=binary
 
 ###############################################################################
-# behavior for image files
+# Behavior for image files.
 #
-# image files are treated as binary by default.
+# Image files are treated as binary by default.
 ###############################################################################
 #*.jpg   binary
 #*.png   binary
 #*.gif   binary
 
 ###############################################################################
-# diff behavior for common document formats
+# Diff behavior for common document formats.
 # 
 # Convert binary document formats to text before diffing them. This feature
 # is only available from the command line. Turn it on by uncommenting the 
