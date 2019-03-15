@@ -5,6 +5,10 @@
 >This sample uses new APIs available in 19H1 insider builds.
 HWND and HMON APIs are in the Windows.Graphics.Capture.Interop.h header.
 
+
+![Screen shot of application](WPF%20Capture.png)
+
+
 ### Insiders
 
 [Windows Insider Preview Downloads](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewSDK)
