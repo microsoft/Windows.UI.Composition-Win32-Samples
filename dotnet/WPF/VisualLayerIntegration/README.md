@@ -6,7 +6,7 @@ The Visual Layer APIs provide a high performance, retained-mode API for graphics
 
 This sample demonstrates how to use these APIs to enhance an existing WPF app UI. We use UWP hosting APIs to add a bar graph to a WPF app and show a visual representation of data selected in a DataGrid.
 
-![app gif](https://media.giphy.com/media/ckzSDh68pZEgg8zXjt/giphy.gif)
+![app gif](wpf-visual-layer-sample.webp)
 
 For an introduction to hosting Visual Layer APIs in a WPF app, see the **Using the Visual Layer with WPF** [tutorial](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-wpf) and [sample](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/HelloComposition). This sample builds on the code introduced there.
 

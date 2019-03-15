@@ -179,7 +179,14 @@
                           ColumnHeaderStyle="{StaticResource GridHeaderStyle}"
                           ColumnWidth="*"
                           AlternationCount="2"
-                          AutoGenerateColumns="True">
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                        <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" />
+                        <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" />
+                        <DataGridTextColumn Header="Customer Since" Binding="{Binding CustomerSince}" />
+                        <DataGridCheckBoxColumn Header="Newsletter Subscriber?" Binding="{Binding NewsletterSubscriber}" />
+                    </DataGrid.Columns>
                 </DataGrid>
             </Grid>
         </Grid>
