@@ -27,6 +27,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Interop;
 using Windows.UI.Composition;
 using System.Windows;
+using System.Diagnostics;
+using WinComp.Interop;
 
 namespace VisualLayerIntegration
 {
@@ -44,6 +46,8 @@ namespace VisualLayerIntegration
             LISTBOX_ID = 0x00000001,
             WS_VSCROLL = 0x00200000,
             WS_BORDER = 0x00800000;
+
+        public event Action<double, double> InvalidateDrawing;
 
         public Visual Child
         {
@@ -71,16 +75,17 @@ namespace VisualLayerIntegration
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
             // Create Window.
-            hwndHost = IntPtr.Zero;
-            hwndHost = CreateWindowEx(0, "static", "",
-                                      WS_CHILD | WS_VISIBLE,
-                                      0, 0,
-                                      (int)(Width * hostDpiX / 96.0),
-                                      (int)(Height * hostDpiY / 96.0),
-                                      hwndParent.Handle,
-                                      (IntPtr)HOST_ID,
-                                      IntPtr.Zero,
-                                      0);
+            hwndHost = User32.CreateWindowExW(
+                                   0,
+                                   "Message",
+                                   "CompositionHost",
+                                   User32.WS.WS_CHILD,
+                                   0, 0,
+                                   0, 0,
+                                   hwndParent.Handle,
+                                   IntPtr.Zero,
+                                   IntPtr.Zero,
+                                   IntPtr.Zero);
 
             // Create dispatcher queue.
             dispatcherQueue = InitializeCoreDispatcher();
@@ -131,34 +136,36 @@ namespace VisualLayerIntegration
 
         protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            const int WM_MOUSEMOVE = 0x0200;
-            const int WM_LBUTTONDOWN = 0x0201;
-            switch (msg)
+            switch ((User32.WM)msg)
             {
-                case WM_MOUSEMOVE:
+                case User32.WM.WM_MOUSEMOVE:
                     var pos = PointToScreen(new Point((short)(((int)lParam) & 0xffff), (short)(((int)lParam) >> 16)));
                     RaiseHwndMouseMove(new HwndMouseEventArgs(pos));
                     break;
-                case WM_LBUTTONDOWN:
+                case User32.WM.WM_LBUTTONDOWN:
                     RaiseHwndMouseLClick(new HwndMouseEventArgs());
                     break;
+                case User32.WM.WM_PAINT:
+                    RaisePaint();
+                    break;
             }
-
+            
             return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
+        }
+
+        void RaisePaint()
+        {
+            InvalidateDrawing?.Invoke(ActualWidth, ActualHeight);
         }
 
         protected virtual void RaiseHwndMouseMove(HwndMouseEventArgs args)
         {
-            var handler = MouseMoved;
-            if (handler != null)
-                handler(this, args);
+            MouseMoved?.Invoke(this, args);
         }
 
         protected virtual void RaiseHwndMouseLClick(HwndMouseEventArgs args)
         {
-            var handler = MouseLClick;
-            if (handler != null)
-                handler(this, args);
+            MouseLClick?.Invoke(this, args);
         }
 
         public event EventHandler<HwndMouseEventArgs> MouseLClick;

@@ -92,7 +92,7 @@ namespace BarGraphUtility
         // Constructor for bar graph.
         // To insert graph, call the constructor then use barGraph.Root to get the container to parent.
         public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel,     // required parameters
-            string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data,// required parameters
+            string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data, WindowRenderTarget rt, // required parameters
             bool AnimationsOn = true, GraphBarStyle graphBarStyle = GraphBarStyle.Single,        // optional parameters
             List<Windows.UI.Color> barColors = null)
         {
@@ -126,9 +126,7 @@ namespace BarGraphUtility
             properties.PixelSize = new SharpDX.Size2((int)(width * dpiX / 96.0), (int)(width * dpiY / 96.0));
             properties.PresentOptions = PresentOptions.None;
 
-            textRenderTarget = new WindowRenderTarget(Factory2D, new RenderTargetProperties(new PixelFormat(Format.Unknown, SharpDX.Direct2D1.AlphaMode.Premultiplied)), properties);
-            textRenderTarget.DotsPerInch = new Size2F((float)dpiX, (float)dpiY);
-            textRenderTarget.Resize(new Size2((int)(width * dpiX / 96.0), (int)(width * dpiY / 96.0)));
+            textRenderTarget = rt;
 
             // Generate graph structure.
             var graphRoot = GenerateGraphStructure();

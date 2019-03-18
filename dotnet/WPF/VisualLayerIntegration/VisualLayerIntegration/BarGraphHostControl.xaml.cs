@@ -29,6 +29,10 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Windows.UI.Composition;
 
+using SharpDX;
+using SharpDX.Direct2D1;
+using SharpDX.DXGI;
+
 namespace VisualLayerIntegration
 {
     /// <summary>
@@ -43,6 +47,9 @@ namespace VisualLayerIntegration
 
         private double currentDpiX = 96.0;
         private double currentDpiY = 96.0;
+
+        protected WindowRenderTarget windowRenderTarget;
+        private static SharpDX.Mathematics.Interop.RawColor4 white = new SharpDX.Mathematics.Interop.RawColor4(255, 255, 255, 255);
 
         public BarGraphHostControl()
         {
@@ -76,6 +83,22 @@ namespace VisualLayerIntegration
                 compositionHost.Child = graphContainer;
 
                 compositionHost.MouseMoved += HostControl_MouseMoved;
+                compositionHost.InvalidateDrawing += CompositionHost_InvalidateDrawing;
+
+                // Create properties for render target
+                var Factory2D = new SharpDX.Direct2D1.Factory();
+                var width = (float)CompositionHostElement.ActualWidth;
+                var height = (float)CompositionHostElement.ActualHeight;
+
+                var properties = new HwndRenderTargetProperties();
+                properties.Hwnd = compositionHost.hwndHost;
+                properties.PixelSize = new SharpDX.Size2((int)(width * currentDpiX / 96.0), (int)(width * currentDpiY / 96.0));
+                properties.PresentOptions = PresentOptions.None;
+
+                // Create render target
+                windowRenderTarget = new WindowRenderTarget(Factory2D, new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(Format.Unknown, SharpDX.Direct2D1.AlphaMode.Premultiplied)), properties);
+                windowRenderTarget.DotsPerInch = new Size2F((float)currentDpiX, (float)currentDpiY);
+                windowRenderTarget.Resize(new Size2((int)(width * currentDpiX / 96.0), (int)(width * currentDpiY / 96.0)));
             }
         }
 
@@ -87,32 +110,32 @@ namespace VisualLayerIntegration
                 // Convert mouse position to DIP (is raised in physical pixels).
                 var posDip = GetPointInDIP(e.point);
 
-                Point adjustedTopLeft = GetControlPointInDIP(CompositionHostElement);
+                System.Windows.Point adjustedTopLeft = GetControlPointInDIP(CompositionHostElement);
 
                 // Get point relative to control.
-                Point relativePoint = new Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
+                System.Windows.Point relativePoint = new System.Windows.Point(posDip.X - adjustedTopLeft.X, posDip.Y - adjustedTopLeft.Y);
 
                 // Update light position.
                 currentGraph.UpdateLight(relativePoint);
             }
         }
 
-        private Point GetPointInDIP(Point point)
+        private System.Windows.Point GetPointInDIP(System.Windows.Point point)
         {
             var posDipX = point.X / (currentDpiX / 96.0);
             var posDipY = point.Y / (currentDpiY / 96.0);
-            return new Point(posDipX, posDipY);
+            return new System.Windows.Point(posDipX, posDipY);
         }
 
-        private Point GetControlPointInDIP(UIElement control)
+        private System.Windows.Point GetControlPointInDIP(UIElement control)
         {
             // Get bounds of hwnd host control.
             // Top left of control relative to screen.
-            Point controlTopLeft = control.PointToScreen(new Point(0, 0));
+            System.Windows.Point controlTopLeft = control.PointToScreen(new System.Windows.Point(0, 0));
             // Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);
-            return new Point(adjustedX, adjustedY);
+            return new System.Windows.Point(adjustedX, adjustedY);
         }
 
         protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
@@ -144,7 +167,7 @@ namespace VisualLayerIntegration
                 else
                 {
                     BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
-                        (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data,
+                        (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data, windowRenderTarget,
                         true, BarGraph.GraphBarStyle.PerBarLinearGradient,
                         new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
 
@@ -154,12 +177,18 @@ namespace VisualLayerIntegration
             }
         }
 
-        private void CompositionHostElement_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void CompositionHost_InvalidateDrawing(double width, double height)
         {
+            // Update render target bg
+            windowRenderTarget.BeginDraw();
+            windowRenderTarget.Clear(white);
+            windowRenderTarget.EndDraw();
+
+            // Update graph
             if (currentGraph != null)
             {
                 var currentDpi = VisualTreeHelper.GetDpi(this);
-                currentGraph.UpdateSize(currentDpi.PixelsPerInchX, currentDpi.PixelsPerInchY, e.NewSize.Width, e.NewSize.Height);
+                currentGraph.UpdateSize(currentDpi.PixelsPerInchX, currentDpi.PixelsPerInchY, width, height);
             }
         }
     }
