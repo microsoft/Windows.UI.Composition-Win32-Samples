@@ -119,7 +119,7 @@ namespace BarGraphUtility
             }
 
             // Configure options for text.
-            var Factory2D = new SharpDX.Direct2D1.Factory();
+            var factory2D = new SharpDX.Direct2D1.Factory();
 
             var properties = new HwndRenderTargetProperties();
             properties.Hwnd = this.hwnd;
@@ -243,19 +243,19 @@ namespace BarGraphUtility
             var textWidth = (int)containerHeight;
             var textHeight = (int)sgOffsetY;
 
-            var FactoryDWrite = new SharpDX.DirectWrite.Factory();
+            var factoryDWrite = new SharpDX.DirectWrite.Factory();
 
-            textFormatTitle = new TextFormat(FactoryDWrite, "Segoe", baseTextSize * 5 / 4)
+            textFormatTitle = new TextFormat(factoryDWrite, "Segoe", baseTextSize * 5 / 4)
             {
                 TextAlignment = TextAlignment.Center,
                 ParagraphAlignment = ParagraphAlignment.Center
             };
-            textFormatHorizontal = new TextFormat(FactoryDWrite, "Segoe", baseTextSize)
+            textFormatHorizontal = new TextFormat(factoryDWrite, "Segoe", baseTextSize)
             {
                 TextAlignment = TextAlignment.Center,
                 ParagraphAlignment = ParagraphAlignment.Far
             };
-            textFormatVertical = new TextFormat(FactoryDWrite, "Segoe", baseTextSize)
+            textFormatVertical = new TextFormat(factoryDWrite, "Segoe", baseTextSize)
             {
                 TextAlignment = TextAlignment.Center,
                 ParagraphAlignment = ParagraphAlignment.Far
@@ -266,10 +266,10 @@ namespace BarGraphUtility
 
             textSceneColorBrush = new SolidColorBrush(renderTarget, black);
 
-            RectangleF ClientRectangleTitle = new RectangleF(0, 0, textWidth, textHeight);
-            RectangleF ClientRectangleXAxis = new RectangleF(0,
+            var ClientRectangleTitle = new RectangleF(0, 0, textWidth, textHeight);
+            var ClientRectangleXAxis = new RectangleF(0,
                 containerHeight - textHeight + sgOffsetY * 2, textWidth, textHeight);
-            RectangleF ClientRectangleYAxis = new RectangleF(-sgOffsetX,
+            var ClientRectangleYAxis = new RectangleF(-sgOffsetX,
                 containerHeight - textHeight + sgOffsetY, textWidth, textHeight);
 
             textSceneColorBrush.Color = black;
@@ -419,7 +419,7 @@ namespace BarGraphUtility
             // Target bars outlines with light.
             for (int i = 0; i < barValueMap.Count; i++)
             {
-                Bar bar = (Bar)barValueMap[i];
+                var bar = (Bar)barValueMap[i];
                 barOutlineLight.Targets.Add(bar.OutlineRoot);
             }
 
@@ -434,7 +434,7 @@ namespace BarGraphUtility
             // Target bars with softer point light.
             for (int i = 0; i < barValueMap.Count; i++)
             {
-                Bar bar = (Bar)barValueMap[i];
+                var bar = (Bar)barValueMap[i];
                 barLight.Targets.Add(bar.Root);
             }
         }

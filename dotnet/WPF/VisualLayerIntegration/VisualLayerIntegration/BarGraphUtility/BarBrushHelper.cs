@@ -55,7 +55,7 @@ namespace BarGraphUtility
 
         internal CompositionBrush[] GenerateRandomColorBrushes(int numBrushes)
         {
-            int max = byte.MaxValue + 1; // 256
+            var max = byte.MaxValue + 1; // 256
             var brushes = new CompositionBrush[numBrushes];
             for (int i = 0; i < numBrushes; i++)
             {

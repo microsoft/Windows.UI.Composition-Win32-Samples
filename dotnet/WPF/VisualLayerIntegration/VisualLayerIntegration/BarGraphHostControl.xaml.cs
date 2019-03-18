@@ -133,7 +133,7 @@ namespace VisualLayerIntegration
         {
             // Get bounds of hwnd host control.
             // Top left of control relative to screen.
-            System.Windows.Point controlTopLeft = control.PointToScreen(new System.Windows.Point(0, 0));
+            var controlTopLeft = control.PointToScreen(new System.Windows.Point(0, 0));
             // Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);
@@ -165,7 +165,7 @@ namespace VisualLayerIntegration
                 }
                 else
                 {
-                    BarGraph graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
+                    var graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
                         (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data, windowRenderTarget,
                         true, BarGraph.GraphBarStyle.PerBarLinearGradient,
                         new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
