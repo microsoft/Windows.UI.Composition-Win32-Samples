@@ -18,14 +18,14 @@ void Scenario1SimpleShape(const Compositor & compositor, const ContainerVisual &
 	ShapeVisual shape = compositor.CreateShapeVisual();
 	shape.Size({ 100.0f,100.0f });
 
-	// Create a circle geometry and set it's radius
+	// Create a circle geometry and set its radius
 	auto circleGeometry = compositor.CreateEllipseGeometry();
-	circleGeometry.Radius(float2(30, 30));
+	circleGeometry.Radius({ 30.0f, 30.0f });
 
 	// Create a shape object from the geometry and give it a color and offset
 	auto circleShape = compositor.CreateSpriteShape(circleGeometry);
 	circleShape.FillBrush(compositor.CreateColorBrush(Windows::UI::Colors::Orange()));
-	circleShape.Offset(float2(50, 50));
+	circleShape.Offset({ 50.0f, 50.0f });
 
 	// Add the circle to our shape visual
 	shape.Shapes().Append(circleShape);
@@ -37,10 +37,10 @@ void Scenario1SimpleShape(const Compositor & compositor, const ContainerVisual &
 // end Scenario 1
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// Scenario 2 constrcut a simple path using ShapeVisual, Composition Path and Direct2D
+// Scenario 2 construct a simple path using ShapeVisual, Composition Path and Direct2D
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// Helper funciton to create a GradientBrush
+// Helper function to create a GradientBrush
 Windows::UI::Composition::CompositionLinearGradientBrush CreateGradientBrush(const Compositor & compositor)
 {
 	auto gradBrush = compositor.CreateLinearGradientBrush();
@@ -202,7 +202,7 @@ void Scenario3PathMorphImperative(const Compositor & compositor, const Container
 	// Create a CompositionPathGeometry, CompositionSpriteShape and set offset and fill
 	CompositionPathGeometry compositionPathGeometry = compositor.CreatePathGeometry(squarePath);
 	CompositionSpriteShape spriteShape = compositor.CreateSpriteShape(compositionPathGeometry);
-	spriteShape.Offset(float2(150, 200));
+	spriteShape.Offset({ 150.0f, 200.0f });
 	spriteShape.FillBrush(CreateGradientBrush(compositor));
 
 	// Create a PathKeyFrameAnimation to set up the path morph passing in the circle and square paths
