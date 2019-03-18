@@ -32,6 +32,10 @@ C:\Program Files (x86)\Windows Kits\10\References\10.0.18334.0\…
 
 For more info about this step, see [Enhance your desktop application for Windows 10](/windows/uwp/porting/desktop-to-uwp-enhance).
 
+
+![Screen shot of application](WPF%20Capture.png)
+
+
 ### Insiders
 
 [Windows Insider Preview Downloads](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewSDK)
