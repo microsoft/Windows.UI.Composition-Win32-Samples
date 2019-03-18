@@ -24,15 +24,14 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using Windows.UI.Composition;
 using System.Windows;
-using System.Diagnostics;
+using System.Windows.Interop;
 using WinComp.Interop;
+using Windows.UI.Composition;
 
 namespace VisualLayerIntegration
 {
-    class CompositionHost : HwndHost
+      class CompositionHost : HwndHost
     {
         object dispatcherQueue;
         int hostHeight, hostWidth;
@@ -47,7 +46,6 @@ namespace VisualLayerIntegration
             WS_VSCROLL = 0x00200000,
             WS_BORDER = 0x00800000;
 
-        public event Action<double, double> InvalidateDrawing;
 
         public Visual Child
         {
@@ -76,16 +74,16 @@ namespace VisualLayerIntegration
         {
             // Create Window.
             hwndHost = User32.CreateWindowExW(
-                                   0,
-                                   "Message",
-                                   "CompositionHost",
-                                   User32.WS.WS_CHILD,
-                                   0, 0,
-                                   0, 0,
-                                   hwndParent.Handle,
-                                   IntPtr.Zero,
-                                   IntPtr.Zero,
-                                   IntPtr.Zero);
+                                   dwExStyle: 0,
+                                   lpClassName: "Message",
+                                   lpWindowName: "CompositionHost",
+                                   dwStyle: User32.WS.WS_CHILD,
+                                   x: 0, y: 0,
+                                   nWidth: 0, nHeight: 0,
+                                   hWndParent: hwndParent.Handle,
+                                   hMenu: IntPtr.Zero,
+                                   hInstance: IntPtr.Zero,
+                                   lpParam: IntPtr.Zero);
 
             // Create dispatcher queue.
             dispatcherQueue = InitializeCoreDispatcher();
@@ -155,7 +153,10 @@ namespace VisualLayerIntegration
 
         void RaisePaint()
         {
-            InvalidateDrawing?.Invoke(ActualWidth, ActualHeight);
+            var args = new InvalidateDrawingEventArgs();
+            args.Width = ActualWidth;
+            args.Height = ActualHeight;
+            InvalidateDrawing?.Invoke(this, args);
         }
 
         protected virtual void RaiseHwndMouseMove(HwndMouseEventArgs args)
@@ -170,7 +171,7 @@ namespace VisualLayerIntegration
 
         public event EventHandler<HwndMouseEventArgs> MouseLClick;
         public event EventHandler<HwndMouseEventArgs> MouseMoved;
-
+        public event EventHandler<InvalidateDrawingEventArgs> InvalidateDrawing;
 
         #region PInvoke declarations
 
@@ -248,6 +249,11 @@ namespace VisualLayerIntegration
         #endregion PInvoke declarations
     }
 
+    public class InvalidateDrawingEventArgs : EventArgs
+    {
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
 
     public class HwndMouseEventArgs : EventArgs
     {

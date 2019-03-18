@@ -22,9 +22,6 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
-using Windows.UI;
-using Windows.UI.Composition;
-
 using SharpDX;
 using SharpDX.DirectWrite;
 using SharpDX.Direct2D1;
@@ -33,6 +30,9 @@ using SharpDX.DXGI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SysWin = System.Windows;
+using Windows.UI;
+using Windows.UI.Composition;
 
 namespace BarGraphUtility
 {
@@ -91,9 +91,9 @@ namespace BarGraphUtility
 
         // Constructor for bar graph.
         // To insert graph, call the constructor then use barGraph.Root to get the container to parent.
-        public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel,     // required parameters
-            string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data, WindowRenderTarget rt, // required parameters
-            bool AnimationsOn = true, GraphBarStyle graphBarStyle = GraphBarStyle.Single,        // optional parameters
+        public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel, 
+            string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data, WindowRenderTarget renderTarget, 
+            bool AnimationsOn = true, GraphBarStyle graphBarStyle = GraphBarStyle.Single,
             List<Windows.UI.Color> barColors = null)
         {
             this.compositor = compositor;
@@ -126,7 +126,7 @@ namespace BarGraphUtility
             properties.PixelSize = new SharpDX.Size2((int)(width * dpiX / 96.0), (int)(width * dpiY / 96.0));
             properties.PresentOptions = PresentOptions.None;
 
-            textRenderTarget = rt;
+            textRenderTarget = renderTarget;
 
             // Generate graph structure.
             var graphRoot = GenerateGraphStructure();
@@ -197,8 +197,11 @@ namespace BarGraphUtility
             return mainContainer;
         }
 
-        public void UpdateSize(double newDpiX, double newDpiY, double newWidth, double newHeight)
+        public void UpdateSize(SysWin.DpiScale dpi, double newWidth, double newHeight)
         {
+            var newDpiX = dpi.PixelsPerInchX;
+            var newDpiY = dpi.PixelsPerInchY;
+
             var oldHeight = graphHeight;
             var oldWidth = graphWidth;
             graphHeight = (float)(newWidth * newDpiY / 96.0);
