@@ -49,7 +49,7 @@ namespace WPFCaptureSample
             InitializeComponent();
 
 #if DEBUG
-            // force grpahicscapture.dll to load
+            // Force grpahicscapture.dll to load
             var picker = new GraphicsCapturePicker();
 #endif
         }
