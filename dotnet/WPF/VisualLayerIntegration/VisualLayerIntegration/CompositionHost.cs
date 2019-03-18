@@ -24,13 +24,14 @@
 
 using System;
 using System.Runtime.InteropServices;
-using System.Windows.Interop;
-using Windows.UI.Composition;
 using System.Windows;
+using System.Windows.Interop;
+using WinComp.Interop;
+using Windows.UI.Composition;
 
 namespace VisualLayerIntegration
 {
-    class CompositionHost : HwndHost
+      class CompositionHost : HwndHost
     {
         object dispatcherQueue;
         int hostHeight, hostWidth;
@@ -44,6 +45,7 @@ namespace VisualLayerIntegration
             LISTBOX_ID = 0x00000001,
             WS_VSCROLL = 0x00200000,
             WS_BORDER = 0x00800000;
+
 
         public Visual Child
         {
@@ -71,16 +73,17 @@ namespace VisualLayerIntegration
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
             // Create Window.
-            hwndHost = IntPtr.Zero;
-            hwndHost = CreateWindowEx(0, "static", "",
-                                      WS_CHILD | WS_VISIBLE,
-                                      0, 0,
-                                      (int)(Width * hostDpiX / 96.0),
-                                      (int)(Height * hostDpiY / 96.0),
-                                      hwndParent.Handle,
-                                      (IntPtr)HOST_ID,
-                                      IntPtr.Zero,
-                                      0);
+            hwndHost = User32.CreateWindowExW(
+                                   dwExStyle: 0,
+                                   lpClassName: "Message",
+                                   lpWindowName: "CompositionHost",
+                                   dwStyle: User32.WS.WS_CHILD,
+                                   x: 0, y: 0,
+                                   nWidth: 0, nHeight: 0,
+                                   hWndParent: hwndParent.Handle,
+                                   hMenu: IntPtr.Zero,
+                                   hInstance: IntPtr.Zero,
+                                   lpParam: IntPtr.Zero);
 
             // Create dispatcher queue.
             dispatcherQueue = InitializeCoreDispatcher();
@@ -131,39 +134,44 @@ namespace VisualLayerIntegration
 
         protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            const int WM_MOUSEMOVE = 0x0200;
-            const int WM_LBUTTONDOWN = 0x0201;
-            switch (msg)
+            switch ((User32.WM)msg)
             {
-                case WM_MOUSEMOVE:
+                case User32.WM.WM_MOUSEMOVE:
                     var pos = PointToScreen(new Point((short)(((int)lParam) & 0xffff), (short)(((int)lParam) >> 16)));
                     RaiseHwndMouseMove(new HwndMouseEventArgs(pos));
                     break;
-                case WM_LBUTTONDOWN:
+                case User32.WM.WM_LBUTTONDOWN:
                     RaiseHwndMouseLClick(new HwndMouseEventArgs());
                     break;
+                case User32.WM.WM_PAINT:
+                    RaisePaint();
+                    break;
             }
-
+            
             return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
+        }
+
+        void RaisePaint()
+        {
+            var args = new InvalidateDrawingEventArgs();
+            args.Width = ActualWidth;
+            args.Height = ActualHeight;
+            InvalidateDrawing?.Invoke(this, args);
         }
 
         protected virtual void RaiseHwndMouseMove(HwndMouseEventArgs args)
         {
-            var handler = MouseMoved;
-            if (handler != null)
-                handler(this, args);
+            MouseMoved?.Invoke(this, args);
         }
 
         protected virtual void RaiseHwndMouseLClick(HwndMouseEventArgs args)
         {
-            var handler = MouseLClick;
-            if (handler != null)
-                handler(this, args);
+            MouseLClick?.Invoke(this, args);
         }
 
         public event EventHandler<HwndMouseEventArgs> MouseLClick;
         public event EventHandler<HwndMouseEventArgs> MouseMoved;
-
+        public event EventHandler<InvalidateDrawingEventArgs> InvalidateDrawing;
 
         #region PInvoke declarations
 
@@ -241,6 +249,11 @@ namespace VisualLayerIntegration
         #endregion PInvoke declarations
     }
 
+    public class InvalidateDrawingEventArgs : EventArgs
+    {
+        public double Width { get; set; }
+        public double Height { get; set; }
+    }
 
     public class HwndMouseEventArgs : EventArgs
     {

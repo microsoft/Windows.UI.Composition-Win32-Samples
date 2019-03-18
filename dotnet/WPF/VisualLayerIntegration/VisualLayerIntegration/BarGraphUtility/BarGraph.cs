@@ -22,17 +22,16 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
-using Windows.UI;
-using Windows.UI.Composition;
-
 using SharpDX;
 using SharpDX.DirectWrite;
 using SharpDX.Direct2D1;
 using TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode;
-using SharpDX.DXGI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SysWin = System.Windows;
+using Windows.UI;
+using Windows.UI.Composition;
 
 namespace BarGraphUtility
 {
@@ -91,9 +90,9 @@ namespace BarGraphUtility
 
         // Constructor for bar graph.
         // To insert graph, call the constructor then use barGraph.Root to get the container to parent.
-        public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel,     // required parameters
-            string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data,// required parameters
-            bool AnimationsOn = true, GraphBarStyle graphBarStyle = GraphBarStyle.Single,        // optional parameters
+        public BarGraph(Compositor compositor, IntPtr hwnd, string title, string xAxisLabel, 
+            string yAxisLabel, float width, float height, double dpiX, double dpiY, float[] data, WindowRenderTarget renderTarget, 
+            bool AnimationsOn = true, GraphBarStyle graphBarStyle = GraphBarStyle.Single,
             List<Windows.UI.Color> barColors = null)
         {
             this.compositor = compositor;
@@ -119,16 +118,14 @@ namespace BarGraphUtility
             }
 
             // Configure options for text.
-            var Factory2D = new SharpDX.Direct2D1.Factory();
+            var factory2D = new SharpDX.Direct2D1.Factory();
 
             var properties = new HwndRenderTargetProperties();
             properties.Hwnd = this.hwnd;
             properties.PixelSize = new SharpDX.Size2((int)(width * dpiX / 96.0), (int)(width * dpiY / 96.0));
             properties.PresentOptions = PresentOptions.None;
 
-            textRenderTarget = new WindowRenderTarget(Factory2D, new RenderTargetProperties(new PixelFormat(Format.Unknown, SharpDX.Direct2D1.AlphaMode.Premultiplied)), properties);
-            textRenderTarget.DotsPerInch = new Size2F((float)dpiX, (float)dpiY);
-            textRenderTarget.Resize(new Size2((int)(width * dpiX / 96.0), (int)(width * dpiY / 96.0)));
+            textRenderTarget = renderTarget;
 
             // Generate graph structure.
             var graphRoot = GenerateGraphStructure();
@@ -199,8 +196,11 @@ namespace BarGraphUtility
             return mainContainer;
         }
 
-        public void UpdateSize(double newDpiX, double newDpiY, double newWidth, double newHeight)
+        public void UpdateSize(SysWin.DpiScale dpi, double newWidth, double newHeight)
         {
+            var newDpiX = dpi.PixelsPerInchX;
+            var newDpiY = dpi.PixelsPerInchY;
+
             var oldHeight = graphHeight;
             var oldWidth = graphWidth;
             graphHeight = (float)(newWidth * newDpiY / 96.0);
@@ -211,7 +211,7 @@ namespace BarGraphUtility
             // Update bars.
             for (int i = 0; i < barValueMap.Count; i++)
             {
-                Bar bar = (Bar)barValueMap[i];
+                var bar = (Bar)barValueMap[i];
 
                 var xOffset = shapeGraphOffsetX + barSpacing + (barWidth + barSpacing) * i;
                 var height = bar.Height;
@@ -242,19 +242,19 @@ namespace BarGraphUtility
             var textWidth = (int)containerHeight;
             var textHeight = (int)sgOffsetY;
 
-            var FactoryDWrite = new SharpDX.DirectWrite.Factory();
+            var factoryDWrite = new SharpDX.DirectWrite.Factory();
 
-            textFormatTitle = new TextFormat(FactoryDWrite, "Segoe", baseTextSize * 5 / 4)
+            textFormatTitle = new TextFormat(factoryDWrite, "Segoe", baseTextSize * 5 / 4)
             {
                 TextAlignment = TextAlignment.Center,
                 ParagraphAlignment = ParagraphAlignment.Center
             };
-            textFormatHorizontal = new TextFormat(FactoryDWrite, "Segoe", baseTextSize)
+            textFormatHorizontal = new TextFormat(factoryDWrite, "Segoe", baseTextSize)
             {
                 TextAlignment = TextAlignment.Center,
                 ParagraphAlignment = ParagraphAlignment.Far
             };
-            textFormatVertical = new TextFormat(FactoryDWrite, "Segoe", baseTextSize)
+            textFormatVertical = new TextFormat(factoryDWrite, "Segoe", baseTextSize)
             {
                 TextAlignment = TextAlignment.Center,
                 ParagraphAlignment = ParagraphAlignment.Far
@@ -265,10 +265,10 @@ namespace BarGraphUtility
 
             textSceneColorBrush = new SolidColorBrush(renderTarget, black);
 
-            RectangleF ClientRectangleTitle = new RectangleF(0, 0, textWidth, textHeight);
-            RectangleF ClientRectangleXAxis = new RectangleF(0,
+            var ClientRectangleTitle = new RectangleF(0, 0, textWidth, textHeight);
+            var ClientRectangleXAxis = new RectangleF(0,
                 containerHeight - textHeight + sgOffsetY * 2, textWidth, textHeight);
-            RectangleF ClientRectangleYAxis = new RectangleF(-sgOffsetX,
+            var ClientRectangleYAxis = new RectangleF(-sgOffsetX,
                 containerHeight - textHeight + sgOffsetY, textWidth, textHeight);
 
             textSceneColorBrush.Color = black;
@@ -418,7 +418,7 @@ namespace BarGraphUtility
             // Target bars outlines with light.
             for (int i = 0; i < barValueMap.Count; i++)
             {
-                Bar bar = (Bar)barValueMap[i];
+                var bar = (Bar)barValueMap[i];
                 barOutlineLight.Targets.Add(bar.OutlineRoot);
             }
 
@@ -433,12 +433,12 @@ namespace BarGraphUtility
             // Target bars with softer point light.
             for (int i = 0; i < barValueMap.Count; i++)
             {
-                Bar bar = (Bar)barValueMap[i];
+                var bar = (Bar)barValueMap[i];
                 barLight.Targets.Add(bar.Root);
             }
         }
 
-        public void UpdateLight(System.Windows.Point relativePoint)
+        public void UpdateLight(SysWin.Point relativePoint)
         {
             barOutlineLight.Offset = new System.Numerics.Vector3((float)relativePoint.X,
                 (float)relativePoint.Y, barOutlineLight.Offset.Z);
