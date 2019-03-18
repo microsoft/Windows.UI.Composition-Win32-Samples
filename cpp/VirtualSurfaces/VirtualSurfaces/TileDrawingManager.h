@@ -28,10 +28,11 @@ public:
 	~TileDrawingManager();
 	void UpdateVisibleRegion(float3 currentPosition);
 	void UpdateViewportSize(Size newSize);
-	void setRenderer(DirectXTileRenderer* renderer);
-	DirectXTileRenderer* getRenderer();
+	void SetRenderer(DirectXTileRenderer* renderer);
+	DirectXTileRenderer* GetRenderer();
 
 	const static int TILESIZE = 250;
+	const static int DRAWAHEADTILECOUNT = 1; //Number of tiles to draw ahead 
 
 private:
 	
@@ -43,18 +44,16 @@ private:
 	void DrawTileRange(int tileStartColumn, int tileStartRow, int numColumns, int numRows);
 
 	//member variables
-	static const int		DRAWAHEAD = 0; //Number of tiles to draw ahead 
-	int						currentTopLeftTileRow = 0;
-	int						currentTopLeftTileColumn = 0;
-	int						drawnTopTileRow = 0;
-	int						drawnBottomTileRow = 0;
-	int						drawnLeftTileColumn = 0;
-	int						drawnRightTileColumn = 0;
-	int						horizontalVisibleTileCount;
-	int						verticalVisibleTileCount;
-	Size					m_viewPortSize;
-	float3					m_currentPosition;
-	DirectXTileRenderer*	m_currentRenderer;
-	int						DrawAheadTileCount;
+	int                     m_currentTopLeftTileRow = 0;
+	int                     m_currentTopLeftTileColumn = 0;
+	int                     m_drawnTopTileRow = 0;
+	int                     m_drawnBottomTileRow = 0;
+	int                     m_drawnLeftTileColumn = 0;
+	int                     m_drawnRightTileColumn = 0;
+	int                     m_horizontalVisibleTileCount=0;
+	int                     m_verticalVisibleTileCount=0;
+	Size                    m_viewPortSize;
+	float3                  m_currentPosition;
+	DirectXTileRenderer*    m_currentRenderer;
 	
 };

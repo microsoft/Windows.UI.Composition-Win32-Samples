@@ -37,14 +37,10 @@ using namespace Windows::Foundation::Numerics;
 class WinComp : public implements<WinComp, IInteractionTrackerOwner, no_weak_ref>
 {
 
-#pragma region Singleton Pattern
 public:
-	~WinComp();
-	static WinComp* GetInstance();
-private:
 	WinComp();
-	static WinComp* s_instance;
-#pragma endregion
+private:
+	~WinComp();
 
 public:
 	void Initialize(HWND hwnd);
@@ -72,25 +68,26 @@ private:
 	Size GetWindowSize();
 
 	//member variables
-	Compositor					m_compositor{ nullptr };
-	VisualInteractionSource		m_interactionSource{ nullptr };
-	SpriteVisual				m_viewportVisual{ nullptr };
-	SpriteVisual				m_contentVisual{ nullptr };
-	InteractionTracker			m_tracker{ nullptr };
-	DesktopWindowTarget			m_target{ nullptr };
-	HWND						m_window = nullptr;
+	Compositor                  m_compositor{ nullptr };
+	VisualInteractionSource     m_interactionSource{ nullptr };
+	SpriteVisual                m_viewportVisual{ nullptr };
+	SpriteVisual                m_contentVisual{ nullptr };
+	InteractionTracker          m_tracker{ nullptr };
+	DesktopWindowTarget         m_target{ nullptr };
+	HWND                        m_window = nullptr;
 
 	//animation member variables
-	ExpressionAnimation			m_moveSurfaceExpressionAnimation{ nullptr };
-	ExpressionAnimation			m_moveSurfaceUpDownExpressionAnimation{ nullptr };
-	ExpressionAnimation			m_scaleSurfaceUpDownExpressionAnimation{ nullptr };
-	ExpressionAnimation			m_animateMatrix{ nullptr };
-	CompositionPropertySet		m_animatingPropset{ nullptr };
+	ExpressionAnimation         m_moveSurfaceExpressionAnimation{ nullptr };
+	ExpressionAnimation         m_moveSurfaceUpDownExpressionAnimation{ nullptr };
+	ExpressionAnimation         m_scaleSurfaceUpDownExpressionAnimation{ nullptr };
+	ExpressionAnimation         m_animateMatrix{ nullptr };
+	CompositionPropertySet      m_animatingPropset{ nullptr };
 
-	TileDrawingManager			m_TileDrawingManager;
-	float						m_lastTrackerScale = 1.0f;
-	float3						m_lastTrackerPosition{ 0.0f,0.0f,0.0f };
-	bool						m_zooming;
+	TileDrawingManager          m_TileDrawingManager;
+	DirectXTileRenderer*        m_dxRenderer;
+	float                       m_lastTrackerScale = 1.0f;
+	float3                      m_lastTrackerPosition{ 0.0f,0.0f,0.0f };
+	bool                        m_zooming;
 
 };
 

@@ -24,6 +24,8 @@ using namespace Windows::Graphics::DirectX;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Numerics;
 
+namespace abi = ABI::Windows::UI::Composition;
+
 struct Tile
 {
 	Rect rect;
@@ -35,14 +37,13 @@ class DirectXTileRenderer
 {
 public:
 	void Initialize(Compositor const& compositor, int tileSize);
-	void DrawTile(ID2D1DeviceContext* d2dDeviceContext, ID2D1SolidColorBrush* textBrush, ID2D1SolidColorBrush* tileBrush, Tile tile, POINT differenceOffset);
 	void Trim(Rect trimRect);
 	CompositionSurfaceBrush getSurfaceBrush();
-	bool DrawTileRange(Rect rect, std::list<Tile> tiles);
+	bool DrawTileRange(Rect rect, std::list<Tile> const& tiles);
 
 private:
-	void DrawText(int tileRow, int tileColumn, D2D1_RECT_F rect, ID2D1DeviceContext*  d2dDeviceContext,
-		ID2D1SolidColorBrush* textBrush);
+	void DrawTile(ID2D1DeviceContext* d2dDeviceContext, ID2D1SolidColorBrush* textBrush, ID2D1SolidColorBrush* tileBrush, Tile tile, POINT differenceOffset);
+	void DrawTextInTile(int tileRow, int tileColumn, D2D1_RECT_F rect, ID2D1DeviceContext*  d2dDeviceContext, ID2D1SolidColorBrush* textBrush);
 	void InitializeTextFormat();
 	com_ptr<ID2D1Factory1> CreateFactory();
 	HRESULT CreateDevice(D3D_DRIVER_TYPE const type, com_ptr<ID3D11Device>& device);
@@ -52,16 +53,16 @@ private:
 	bool CheckForDeviceRemoved(HRESULT hr);
 
 	//member variables
-	winrt::com_ptr<::IDWriteFactory>        m_dWriteFactory;
-	winrt::com_ptr<::IDWriteTextFormat>     m_textFormat;
-	com_ptr<ICompositionGraphicsDevice>     m_graphicsDevice = nullptr;
-	com_ptr<ICompositionGraphicsDevice2>    m_graphicsDevice2 = nullptr;
-	CompositionVirtualDrawingSurface        m_virtualSurfaceBrush = nullptr;
+	com_ptr<IDWriteFactory>                 m_dWriteFactory;
+	com_ptr<IDWriteTextFormat>              m_textFormat;
+	com_ptr<ICompositionGraphicsDevice>     m_graphicsDevice ;
+	com_ptr<ICompositionGraphicsDevice2>    m_graphicsDevice2 ;
+	CompositionVirtualDrawingSurface        m_virtualSurface = nullptr;
 	CompositionSurfaceBrush                 m_surfaceBrush = nullptr;
 	Compositor                              m_compositor = nullptr;
 	float                                   m_colorCounter = 0.0;
 	int                                     m_tileSize = 0;
-	com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_surfaceInterop = nullptr;
+	com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_surfaceInterop ;
 
 };
 

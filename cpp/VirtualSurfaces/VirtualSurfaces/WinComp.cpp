@@ -15,23 +15,13 @@
 #include "stdafx.h"
 #include "WinComp.h"
 
-WinComp* WinComp::s_instance;
-
 WinComp::WinComp() 
 {
 }
 
-//Making this a singleton cals because the CreateDispatcherQueue doesn't get called multiple times for a thread.
-WinComp* WinComp::GetInstance()
-{
-	if (s_instance == NULL)
-		s_instance = new WinComp();
-	return s_instance;
-}
-
 WinComp::~WinComp()
 {
-	delete s_instance;
+	delete m_dxRenderer;
 }
 
 //
@@ -72,7 +62,6 @@ DesktopWindowTarget WinComp::CreateDesktopWindowTarget(Compositor const& composi
 	return target;
 }
 
-
 //
 //  FUNCTION:Initialize
 //
@@ -85,9 +74,9 @@ void WinComp::Initialize(HWND hwnd)
 	m_window = hwnd;
 	Compositor compositor;
 	m_compositor = compositor;
-	DirectXTileRenderer* dxRenderer = new DirectXTileRenderer();
-	dxRenderer->Initialize(m_compositor, TileDrawingManager::TILESIZE);
-	m_TileDrawingManager.setRenderer(dxRenderer);
+	m_dxRenderer = new DirectXTileRenderer();
+	m_dxRenderer->Initialize(m_compositor, TileDrawingManager::TILESIZE);
+	m_TileDrawingManager.SetRenderer(m_dxRenderer);
 
 }
 
@@ -121,7 +110,6 @@ void WinComp::PrepareVisuals()
 	AddD2DVisual(visuals, 0.0f, 0.0f);
 }
 
-
 //
 //  FUNCTION: AddD2DVisual
 //
@@ -131,7 +119,7 @@ void WinComp::AddD2DVisual(VisualCollection const& visuals, float x, float y)
 {
 	auto compositor = visuals.Compositor();
 	m_contentVisual = compositor.CreateSpriteVisual();
-	m_contentVisual.Brush(m_TileDrawingManager.getRenderer()->getSurfaceBrush());
+	m_contentVisual.Brush(m_TileDrawingManager.GetRenderer()->getSurfaceBrush());
 
 	m_contentVisual.Size(GetWindowSize());
 	m_contentVisual.Offset({ x, y, 0.0f, });
@@ -147,18 +135,18 @@ void WinComp::AddD2DVisual(VisualCollection const& visuals, float x, float y)
 void WinComp::UpdateViewPort(boolean changeContentVisual)
 {
 	//return if the m_window hasn't been set.
-	if(m_window!=nullptr){
+	if(m_window!=NULL){
 		RECT windowRect;
 		::GetWindowRect(m_window, &windowRect);
-		Size windowSize ;
-		windowSize.Height = (windowRect.bottom - windowRect.top)/m_lastTrackerScale;
-		windowSize.Width = (windowRect.right - windowRect.left)/m_lastTrackerScale;
+		Size windowSize;
+		windowSize.Height = (windowRect.bottom-windowRect.top)/m_lastTrackerScale;
+		windowSize.Width = (windowRect.right-windowRect.left)/m_lastTrackerScale;
 		
 		if(changeContentVisual){
 			m_contentVisual.Size(windowSize);
 		}
 		m_TileDrawingManager.UpdateViewportSize(windowSize);
-		m_TileDrawingManager.UpdateVisibleRegion(m_lastTrackerPosition / m_lastTrackerScale);
+		m_TileDrawingManager.UpdateVisibleRegion(m_lastTrackerPosition/m_lastTrackerScale);
 	}
 }
 
@@ -171,9 +159,7 @@ Size WinComp::GetWindowSize()
 {
 	RECT windowRect;
 	::GetWindowRect(m_window, &windowRect);
-
-	return Size({ 0.0f + windowRect.right - windowRect.left, 0.0f + windowRect.bottom - windowRect.top });
-
+	return Size({ (float)(windowRect.right - windowRect.left), (float)(windowRect.bottom - windowRect.top) });
 }
 
 //
@@ -227,12 +213,10 @@ void WinComp::ConfigureInteraction()
 	m_tracker.MinPosition(float3(0, 0, 0));
 	m_tracker.MaxPosition(float3(TileDrawingManager::TILESIZE*10000, TileDrawingManager::TILESIZE*10000, 0));
 	
-	//TODO: VirtualSurface.BeginDraw fails when we try to draw to a very large surface inside one BeginDraw call. 
-	//Need more complex logic there to handle it well.
 	m_tracker.MinScale(0.2f);
 	m_tracker.MaxScale(3.0f);
 	
-	StartAnimation(m_TileDrawingManager.getRenderer()->getSurfaceBrush());
+	StartAnimation(m_TileDrawingManager.GetRenderer()->getSurfaceBrush());
 }
 
 // interactionTrackerowner methods.
@@ -248,7 +232,6 @@ void WinComp::IdleStateEntered(InteractionTracker sender, InteractionTrackerIdle
 		//dont update the content visual, because the window size hasnt changed.
 		UpdateViewPort( false);
 	}
-
 	m_zooming = false;
 }
 
@@ -267,24 +250,16 @@ void WinComp::RequestIgnored(InteractionTracker sender, InteractionTrackerReques
 
 void WinComp::ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
 {
-	try
+	if (m_lastTrackerScale == args.Scale())
 	{
-		
-		if (m_lastTrackerScale == args.Scale())
-		{
-			m_TileDrawingManager.UpdateVisibleRegion(sender.Position()/m_lastTrackerScale);
-		}
-		else
-		{
-			// Don't run tilemanager during a zoom
-			m_zooming = true;
-		}
+		m_TileDrawingManager.UpdateVisibleRegion(sender.Position()/m_lastTrackerScale);
+	}
+	else
+	{
+		// Don't run tilemanager during a zoom
+		m_zooming = true;
+	}
 
-		m_lastTrackerScale = args.Scale();
-		m_lastTrackerPosition = sender.Position();
-	}
-	catch (...)
-	{
-	//	Debug.WriteLine(ex.Message);
-	}
+	m_lastTrackerScale = args.Scale();
+	m_lastTrackerPosition = sender.Position();
 }
