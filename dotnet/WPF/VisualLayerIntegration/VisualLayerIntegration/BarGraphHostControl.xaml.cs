@@ -122,18 +122,18 @@ namespace VisualLayerIntegration
             }
         }
 
-        private System.Windows.Point GetPointInDIP(System.Windows.Point point)
+        private SysWin.Point GetPointInDIP(SysWin.Point point)
         {
             var posDipX = point.X / (currentDpiX / 96.0);
             var posDipY = point.Y / (currentDpiY / 96.0);
             return new SysWin.Point(posDipX, posDipY);
         }
 
-        private System.Windows.Point GetControlPointInDIP(UIElement control)
+        private SysWin.Point GetControlPointInDIP(UIElement control)
         {
             // Get bounds of hwnd host control.
             // Top left of control relative to screen.
-            var controlTopLeft = control.PointToScreen(new System.Windows.Point(0, 0));
+            var controlTopLeft = control.PointToScreen(new SysWin.Point(0, 0));
             // Convert screen coord to DIP.
             var adjustedX = controlTopLeft.X / (currentDpiX / 96.0);
             var adjustedY = controlTopLeft.Y / (currentDpiY / 96.0);

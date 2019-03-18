@@ -26,7 +26,6 @@ using SharpDX;
 using SharpDX.DirectWrite;
 using SharpDX.Direct2D1;
 using TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode;
-using SharpDX.DXGI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -212,7 +211,7 @@ namespace BarGraphUtility
             // Update bars.
             for (int i = 0; i < barValueMap.Count; i++)
             {
-                Bar bar = (Bar)barValueMap[i];
+                var bar = (Bar)barValueMap[i];
 
                 var xOffset = shapeGraphOffsetX + barSpacing + (barWidth + barSpacing) * i;
                 var height = bar.Height;
@@ -439,7 +438,7 @@ namespace BarGraphUtility
             }
         }
 
-        public void UpdateLight(System.Windows.Point relativePoint)
+        public void UpdateLight(SysWin.Point relativePoint)
         {
             barOutlineLight.Offset = new System.Numerics.Vector3((float)relativePoint.X,
                 (float)relativePoint.Y, barOutlineLight.Offset.Z);
