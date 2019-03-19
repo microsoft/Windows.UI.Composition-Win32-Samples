@@ -48,21 +48,6 @@ DispatcherQueueController WinComp::EnsureDispatcherQueue()
 }
 
 //
-//  FUNCTION:CreateDesktopWindowTarget
-//
-//  PURPOSE:Creates a DesktoWindowTarget that can host Windows.UI.Composition Visual tree inside an HWnd
-//
-DesktopWindowTarget WinComp::CreateDesktopWindowTarget(Compositor const& compositor, HWND window)
-{
-	namespace abi = ABI::Windows::UI::Composition::Desktop;
-
-	auto interop = compositor.as<abi::ICompositorDesktopInterop>();
-	DesktopWindowTarget target{ nullptr };
-	check_hresult(interop->CreateDesktopWindowTarget(window, true, reinterpret_cast<abi::IDesktopWindowTarget**>(put_abi(target))));
-	return target;
-}
-
-//
 //  FUNCTION:Initialize
 //
 //  PURPOSE: Initializes all the key member variables, including the Compositor. This sample hosts directX content inside a visual 
@@ -97,7 +82,11 @@ void WinComp::TryUpdatePositionBy(float3 const& amount)
 //
 void WinComp::PrepareVisuals()
 {
-	m_target = CreateDesktopWindowTarget(m_compositor, m_window);
+	namespace abi = ABI::Windows::UI::Composition::Desktop;
+
+	//Creates a DesktoWindowTarget that can host Windows.UI.Composition Visual tree inside an HWnd
+	auto interop = m_compositor.as<abi::ICompositorDesktopInterop>();
+	check_hresult(interop->CreateDesktopWindowTarget(m_window, true, reinterpret_cast<abi::IDesktopWindowTarget**>(put_abi(m_target))));
 	
 	auto root = m_compositor.CreateSpriteVisual();
 	//Create a background with Gray color brush.

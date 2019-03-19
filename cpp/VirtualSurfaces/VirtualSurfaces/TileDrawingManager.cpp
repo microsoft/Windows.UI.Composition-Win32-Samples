@@ -53,6 +53,7 @@ void TileDrawingManager::UpdateVisibleRegion(float3 currentPosition)
 	m_currentTopLeftTileRow = (int)m_currentPosition.y / TILESIZE;
 	m_currentTopLeftTileColumn = (int)m_currentPosition.x / TILESIZE;
 	
+	//Draws the tiles that are required above the drawn top row.
 	int numberOfRows = (m_drawnTopTileRow - requiredTopTileRow );
 	int numberOfColumns = (m_drawnRightTileColumn-m_drawnLeftTileColumn )+1;
 	if(numberOfRows>0 && numberOfColumns>0)
@@ -61,6 +62,7 @@ void TileDrawingManager::UpdateVisibleRegion(float3 currentPosition)
 		stateUpdate = true;
 	}
 
+	//Draws the tiles that are required below the drawn bottom row.
 	numberOfRows = (requiredBottomTileRow - m_drawnBottomTileRow);
 	numberOfColumns = (m_drawnRightTileColumn - m_drawnLeftTileColumn) + 1;
 	if (numberOfRows > 0 && numberOfColumns > 0)
@@ -69,9 +71,11 @@ void TileDrawingManager::UpdateVisibleRegion(float3 currentPosition)
 		stateUpdate = true;
 	}
 
+	//Update the current drawn top tile row and current drawn bottom tile row.
 	m_drawnTopTileRow = min(requiredTopTileRow, m_drawnTopTileRow);
 	m_drawnBottomTileRow = max(requiredBottomTileRow, m_drawnBottomTileRow);
 
+	//Draws the tiles that are required to the left of the drawn columns.
 	numberOfRows = ( m_drawnBottomTileRow - m_drawnTopTileRow)+1;
 	numberOfColumns = (m_drawnLeftTileColumn - requiredLeftTileColumn) ;
 	if (numberOfRows > 0 && numberOfColumns > 0)
@@ -80,6 +84,7 @@ void TileDrawingManager::UpdateVisibleRegion(float3 currentPosition)
 		stateUpdate = true;
 	}
 
+	//Draws the tiles that are required to the right of the drawn columns.
 	numberOfRows = (m_drawnBottomTileRow - m_drawnTopTileRow)+1;
 	numberOfColumns = (requiredRightTileColumn - m_drawnRightTileColumn) ;
 	if (numberOfRows > 0 && numberOfColumns > 0)
@@ -88,6 +93,7 @@ void TileDrawingManager::UpdateVisibleRegion(float3 currentPosition)
 		stateUpdate = true;
 	}
 
+	//Update the current drawn left tile columns and current drawn right tile columns.
 	m_drawnLeftTileColumn = min(requiredLeftTileColumn, m_drawnLeftTileColumn);
 	m_drawnRightTileColumn = max(requiredRightTileColumn, m_drawnRightTileColumn);
 

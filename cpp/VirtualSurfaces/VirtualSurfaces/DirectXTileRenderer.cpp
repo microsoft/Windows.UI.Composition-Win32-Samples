@@ -54,7 +54,7 @@ bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> const& tiles)
 	RECT updateRect = { static_cast<LONG>(rect.X), static_cast<LONG>(rect.Y), static_cast<LONG>(rect.X + rect.Width), static_cast<LONG>(rect.Y + rect.Height) };
 
 	//Cannot update a surface larger than the max texture size of the hardware. 2048X2048 is the lowest max texture size for relevant hardware.
-	int MAXTEXTURESIZE = 2048;
+	int MAXTEXTURESIZE = D3D_FL9_1_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 	//3 is the buffer here.
 	SIZE constrainedUpdateSize = { min(updateSize.cx, MAXTEXTURESIZE-3), min(updateSize.cy, MAXTEXTURESIZE-3) };
 
@@ -169,8 +169,7 @@ void DirectXTileRenderer::DrawTextInTile(int tileRow, int tileColumn, D2D1_RECT_
 {
 	std::wstring text{ std::to_wstring(tileRow) + L"," + std::to_wstring(tileColumn)  };
 	//Drawing the text in the second third of the rectangle, so it is centered. The centerRect is the new rectangle that is 1/3rd of the height and placed at the center of the Tile.
-	D2D1_RECT_F centerRect{ rect.left ,  rect.top+(rect.bottom - rect.top) / 3 , rect.right  , rect.bottom-(rect.top-rect.bottom) / 3 };
-	d2dDeviceContext->DrawText(text.c_str(), (uint32_t)text.size(), m_textFormat.get(), centerRect, textBrush);
+	d2dDeviceContext->DrawText(text.c_str(), (uint32_t)text.size(), m_textFormat.get(), rect, textBrush);
 }
 
 //
@@ -194,6 +193,7 @@ void DirectXTileRenderer::InitializeTextFormat()
 		60.f,
 		L"en-US",
 		m_textFormat.put()));
+	m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
 	m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 }
 
