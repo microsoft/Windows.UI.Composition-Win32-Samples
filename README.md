@@ -30,9 +30,9 @@ Minimum requirements for using the Visual layer in desktop apps are listed here.
 | Sample |  |
 | - | - |
 | [**Hello Composition sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/HelloComposition)</br>Demonstrates how to set up a project to use Composition APIs in a C++ Win32 app.</br>See the [Using the Visual layer with Win32](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-win32) tutorial for more info. | ![Hello Composition sample](images/hello-comp-win32.png) |
-| [**Hello Vectors sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/HelloVectors)</br>Demonstrates how to use vectors in the Visual layer. |  |
-| [**Virtual Surfaces sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/VirtualSurfaces)</br>Demonstrates how to use virtual surfaces in the Visual layer. |  |
-| [**Screen Capture sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/ScreenCaptureforHWND)</br>Demonstrates how to use screen capture APIs. |  |
+| [**Hello Vectors sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/HelloVectors)</br>Demonstrates how to use vectors in the Visual layer. | ![Vector graphics UI](images/hello-vectors-win32.png)   |
+| [**Virtual Surfaces sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/VirtualSurfaces)</br>Demonstrates how to use virtual surfaces in the Visual layer. | ![Virtual surfaces UI](images/virtual-surfaces-win32.png)  |
+| [**Screen Capture sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/ScreenCaptureforHWND)</br>Demonstrates how to use screen capture APIs. | ![Screen capture UI](images/screen-capture-win32.png)  |
 
 ### Windows Forms
 

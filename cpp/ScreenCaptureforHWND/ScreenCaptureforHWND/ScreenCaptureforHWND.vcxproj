@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{045FFB0E-D0D4-404D-8C33-13C7074B3236}</ProjectGuid>
     <RootNamespace>ScreenCaptureforHWND</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.18335.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18346.0</WindowsTargetPlatformVersion>
     <ProjectName>ScreenCaptureforHWND</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
