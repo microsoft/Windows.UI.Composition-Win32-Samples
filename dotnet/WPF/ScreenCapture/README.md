@@ -10,7 +10,7 @@ This sample demonstrates Windows.Graphics.Capture APIs for displays and windows.
 
 This sample uses new APIs available in **19H1 insider builds, SDK 18334 or greater**
 
- - **CreateForWindow** (HWMD) and **CreateForMonitor** (HMON) APIs are in the Windows.Graphics.Capture.Interop.h header
+ - `CreateForWindow` (HWMD) and `CreateForMonitor` (HMON) APIs are in the Windows.Graphics.Capture.Interop.h header
 
  - Packages for .NET 4.7.2 are required
  - You many need to manually add references for you project.  To do this:  
