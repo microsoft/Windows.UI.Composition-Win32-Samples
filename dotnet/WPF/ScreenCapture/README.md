@@ -26,9 +26,8 @@ This sample uses new APIs available in **19H1 insider builds, SDK 18334 or great
   **System.Runtime.WindowsRuntime**
 C:\Windows\Microsoft.NET\Framework\v4.0.30319
 
-  **Windows.Foundation.UniversalApiContract.winmd** and **Windows.Foundation.FoundationContract.winmd**
-C:\Program Files (x86)\Windows Kits\10\References\10.0.18334.0\…
-
+  **Windows.winmd** 
+C:\Program Files (x86)\Windows Kits\10\UnionMetadata\<SDK-version>\Windows.winmd
 
 4. In the **Properties** window, set the **Copy Local** field of each *.winmd* file to **False**.
    For more info about this step, see [Enhance your desktop application for Windows 10](/windows/uwp/porting/desktop-to-uwp-enhance).
