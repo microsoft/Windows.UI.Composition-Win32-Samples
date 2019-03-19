@@ -32,6 +32,7 @@ public:
 	DirectXTileRenderer* GetRenderer();
 
 	const static int TILESIZE = 250;
+	const static int MAXSURFACESIZE = TILESIZE * 10000;
 	const static int DRAWAHEADTILECOUNT = 1; //Number of tiles to draw ahead 
 
 private:

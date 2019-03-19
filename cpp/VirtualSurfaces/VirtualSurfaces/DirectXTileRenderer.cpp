@@ -19,7 +19,7 @@
 //
 //  PURPOSE: Initializes all the necessary devices and structures needed for a DirectX Surface rendering operation.
 //
-void DirectXTileRenderer::Initialize(Compositor const& compositor, int tileSize) {
+void DirectXTileRenderer::Initialize(Compositor const& compositor, int tileSize, int surfaceSize) {
 	namespace abi = ABI::Windows::UI::Composition;
 
 	auto factory = CreateFactory();
@@ -28,6 +28,7 @@ void DirectXTileRenderer::Initialize(Compositor const& compositor, int tileSize)
 
 	m_compositor = compositor;
 	m_tileSize = tileSize;
+	m_surfaceSize = surfaceSize;
 	com_ptr<abi::ICompositorInterop> interopCompositor = m_compositor.as<abi::ICompositorInterop>();
 	com_ptr<ID2D1Device> d2device;
 	check_hresult(factory->CreateDevice(dxdevice.get(), d2device.put()));
@@ -51,21 +52,23 @@ CompositionSurfaceBrush DirectXTileRenderer::getSurfaceBrush()
 bool DirectXTileRenderer::DrawTileRange(Rect rect, std::list<Tile> const& tiles)
 {
 	SIZE updateSize = { static_cast<LONG>(rect.Width - 5), static_cast<LONG>(rect.Height - 5) };
-	RECT updateRect = { static_cast<LONG>(rect.X), static_cast<LONG>(rect.Y), static_cast<LONG>(rect.X + rect.Width), static_cast<LONG>(rect.Y + rect.Height) };
+	//making sure the update rect doesnt go past the maximum size of the surface.
+	RECT updateRect = { static_cast<LONG>(rect.X), static_cast<LONG>(rect.Y), static_cast<LONG>(min((rect.X + rect.Width),m_surfaceSize)), static_cast<LONG>(min((rect.Y + rect.Height),m_surfaceSize)) };
 
 	//Cannot update a surface larger than the max texture size of the hardware. 2048X2048 is the lowest max texture size for relevant hardware.
 	int MAXTEXTURESIZE = 2048;
-	//3 is the buffer here.
+	//3 is the buffer here from the max texture size.
 	SIZE constrainedUpdateSize = { min(updateSize.cx, MAXTEXTURESIZE-3), min(updateSize.cy, MAXTEXTURESIZE-3) };
 
-
+	float savedColorCounter = m_colorCounter;
 	//Breaking the BeginDraw/EndDraw calls to update rects that dont exceed the max texture size.
 	for (LONG y = updateRect.top; y < updateRect.bottom; y += constrainedUpdateSize.cy)
 	{
 		for (LONG x = updateRect.left; x < updateRect.right; x += constrainedUpdateSize.cx)
 		{
+			m_colorCounter = savedColorCounter;
+
 			POINT offset{};
-			//The 5 in this adds a border to each tile, just to make it visually pleasing.
 			RECT constrainedUpdateRect = RECT{ x,  y,  min(x + constrainedUpdateSize.cx, updateRect.right), min(y + constrainedUpdateSize.cy, updateRect.bottom) };
 			com_ptr<ID2D1DeviceContext> d2dDeviceContext;
 			com_ptr<ID2D1SolidColorBrush> textBrush;
@@ -274,10 +277,10 @@ CompositionDrawingSurface DirectXTileRenderer::CreateVirtualDrawingSurface(SizeI
 //
 CompositionSurfaceBrush DirectXTileRenderer::CreateVirtualDrawingSurfaceBrush()
 {
-	//Virtual Surface's maximum size is 2^24, per dimension. In this sample the size will never exceed the m_tileSize*10000 limit.
+	//Virtual Surface's maximum size is 2^24, per dimension. In this sample the size will never exceed the m_surfaceSize (In this case it is 10000*TILESIZE).
 	SizeInt32 size;
-	size.Width = m_tileSize * 10000;
-	size.Height = m_tileSize * 10000;
+	size.Width = m_surfaceSize;
+	size.Height = m_surfaceSize;
 
 	m_surfaceInterop = CreateVirtualDrawingSurface(size).as<abi::ICompositionDrawingSurfaceInterop>();
 

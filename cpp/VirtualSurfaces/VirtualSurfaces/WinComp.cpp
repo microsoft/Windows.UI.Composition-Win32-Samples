@@ -75,7 +75,7 @@ void WinComp::Initialize(HWND hwnd)
 	Compositor compositor;
 	m_compositor = compositor;
 	m_dxRenderer = new DirectXTileRenderer();
-	m_dxRenderer->Initialize(m_compositor, TileDrawingManager::TILESIZE);
+	m_dxRenderer->Initialize(m_compositor, TileDrawingManager::TILESIZE, TileDrawingManager::MAXSURFACESIZE);
 	m_TileDrawingManager.SetRenderer(m_dxRenderer);
 
 }
@@ -211,7 +211,7 @@ void WinComp::ConfigureInteraction()
 	m_scaleSurfaceUpDownExpressionAnimation.SetReferenceParameter(L"tracker", m_tracker);
 	
 	m_tracker.MinPosition(float3(0, 0, 0));
-	m_tracker.MaxPosition(float3(TileDrawingManager::TILESIZE*10000, TileDrawingManager::TILESIZE*10000, 0));
+	m_tracker.MaxPosition(float3(TileDrawingManager::MAXSURFACESIZE, TileDrawingManager::MAXSURFACESIZE, 0));
 	
 	m_tracker.MinScale(0.2f);
 	m_tracker.MaxScale(3.0f);

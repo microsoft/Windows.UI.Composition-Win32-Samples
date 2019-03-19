@@ -36,7 +36,7 @@ struct Tile
 class DirectXTileRenderer
 {
 public:
-	void Initialize(Compositor const& compositor, int tileSize);
+	void Initialize(Compositor const& compositor, int tileSize, int surfaceSize);
 	void Trim(Rect trimRect);
 	CompositionSurfaceBrush getSurfaceBrush();
 	bool DrawTileRange(Rect rect, std::list<Tile> const& tiles);
@@ -62,6 +62,7 @@ private:
 	Compositor                              m_compositor = nullptr;
 	float                                   m_colorCounter = 0.0;
 	int                                     m_tileSize = 0;
+	int                                     m_surfaceSize = 0;
 	com_ptr<ABI::Windows::UI::Composition::ICompositionDrawingSurfaceInterop> m_surfaceInterop ;
 
 };
