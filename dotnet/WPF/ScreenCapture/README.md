@@ -6,6 +6,7 @@ This sample demonstrates Windows.Graphics.Capture APIs for displays and windows.
  ![Capture Selection](Images/WPFCapture.png)
  
 
+>Note: Minimized windows are enumerated but not captured
 ### Requirements
 
 This sample uses new APIs available in **19H1 insider builds, SDK 18334 or greater**
