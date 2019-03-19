@@ -37,7 +37,6 @@ public:
 
 private:
 	
-	Tile GetTileForCoordinates(int row, int column);
 	list<Tile> GetTilesForRange(int tileStartColumn, int tileStartRow, int numColumns, int numRows);
 	void DrawVisibleTilesByRange();
 	Rect GetRectForTileRange(int tileStartColumn, int tileStartRow, int numColumns, int numRows);
@@ -45,16 +44,22 @@ private:
 	void DrawTileRange(int tileStartColumn, int tileStartRow, int numColumns, int numRows);
 
 	//member variables
-	int                     m_currentTopLeftTileRow = 0;
-	int                     m_currentTopLeftTileColumn = 0;
-	int                     m_drawnTopTileRow = 0;
-	int                     m_drawnBottomTileRow = 0;
-	int                     m_drawnLeftTileColumn = 0;
-	int                     m_drawnRightTileColumn = 0;
-	int                     m_horizontalVisibleTileCount=0;
-	int                     m_verticalVisibleTileCount=0;
-	Size                    m_viewPortSize;
-	float3                  m_currentPosition;
-	DirectXTileRenderer*    m_currentRenderer;
 	
+	//These variables reflect the current state of the surface and which tiles are screen.
+	//Helps us figure out the new set of tiles that need to be rendered when there's change because of manipulation
+	//or viewport size changes.
+	int                     m_drawnTopTileRow = 0;//Keeps track of the top tile row that is currently drawn
+	int                     m_drawnBottomTileRow = 0;//Keeps track of the bottom tile row that is currently drawn
+	int                     m_drawnLeftTileColumn = 0;//Keeps track of the left tile colum that is currently drawn
+	int                     m_drawnRightTileColumn = 0;//Keeps track of the right rile column that is currently drawn
+
+	int                     m_horizontalVisibleTileCount=0;//Number of horizonal tiles visible.
+	int                     m_verticalVisibleTileCount=0;//Number of vertical tiles visible.
+
+	Size                    m_viewPortSize;//Size of the viewport.
+	float3                  m_currentPosition;//Current position
+	int                     m_currentTopLeftTileRow = 0;//Row number of the top left tile that is currently visible
+	int                     m_currentTopLeftTileColumn = 0;//Column number of the top left tile that is currently visible.
+
+	DirectXTileRenderer*    m_currentRenderer;
 };

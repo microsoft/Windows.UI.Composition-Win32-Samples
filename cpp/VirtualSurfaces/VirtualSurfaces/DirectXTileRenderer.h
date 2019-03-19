@@ -28,6 +28,7 @@ namespace abi = ABI::Windows::UI::Composition;
 
 struct Tile
 {
+	Tile(int row, int column, int tileSize);
 	Rect rect;
 	int row;
 	int column;

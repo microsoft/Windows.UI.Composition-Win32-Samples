@@ -105,9 +105,9 @@ void TileDrawingManager::UpdateVisibleRegion(float3 currentPosition)
 }
 
 //
-//  FUNCTION: GetTileForCoordinates
+//  FUNCTION: UpdateViewportSize
 //
-//  PURPOSE: Helper function that gets the tile object for a particular row and column combination.
+//  PURPOSE: Updates the Viewport Size of the application.
 //
 void TileDrawingManager::UpdateViewportSize(Size newSize)
 {
@@ -117,19 +117,6 @@ void TileDrawingManager::UpdateViewportSize(Size newSize)
 	m_horizontalVisibleTileCount = (int)ceil(newSize.Width / TILESIZE);
 	m_verticalVisibleTileCount = (int)ceil(newSize.Height / TILESIZE);
 	DrawVisibleTilesByRange();
-}
-
-//
-//  FUNCTION: GetTileForCoordinates
-//
-//  PURPOSE: Helper function that gets the tile object for a particular row and column combination.
-//
-Tile TileDrawingManager::GetTileForCoordinates(int row, int column)
-{
-	int x = column * TILESIZE;
-	int y = row * TILESIZE;
-	Rect rect((float)x, (float)y, TILESIZE, TILESIZE);
-	return Tile{ rect,row,column };
 }
 
 //
@@ -155,7 +142,7 @@ list<Tile> TileDrawingManager::GetTilesForRange(int tileStartColumn, int tileSta
 	//get Tile objects for each tile that needs to be rendered.
 	for (int i = tileStartColumn; i < tileStartColumn + numColumns; i++) {
 		for (int j = tileStartRow; j < tileStartRow + numRows; j++) {
-			returnTiles.push_back(GetTileForCoordinates(j, i));
+			returnTiles.push_back(Tile(j, i,TILESIZE));
 		}
 	}
 	return returnTiles;

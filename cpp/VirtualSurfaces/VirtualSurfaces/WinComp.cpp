@@ -15,14 +15,7 @@
 #include "stdafx.h"
 #include "WinComp.h"
 
-WinComp::WinComp() 
-{
-}
 
-WinComp::~WinComp()
-{
-	delete m_dxRenderer;
-}
 
 //
 //  FUNCTION: EnsureDispatcherQueue
@@ -59,9 +52,9 @@ void WinComp::Initialize(HWND hwnd)
 	m_window = hwnd;
 	Compositor compositor;
 	m_compositor = compositor;
-	m_dxRenderer = new DirectXTileRenderer();
-	m_dxRenderer->Initialize(m_compositor, TileDrawingManager::TILESIZE, TileDrawingManager::MAXSURFACESIZE);
-	m_TileDrawingManager.SetRenderer(m_dxRenderer);
+	DirectXTileRenderer* dxRenderer = new DirectXTileRenderer();
+	dxRenderer->Initialize(m_compositor, TileDrawingManager::TILESIZE, TileDrawingManager::MAXSURFACESIZE);
+	m_TileDrawingManager.SetRenderer(dxRenderer);
 
 }
 

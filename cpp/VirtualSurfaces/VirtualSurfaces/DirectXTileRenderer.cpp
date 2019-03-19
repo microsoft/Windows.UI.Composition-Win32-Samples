@@ -35,7 +35,6 @@ void DirectXTileRenderer::Initialize(Compositor const& compositor, int tileSize,
 	check_hresult(interopCompositor->CreateGraphicsDevice(d2device.get(), reinterpret_cast<abi::ICompositionGraphicsDevice**>(put_abi(m_graphicsDevice))));
 	InitializeTextFormat();
 	m_surfaceBrush = CreateVirtualDrawingSurfaceBrush();
-
 }
 
 CompositionSurfaceBrush DirectXTileRenderer::getSurfaceBrush()
@@ -294,4 +293,18 @@ CompositionSurfaceBrush DirectXTileRenderer::CreateVirtualDrawingSurfaceBrush()
 	surfaceBrush.TransformMatrix(make_float3x2_translation(20.0f, 20.0f));
 
 	return surfaceBrush;
+}
+
+//
+//  FUNCTION: Constructor for Tile Struct
+//
+//  PURPOSE: Creates a Tile object based on rows and columns
+//
+Tile::Tile(int lrow, int lcolumn, int tileSize)
+{
+	int x = lcolumn * tileSize;
+	int y = lrow * tileSize;
+	row = lrow;
+	column = lcolumn;
+	rect = Rect((float)x, (float)y, tileSize, tileSize);
 }

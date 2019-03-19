@@ -38,11 +38,6 @@ class WinComp : public implements<WinComp, IInteractionTrackerOwner, no_weak_ref
 {
 
 public:
-	WinComp();
-private:
-	~WinComp();
-
-public:
 	void Initialize(HWND hwnd);
 	void PrepareVisuals();
 	DispatcherQueueController EnsureDispatcherQueue();
@@ -50,7 +45,6 @@ public:
 	void ConfigureInteraction();
 	void TryRedirectForManipulation(PointerPoint pp);
 	void TryUpdatePositionBy(float3 const& amount);
-
 
 	//interaction tracker owner implementation
 	void InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args);
@@ -83,7 +77,6 @@ private:
 	CompositionPropertySet      m_animatingPropset{ nullptr };
 
 	TileDrawingManager          m_TileDrawingManager;
-	DirectXTileRenderer*        m_dxRenderer;
 	float                       m_lastTrackerScale = 1.0f;
 	float3                      m_lastTrackerPosition{ 0.0f,0.0f,0.0f };
 	bool                        m_zooming;
