@@ -34,7 +34,7 @@ inline auto SurfaceBeginDraw(
     winrt::com_ptr<ID2D1DeviceContext> context;
     POINT offset = {};
     winrt::check_hresult(surfaceInterop->BeginDraw(nullptr, __uuidof(ID2D1DeviceContext), context.put_void(), &offset));
-    context->SetTransform(D2D1::Matrix3x2F::Translation(offset.x, offset.y));
+    context->SetTransform(D2D1::Matrix3x2F::Translation((FLOAT)offset.x,(FLOAT) offset.y));
     return context;
 }
 

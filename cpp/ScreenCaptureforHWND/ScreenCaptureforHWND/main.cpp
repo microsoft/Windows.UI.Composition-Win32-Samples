@@ -155,7 +155,7 @@ int CALLBACK WinMain(
         DispatchMessage(&msg);
     }
 
-    return msg.wParam;
+    return (int)msg.wParam;
 }
 
 LRESULT CALLBACK WndProc(

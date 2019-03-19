@@ -26,7 +26,7 @@ std::wstring GetClassName(HWND hwnd)
 {
 	std::array<WCHAR, 1024> className;
 
-    ::GetClassName(hwnd, className.data(), className.size());
+    ::GetClassName(hwnd, className.data(), (int)className.size());
 
     std::wstring title(className.data());
     return title;
@@ -36,7 +36,7 @@ std::wstring GetWindowText(HWND hwnd)
 {
 	std::array<WCHAR, 1024> windowText;
 
-    ::GetWindowText(hwnd, windowText.data(), windowText.size());
+    ::GetWindowText(hwnd, windowText.data(), (int)windowText.size());
 
     std::wstring title(windowText.data());
     return title;
