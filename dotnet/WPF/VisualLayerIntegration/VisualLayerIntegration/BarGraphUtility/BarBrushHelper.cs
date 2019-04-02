@@ -30,9 +30,9 @@ using Windows.UI.Composition;
 namespace BarGraphUtility
 {
     // Create brushes to fill the bars. 
-    public class BarBrushHelper
+    sealed class BarBrushHelper
     {
-        private Compositor compositor;
+        private readonly Compositor compositor;
         private Random rand;
 
         public BarBrushHelper(Compositor c)
@@ -59,10 +59,9 @@ namespace BarGraphUtility
             var brushes = new CompositionBrush[numBrushes];
             for (int i = 0; i < numBrushes; i++)
             {
-                byte r = Convert.ToByte(rand.Next(max));
-                byte g = Convert.ToByte(rand.Next(max));
-                byte b = Convert.ToByte(rand.Next(max));
-                Color c = Color.FromArgb(Convert.ToByte(255), r, g, b);
+                byte[] rgb = new byte[3];
+                rand.NextBytes(rgb);
+                Color c = Color.FromArgb(Convert.ToByte(255), rgb[0], rgb[1], rgb[2]);
                 brushes[i] = compositor.CreateColorBrush(c);
             }
 
@@ -98,21 +97,21 @@ namespace BarGraphUtility
             lgb.RotationAngleInDegrees = 45;
 
             int i = 0;
-            var animationDuration = 100;
+            var animationDuration = TimeSpan.FromSeconds(100);
             foreach (Color color in colors)
             {
                 float offset = i / ((float)colors.Count - 1);
 
                 var stop = compositor.CreateColorGradientStop(offset, color);
                 lgb.ColorStops.Add(stop);
-                InitLGBAnimation(stop, animationDuration, 1.0f);
+                InitLinearGradientAnimation(stop, animationDuration, 1.0f);
 
                 // Create a second mirrored stop for all colors but the first.
                 if (offset > 0)
                 {
                     var stop2 = compositor.CreateColorGradientStop(-offset, color);
                     lgb.ColorStops.Add(stop2);
-                    InitLGBAnimation(stop2, animationDuration, 1.0f);
+                    InitLinearGradientAnimation(stop2, animationDuration, 1.0f);
                 }
 
                 i++;
@@ -127,14 +126,14 @@ namespace BarGraphUtility
             return brushes;
         }
 
-        private void InitLGBAnimation(CompositionColorGradientStop stop, int duration, float offsetAdjustment)
+        private void InitLinearGradientAnimation(CompositionColorGradientStop stop, TimeSpan duration, float offsetAdjustment)
         {
             var animateStop = compositor.CreateScalarKeyFrameAnimation();
             animateStop.InsertKeyFrame(0.0f, stop.Offset);
             animateStop.InsertKeyFrame(0.5f, stop.Offset + offsetAdjustment);
             animateStop.InsertKeyFrame(1.0f, stop.Offset);
             animateStop.IterationBehavior = AnimationIterationBehavior.Forever;
-            animateStop.Duration = TimeSpan.FromSeconds(duration);
+            animateStop.Duration = duration;
             stop.StartAnimation(nameof(stop.Offset), animateStop);
         }
     }

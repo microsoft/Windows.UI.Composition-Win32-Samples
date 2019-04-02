@@ -29,15 +29,15 @@ using Windows.UI.Composition;
 
 namespace BarGraphUtility
 {
-    class Bar
+    sealed class Bar
     {
-        private Compositor compositor;
+        private Compositor _compositor;
         private float _height;
-        private CompositionRectangleGeometry rectGeometry;
-        private CompositionRectangleGeometry rectOutlineGeometry;
-        private ShapeVisual shapeVisual;
-        private ShapeVisual shapeOutlineVisual;
-        private CompositionSpriteShape barVisual;
+        private CompositionRectangleGeometry _rectGeometry;
+        private CompositionRectangleGeometry _rectOutlineGeometry;
+        private ShapeVisual _shapeVisual;
+        private ShapeVisual _shapeOutlineVisual;
+        private CompositionSpriteShape _barVisual;
 
         public CompositionBrush Brush { get; set; }
         public float Height
@@ -48,8 +48,8 @@ namespace BarGraphUtility
                 _height = value;
                 if (Root != null)
                 {
-                    rectGeometry.Size = new Vector2(value, Width);
-                    rectOutlineGeometry.Size = new Vector2(value, Width);
+                    _rectGeometry.Size = new Vector2(value, Width);
+                    _rectOutlineGeometry.Size = new Vector2(value, Width);
                 }
             }
         }
@@ -62,20 +62,55 @@ namespace BarGraphUtility
 
         public Bar(Compositor compositor, float maxBarHeight, float height, float width, string label, float value, CompositionBrush brush = null)
         {
-            this.compositor = compositor;
+            this._compositor = compositor;
 
             Height = height;
             Width = width;
             Value = value;
             Label = label;
 
-            if (brush == null)
-            {
-                brush = compositor.CreateColorBrush(Colors.Blue);
-            }
-            Brush = brush;
+            Brush = brush ?? compositor.CreateColorBrush(Colors.Blue);
 
-            CreateBar(maxBarHeight);
+            const float strokeThickness = 8;
+
+            // Define shape visual for bar outline.
+            _shapeOutlineVisual = _compositor.CreateShapeVisual();
+            _shapeOutlineVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
+            _shapeOutlineVisual.RotationAngleInDegrees = -90f;
+
+            // Create geometry and shape for the bar outline.
+            _rectOutlineGeometry = _compositor.CreateRectangleGeometry();
+            // Reverse width and height since rect will be at a 90* angle.
+            _rectOutlineGeometry.Size = new Vector2(Height, Width);
+            var barOutlineVisual = _compositor.CreateSpriteShape(_rectOutlineGeometry);
+            barOutlineVisual.StrokeThickness = strokeThickness;
+            barOutlineVisual.StrokeBrush = Brush;
+
+            _shapeOutlineVisual.Shapes.Add(barOutlineVisual);
+
+            // Define shape visual. 
+            _shapeVisual = _compositor.CreateShapeVisual();
+            _shapeVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
+            _shapeVisual.RotationAngleInDegrees = -90f;
+
+            // Create rectangle geometry and shape for the bar.
+            _rectGeometry = _compositor.CreateRectangleGeometry();
+            // Reverse width and height since rect will be at a 90* angle.
+            _rectGeometry.Size = new Vector2(Height, Width);
+            _barVisual = _compositor.CreateSpriteShape(_rectGeometry);
+            _barVisual.FillBrush = Brush;
+
+            _shapeVisual.Shapes.Add(_barVisual);
+
+            Root = _shapeVisual;
+            OutlineRoot = _shapeOutlineVisual;
+
+            // Add implict animation to bar.
+            var implicitAnimations = _compositor.CreateImplicitAnimationCollection();
+            // Trigger animation when the size property changes. 
+            implicitAnimations["Size"] = CreateAnimation();
+            _rectGeometry.ImplicitAnimations = implicitAnimations;
+            _rectOutlineGeometry.ImplicitAnimations = implicitAnimations;
         }
 
         public void UpdateSize(float width, float height)
@@ -83,57 +118,13 @@ namespace BarGraphUtility
             Width = width;
             Height = height;
 
-            rectGeometry.Size = new Vector2(Height, Width);
-            rectOutlineGeometry.Size = new Vector2(Height, Width);
+            _rectGeometry.Size = new Vector2(Height, Width);
+            _rectOutlineGeometry.Size = new Vector2(Height, Width);
         }
 
-        public void CreateBar(float maxHeight)
+        private Vector2KeyFrameAnimation CreateAnimation()
         {
-            var strokeThickness = 8;
-
-            // Define shape visual for bar outline.
-            shapeOutlineVisual = compositor.CreateShapeVisual();
-            shapeOutlineVisual.Size = new Vector2(maxHeight, maxHeight);
-            shapeOutlineVisual.RotationAngleInDegrees = -90f;
-
-            // Create geometry and shape for the bar outline.
-            rectOutlineGeometry = compositor.CreateRectangleGeometry();
-            // Reverse width and height since rect will be at a 90* angle.
-            rectOutlineGeometry.Size = new Vector2(Height, Width);
-            var barOutlineVisual = compositor.CreateSpriteShape(rectOutlineGeometry);
-            barOutlineVisual.StrokeThickness = (float)strokeThickness;
-            barOutlineVisual.StrokeBrush = Brush;
-
-            shapeOutlineVisual.Shapes.Add(barOutlineVisual);
-
-            // Define shape visual. 
-            shapeVisual = compositor.CreateShapeVisual();
-            shapeVisual.Size = new Vector2(maxHeight, maxHeight);
-            shapeVisual.RotationAngleInDegrees = -90f;
-
-            // Create rectangle geometry and shape for the bar.
-            rectGeometry = compositor.CreateRectangleGeometry();
-            // Reverse width and height since rect will be at a 90* angle.
-            rectGeometry.Size = new Vector2(Height, Width);
-            barVisual = compositor.CreateSpriteShape(rectGeometry);
-            barVisual.FillBrush = Brush;
-
-            shapeVisual.Shapes.Add(barVisual);
-
-            Root = shapeVisual;
-            OutlineRoot = shapeOutlineVisual;
-
-            // Add implict animation to bar.
-            var implicitAnimations = compositor.CreateImplicitAnimationCollection();
-            // Trigger animation when the size property changes. 
-            implicitAnimations["Size"] = CreateAnimation();
-            rectGeometry.ImplicitAnimations = implicitAnimations;
-            rectOutlineGeometry.ImplicitAnimations = implicitAnimations;
-        }
-
-        Vector2KeyFrameAnimation CreateAnimation()
-        {
-            var animation = compositor.CreateVector2KeyFrameAnimation();
+            var animation = _compositor.CreateVector2KeyFrameAnimation();
             animation.InsertExpressionKeyFrame(0f, "this.StartingValue");
             animation.InsertExpressionKeyFrame(1f, "this.FinalValue");
             animation.Target = "Size";
