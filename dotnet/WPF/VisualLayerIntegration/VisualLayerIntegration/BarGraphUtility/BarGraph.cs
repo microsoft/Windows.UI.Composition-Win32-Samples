@@ -311,22 +311,24 @@ namespace BarGraphUtility
 
             var barBrushHelper = new BarGraphUtility.BarBrushHelper(compositor);
             var brushes = new CompositionBrush[data.Length];
+            CompositionBrush brush = null;
+
             switch (graphBarStyle)
             {
                 case GraphBarStyle.Single:
-                    brushes = barBrushHelper.GenerateSingleColorBrush(data.Length, graphBarColors[0]);
+                    brush = barBrushHelper.GenerateSingleColorBrush(graphBarColors[0]);
                     break;
                 case GraphBarStyle.Random:
                     brushes = barBrushHelper.GenerateRandomColorBrushes(data.Length);
                     break;
                 case GraphBarStyle.PerBarLinearGradient:
-                    brushes = barBrushHelper.GeneratePerBarLinearGradient(data.Length, graphBarColors);
+                    brush = barBrushHelper.GenerateLinearGradient(graphBarColors);
                     break;
                 case GraphBarStyle.AmbientAnimatingPerBarLinearGradient:
-                    brushes = barBrushHelper.GenerateAmbientAnimatingPerBarLinearGradient(data.Length, graphBarColors);
+                    brush = barBrushHelper.GenerateAmbientAnimatingLinearGradient(graphBarColors);
                     break;
                 default:
-                    brushes = barBrushHelper.GenerateSingleColorBrush(data.Length, graphBarColors[0]);
+                    brush = barBrushHelper.GenerateSingleColorBrush(graphBarColors[0]);
                     break;
             }
 
@@ -336,8 +338,9 @@ namespace BarGraphUtility
             {
                 var xOffset = shapeGraphOffsetX + barSpacing + (barWidth + barSpacing) * i;
                 var height = GetAdjustedBarHeight(maxValue, graphData[i]);
+                var barBrush = brush ?? brushes[i];
 
-                var bar = new BarGraphUtility.Bar(compositor, shapeGraphContainerHeight, height, barWidth, "something", graphData[i], brushes[i]);
+                var bar = new BarGraphUtility.Bar(compositor, shapeGraphContainerHeight, height, barWidth, "something", graphData[i], barBrush);
                 bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, shapeGraphContainerHeight, 0);
                 bar.Root.Offset = new System.Numerics.Vector3(xOffset, shapeGraphContainerHeight, 0);
 

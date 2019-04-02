@@ -41,21 +41,14 @@ namespace BarGraphUtility
             rand = new Random();
         }
 
-        internal CompositionBrush[] GenerateSingleColorBrush(int numBrushes, Color color)
+        internal CompositionBrush GenerateSingleColorBrush(Color color)
         {
-            var brushes = new CompositionBrush[numBrushes];
-            for (int i = 0; i < numBrushes; i++)
-            {
-                brushes[i] = compositor.CreateColorBrush(color);
-            }
-
-            return brushes;
+            return compositor.CreateColorBrush(color);
         }
 
 
         internal CompositionBrush[] GenerateRandomColorBrushes(int numBrushes)
         {
-            var max = byte.MaxValue + 1; // 256
             var brushes = new CompositionBrush[numBrushes];
             for (int i = 0; i < numBrushes; i++)
             {
@@ -68,10 +61,10 @@ namespace BarGraphUtility
             return brushes;
         }
 
-        internal CompositionBrush[] GeneratePerBarLinearGradient(int numBrushes, List<Color> colors)
+        internal CompositionBrush GenerateLinearGradient(List<Color> colors)
         {
-            var lgb = compositor.CreateLinearGradientBrush();
-            lgb.RotationAngleInDegrees = 45;
+            var linearGradientBrush = compositor.CreateLinearGradientBrush();
+            linearGradientBrush.RotationAngleInDegrees = 45;
 
             int i = 0;
             foreach (Color color in colors)
@@ -80,21 +73,16 @@ namespace BarGraphUtility
                 var stop = compositor.CreateColorGradientStop(offset, color);
 
                 i++;
-                lgb.ColorStops.Add(stop);
+                linearGradientBrush.ColorStops.Add(stop);
             }
 
-            var brushes = new CompositionBrush[numBrushes];
-            for (int j = 0; j < numBrushes; j++)
-            {
-                brushes[j] = lgb;
-            }
-            return brushes;
+            return linearGradientBrush;
         }
 
-        internal CompositionBrush[] GenerateAmbientAnimatingPerBarLinearGradient(int numBrushes, List<Color> colors)
+        internal CompositionBrush GenerateAmbientAnimatingLinearGradient(List<Color> colors)
         {
-            var lgb = compositor.CreateLinearGradientBrush();
-            lgb.RotationAngleInDegrees = 45;
+            var linearGradientBrush = compositor.CreateLinearGradientBrush();
+            linearGradientBrush.RotationAngleInDegrees = 45;
 
             int i = 0;
             var animationDuration = TimeSpan.FromSeconds(100);
@@ -103,27 +91,21 @@ namespace BarGraphUtility
                 float offset = i / ((float)colors.Count - 1);
 
                 var stop = compositor.CreateColorGradientStop(offset, color);
-                lgb.ColorStops.Add(stop);
+                linearGradientBrush.ColorStops.Add(stop);
                 InitLinearGradientAnimation(stop, animationDuration, 1.0f);
 
                 // Create a second mirrored stop for all colors but the first.
                 if (offset > 0)
                 {
                     var stop2 = compositor.CreateColorGradientStop(-offset, color);
-                    lgb.ColorStops.Add(stop2);
+                    linearGradientBrush.ColorStops.Add(stop2);
                     InitLinearGradientAnimation(stop2, animationDuration, 1.0f);
                 }
 
                 i++;
             }
 
-            var brushes = new CompositionBrush[numBrushes];
-            for (int j = 0; j < numBrushes; j++)
-            {
-                brushes[j] = lgb;
-            }
-
-            return brushes;
+            return linearGradientBrush;
         }
 
         private void InitLinearGradientAnimation(CompositionColorGradientStop stop, TimeSpan duration, float offsetAdjustment)
