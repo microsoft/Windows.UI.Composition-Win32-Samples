@@ -170,7 +170,7 @@ namespace VisualLayerIntegration
                     var graph = new BarGraph(compositor, compositionHost.hwndHost, graphTitle, xAxisTitle, yAxisTitle,
                         (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, currentDpiX, currentDpiY, customer.Data, windowRenderTarget,
                         true, BarGraph.GraphBarStyle.PerBarLinearGradient,
-                        new List<Windows.UI.Color> { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
+                        new Windows.UI.Color[] { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) });
 
                     currentGraph = graph;
                     graphContainer.Children.InsertAtTop(graph.GraphRoot);

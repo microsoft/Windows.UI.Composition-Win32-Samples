@@ -64,10 +64,10 @@ namespace VisualLayerIntegration
         }
 
         // Generate random customer data.
-        private float[] GenerateRandomData()
+        private double[] GenerateRandomData()
         {
             var numDataPoints = 6;
-            var data = new float[numDataPoints];
+            var data = new double[numDataPoints];
 
             for (int j = 0; j < numDataPoints; j++)
             {

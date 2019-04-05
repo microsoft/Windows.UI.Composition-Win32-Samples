@@ -32,45 +32,44 @@ namespace BarGraphUtility
     // Create brushes to fill the bars. 
     sealed class BarBrushHelper
     {
-        private readonly Compositor compositor;
-        private Random rand;
+        private readonly Compositor _compositor;
+        private readonly Random _rand;
 
         public BarBrushHelper(Compositor c)
         {
-            compositor = c;
-            rand = new Random();
+            _compositor = c;
+            _rand = new Random();
         }
 
         internal CompositionBrush GenerateSingleColorBrush(Color color)
         {
-            return compositor.CreateColorBrush(color);
+            return _compositor.CreateColorBrush(color);
         }
-
 
         internal CompositionBrush[] GenerateRandomColorBrushes(int numBrushes)
         {
             var brushes = new CompositionBrush[numBrushes];
             for (int i = 0; i < numBrushes; i++)
             {
-                byte[] rgb = new byte[3];
-                rand.NextBytes(rgb);
-                Color c = Color.FromArgb(Convert.ToByte(255), rgb[0], rgb[1], rgb[2]);
-                brushes[i] = compositor.CreateColorBrush(c);
+                var rgb = new byte[3];
+                _rand.NextBytes(rgb);
+                var c = Color.FromArgb(255, rgb[0], rgb[1], rgb[2]);
+                brushes[i] = _compositor.CreateColorBrush(c);
             }
 
             return brushes;
         }
 
-        internal CompositionBrush GenerateLinearGradient(List<Color> colors)
+        internal CompositionBrush GenerateLinearGradient(Color[] colors)
         {
-            var linearGradientBrush = compositor.CreateLinearGradientBrush();
+            var linearGradientBrush = _compositor.CreateLinearGradientBrush();
             linearGradientBrush.RotationAngleInDegrees = 45;
 
-            int i = 0;
+            var i = 0;
             foreach (Color color in colors)
             {
-                float offset = i / ((float)colors.Count - 1);
-                var stop = compositor.CreateColorGradientStop(offset, color);
+                var offset = i / ((float)colors.Length - 1);
+                var stop = _compositor.CreateColorGradientStop(offset, color);
 
                 i++;
                 linearGradientBrush.ColorStops.Add(stop);
@@ -79,25 +78,25 @@ namespace BarGraphUtility
             return linearGradientBrush;
         }
 
-        internal CompositionBrush GenerateAmbientAnimatingLinearGradient(List<Color> colors)
+        internal CompositionBrush GenerateAmbientAnimatingLinearGradient(Color[] colors)
         {
-            var linearGradientBrush = compositor.CreateLinearGradientBrush();
+            var linearGradientBrush = _compositor.CreateLinearGradientBrush();
             linearGradientBrush.RotationAngleInDegrees = 45;
 
-            int i = 0;
+            var i = 0;
             var animationDuration = TimeSpan.FromSeconds(100);
             foreach (Color color in colors)
             {
-                float offset = i / ((float)colors.Count - 1);
+                var offset = i / ((float)colors.Length - 1);
 
-                var stop = compositor.CreateColorGradientStop(offset, color);
+                var stop = _compositor.CreateColorGradientStop(offset, color);
                 linearGradientBrush.ColorStops.Add(stop);
                 InitLinearGradientAnimation(stop, animationDuration, 1.0f);
 
                 // Create a second mirrored stop for all colors but the first.
                 if (offset > 0)
                 {
-                    var stop2 = compositor.CreateColorGradientStop(-offset, color);
+                    var stop2 = _compositor.CreateColorGradientStop(-offset, color);
                     linearGradientBrush.ColorStops.Add(stop2);
                     InitLinearGradientAnimation(stop2, animationDuration, 1.0f);
                 }
@@ -110,7 +109,7 @@ namespace BarGraphUtility
 
         private void InitLinearGradientAnimation(CompositionColorGradientStop stop, TimeSpan duration, float offsetAdjustment)
         {
-            var animateStop = compositor.CreateScalarKeyFrameAnimation();
+            var animateStop = _compositor.CreateScalarKeyFrameAnimation();
             animateStop.InsertKeyFrame(0.0f, stop.Offset);
             animateStop.InsertKeyFrame(0.5f, stop.Offset + offsetAdjustment);
             animateStop.InsertKeyFrame(1.0f, stop.Offset);

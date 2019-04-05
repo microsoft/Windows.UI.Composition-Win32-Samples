@@ -29,17 +29,17 @@ namespace VisualLayerIntegration
     //Base customer object with a selection of data.
     public class Customer
     {
-        public Customer(string id, string firstname, string lastname, DateTime customerSince, bool newslettersubscriber, float[] data)
+        public Customer(string id, string firstname, string lastname, DateTime customerSince, bool newslettersubscriber, double[] data)
         {
-            this.FirstName = firstname;
-            this.LastName = lastname;
-            this.ID = id;
-            this.CustomerSince = customerSince;
-            this.NewsletterSubscriber = newslettersubscriber;
-            this.Data = data;
+            FirstName = firstname;
+            LastName = lastname;
+            ID = id;
+            CustomerSince = customerSince;
+            NewsletterSubscriber = newslettersubscriber;
+            Data = data;
         }
 
-        public float[] Data { get; }
+        public double[] Data { get; }
         public string ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
