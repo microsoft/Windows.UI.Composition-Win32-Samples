@@ -78,11 +78,11 @@ namespace VisualLayerIntegration
 
                 currentDpi = VisualTreeHelper.GetDpi(this);
 
-                compositionHost = new CompositionHost(CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight, currentDpiX, currentDpiY);
+                compositionHost = new CompositionHost();
                 CompositionHostElement.Child = compositionHost;
                 compositor = compositionHost.Compositor;
                 graphContainer = compositor.CreateContainerVisual();
-                compositionHost.Child = graphContainer;
+                compositionHost.SetChild(graphContainer);
 
                 compositionHost.MouseMoved += HostControl_MouseMoved;
                 compositionHost.InvalidateDrawing += CompositionHost_InvalidateDrawing;
@@ -144,6 +144,8 @@ namespace VisualLayerIntegration
         {
             if (this.ActualWidth > 0 && currentGraph != null)
             {
+                currentDpiX = newDpi.PixelsPerInchX;
+                currentDpiY = newDpi.PixelsPerInchY;
                 currentGraph.UpdateSize(newDpi, CompositionHostElement.ActualWidth, CompositionHostElement.ActualHeight);
             }
         }

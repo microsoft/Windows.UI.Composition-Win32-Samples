@@ -39,6 +39,9 @@ namespace BarGraphUtility
         private ShapeVisual _shapeOutlineVisual;
         private CompositionSpriteShape _barVisual;
 
+        private const float _strokeThickness = 8;
+
+
         public CompositionBrush Brush { get; set; }
         public float Height
         {
@@ -70,9 +73,7 @@ namespace BarGraphUtility
             Label = label;
 
             Brush = brush ?? compositor.CreateColorBrush(Colors.Blue);
-
-            const float strokeThickness = 8;
-
+            
             // Define shape visual for bar outline.
             _shapeOutlineVisual = _compositor.CreateShapeVisual();
             _shapeOutlineVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
@@ -83,7 +84,7 @@ namespace BarGraphUtility
             // Reverse width and height since rect will be at a 90* angle.
             _rectOutlineGeometry.Size = new Vector2(Height, Width);
             var barOutlineVisual = _compositor.CreateSpriteShape(_rectOutlineGeometry);
-            barOutlineVisual.StrokeThickness = strokeThickness;
+            barOutlineVisual.StrokeThickness = _strokeThickness;
             barOutlineVisual.StrokeBrush = Brush;
 
             _shapeOutlineVisual.Shapes.Add(barOutlineVisual);

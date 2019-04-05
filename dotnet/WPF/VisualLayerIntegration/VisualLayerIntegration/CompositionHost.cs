@@ -31,42 +31,23 @@ using Windows.UI.Composition;
 
 namespace VisualLayerIntegration
 {
-      class CompositionHost : HwndHost
+    sealed class CompositionHost : HwndHost
     {
-        object dispatcherQueue;
-        int hostHeight, hostWidth;
-        double hostDpiX, hostDpiY;
+        private object dispatcherQueue;
         private ICompositionTarget compositionTarget;
-        internal const int
-            WS_CHILD = 0x40000000,
-            WS_VISIBLE = 0x10000000,
-            LBS_NOTIFY = 0x00000001,
-            HOST_ID = 0x00000002,
-            LISTBOX_ID = 0x00000001,
-            WS_VSCROLL = 0x00200000,
-            WS_BORDER = 0x00800000;
-
-
-        public Visual Child
-        {
-            set
-            {
-                if (Compositor == null)
-                {
-                    InitComposition(hwndHost);
-                }
-                compositionTarget.Root = value;
-            }
-        }
+       
         public IntPtr hwndHost { get; private set; }
         public Compositor Compositor { get; private set; }
 
-        public CompositionHost(double height, double width, double dpiX, double dpiY)
+        public CompositionHost() {   }
+
+        public void SetChild(Visual v)
         {
-            hostHeight = (int)height;
-            hostWidth = (int)width;
-            hostDpiX = (double)dpiX;
-            hostDpiY = (double)dpiY;
+            if (Compositor == null)
+            {
+                InitializeComposition(hwndHost);
+            }
+            compositionTarget.Root = v;
         }
 
         // Create window and content
@@ -89,7 +70,7 @@ namespace VisualLayerIntegration
             dispatcherQueue = InitializeCoreDispatcher();
 
             // Get compositor and target for hwnd.
-            InitComposition(hwndHost);
+            InitializeComposition(hwndHost);
 
             return new HandleRef(this, hwndHost);
         }
@@ -107,20 +88,11 @@ namespace VisualLayerIntegration
         }
 
         // Get compositor and target for hwnd.
-        private void InitComposition(IntPtr hwndHost)
+        private void InitializeComposition(IntPtr hwndHost)
         {
-            ICompositorDesktopInterop interop;
-
             this.Compositor = new Compositor();
-            object iunknown = Compositor as object;
-            interop = (ICompositorDesktopInterop)iunknown;
-            interop.CreateDesktopWindowTarget(hwndHost, true, out IntPtr raw);
-
-            object rawObject = Marshal.GetObjectForIUnknown(raw);
-            compositionTarget = (ICompositionTarget)rawObject;
-
-            if (raw == null) { throw new Exception("QI Failed"); }
-
+            var compositorDesktopInterop = (ICompositorDesktopInterop)(object)this.Compositor;
+            compositorDesktopInterop.CreateDesktopWindowTarget(hwndHost, true, out compositionTarget);
         }
 
         protected override void DestroyWindowCore(HandleRef hwnd)
@@ -159,12 +131,12 @@ namespace VisualLayerIntegration
             InvalidateDrawing?.Invoke(this, args);
         }
 
-        protected virtual void RaiseHwndMouseMove(HwndMouseEventArgs args)
+        private void RaiseHwndMouseMove(HwndMouseEventArgs args)
         {
             MouseMoved?.Invoke(this, args);
         }
 
-        protected virtual void RaiseHwndMouseLClick(HwndMouseEventArgs args)
+        private void RaiseHwndMouseLClick(HwndMouseEventArgs args)
         {
             MouseLClick?.Invoke(this, args);
         }
@@ -285,7 +257,7 @@ namespace VisualLayerIntegration
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface ICompositorDesktopInterop
     {
-        void CreateDesktopWindowTarget(IntPtr hwndTarget, bool isTopmost, out IntPtr test);
+        void CreateDesktopWindowTarget(IntPtr hwndTarget, bool isTopmost, out ICompositionTarget test);
     }
 
     // COM interface we're duplicating.
