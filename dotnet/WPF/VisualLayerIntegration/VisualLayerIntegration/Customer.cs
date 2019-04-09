@@ -26,20 +26,10 @@ using System;
 
 namespace VisualLayerIntegration
 {
-    //Base customer object with a selection of data.
-    public class Customer
+    // Base customer object with a selection of data.
+    sealed public class Customer
     {
-        public Customer(string id, string firstname, string lastname, DateTime customerSince, bool newslettersubscriber, double[] data)
-        {
-            FirstName = firstname;
-            LastName = lastname;
-            ID = id;
-            CustomerSince = customerSince;
-            NewsletterSubscriber = newslettersubscriber;
-            Data = data;
-        }
-
-        public double[] Data { get; }
+        public double[] Data { get; set; }
         public string ID { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

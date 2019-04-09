@@ -23,7 +23,6 @@
 //  ---------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -34,24 +33,26 @@ namespace VisualLayerIntegration
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Random random = new Random();
-        private string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private string[] customerFirstNames = new string[] { "Angel", "Josephine", "Wade", "Christie", "Whitney", "Ismael", "Alexandra", "Rhonda", "Dawn", "Roman", "Emanuel", "Evan", "Aaron", "Bill", "Margaret", "Mandy", "Carlton", "Cornelius", "Cora", "Alejandro", "Annette", "Bertha", "John", "Billy", "Randall" };
-        private string[] customerLastNames = new string[] { "Murphy", "Swanson", "Sandoval", "Moore", "Adkins", "Tucker", "Cook", "Fernandez", "Schwartz", "Sharp", "Bryant", "Gross", "Spencer", "Powers", "Hunter", "Moreno", "Baldwin", "Stewart", "Rice", "Watkins", "Hawkins", "Dean", "Howard", "Bailey", "Gill" };
+        private static readonly Random random = new Random();
+        private static readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        private static readonly string[] customerFirstNames = new string[] { "Angel", "Josephine",
+            "Wade", "Christie", "Whitney", "Ismael", "Alexandra", "Rhonda", "Dawn", "Roman", "Emanuel",
+            "Evan", "Aaron", "Bill", "Margaret", "Mandy", "Carlton", "Cornelius", "Cora", "Alejandro",
+            "Annette", "Bertha", "John", "Billy", "Randall" };
+        private static readonly string[] customerLastNames = new string[] { "Murphy", "Swanson", "Sandoval",
+            "Moore", "Adkins", "Tucker", "Cook", "Fernandez", "Schwartz", "Sharp", "Bryant", "Gross", "Spencer",
+            "Powers", "Hunter", "Moreno", "Baldwin", "Stewart", "Rice", "Watkins", "Hawkins", "Dean", "Howard",
+            "Bailey", "Gill" };
 
         public MainWindow()
         {
             InitializeComponent();
-        }
 
-        // Generate customers and pass data to grid.
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {          
-            List<Customer> customers = new List<Customer>();
+            Customer[] customers = new Customer[customerFirstNames.Length];
             for (int i = 0; i < customerFirstNames.Length; i++)
             {
-                var id = new string(Enumerable.Repeat(chars, 12).Select(s => s[random.Next(s.Length)]).ToArray());
-                customers.Add(new Customer(id, customerFirstNames[i], customerLastNames[random.Next(0, customerLastNames.Length - 1)], GenerateRandomDay(), random.NextDouble() >= 0.5, GenerateRandomData()));
+                Customer c = GenerateRandomCustomer();
+                customers[i] = c;
             }
 
             CustomerGrid.ItemsSource = customers;
@@ -63,8 +64,30 @@ namespace VisualLayerIntegration
             barGraphHost.DataContext = (Customer)CustomerGrid.SelectedItem;
         }
 
+        private static Customer GenerateRandomCustomer()
+        {
+            Customer c = new Customer
+            {
+                ID = GenerateRandomID(),
+                FirstName = customerFirstNames[random.Next(0, customerFirstNames.Length - 1)],
+                LastName = customerLastNames[random.Next(0, customerLastNames.Length - 1)],
+                CustomerSince = GenerateRandomDay(),
+                NewsletterSubscriber = random.NextDouble() >= 0.5,
+                Data = GenerateRandomData()
+            };
+
+            return c;
+        }
+
+        // Generate random customer ID
+        private static string GenerateRandomID()
+        {
+            // Create string of random chars for ID. ID is not necessarily unique.
+            return new string(Enumerable.Repeat(chars, 12).Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
         // Generate random customer data.
-        private double[] GenerateRandomData()
+        private static double[] GenerateRandomData()
         {
             var numDataPoints = 6;
             var data = new double[numDataPoints];
@@ -77,7 +100,7 @@ namespace VisualLayerIntegration
         }
 
         // Generate random date to use for the customer info.
-        private DateTime GenerateRandomDay()
+        private static DateTime GenerateRandomDay()
         {
             var start = new DateTime(1995, 1, 1);
             var range = (DateTime.Today - start).Days;

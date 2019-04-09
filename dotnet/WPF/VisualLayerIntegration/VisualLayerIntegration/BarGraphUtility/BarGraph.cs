@@ -49,7 +49,7 @@ namespace BarGraphUtility
         private GraphBarStyle _graphBarStyle;
         private Windows.UI.Color[] _graphBarColors;
 
-        private Dictionary<int,Bar> _barValueMap;
+        private Bar[] _bars;
 
         private WindowRenderTarget _textRenderTarget;
         private SolidColorBrush _textSceneColorBrush;
@@ -133,10 +133,33 @@ namespace BarGraphUtility
             BarRoot = _compositor.CreateContainerVisual();
             GraphRoot.Children.InsertAtBottom(BarRoot);
 
+            // Ambient light
+            _ambientLight = _compositor.CreateAmbientLight();
+            _ambientLight.Color = Colors.White;
+            _ambientLight.Targets.Add(_mainContainer);
+
+            // Spot light
+            var innerConeColor = Colors.White;
+            var outerConeColor = Colors.AntiqueWhite;
+            _barOutlineLight = _compositor.CreateSpotLight();
+            _barOutlineLight.InnerConeColor = innerConeColor;
+            _barOutlineLight.OuterConeColor = outerConeColor;
+            _barOutlineLight.CoordinateSpace = _mainContainer;
+            _barOutlineLight.InnerConeAngleInDegrees = 45;
+            _barOutlineLight.OuterConeAngleInDegrees = 80;
+            _barOutlineLight.Offset = new System.Numerics.Vector3(0, 0, 80);
+
+            // Point light
+            _barLight = _compositor.CreatePointLight();
+            _barLight.Color = outerConeColor;
+            _barLight.CoordinateSpace = _mainContainer;
+            _barLight.Intensity = 0.5f;
+            _barLight.Offset = new System.Numerics.Vector3(0, 0, 120);
+
             // If data has been provided, initialize bars and animations; otherwise, leave graph empty.
             if (_graphData.Length > 0)
             {
-                _barValueMap = new Dictionary<int, Bar>();
+                _bars = new Bar[_graphData.Length];
                 var bars = CreateBars(_graphData);
                 AddBarsToTree(bars);
             }
@@ -208,9 +231,9 @@ namespace BarGraphUtility
             UpdateSizeAndPositions();
 
             // Update bars.
-            for (int i = 0; i < _barValueMap.Count; i++)
+            for (int i = 0; i < _graphData.Length; i++)
             {
-                var bar = _barValueMap[i];
+                var bar = _bars[i];
 
                 var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
                 var height = bar.Height;
@@ -305,8 +328,8 @@ namespace BarGraphUtility
 
         private Bar[] CreateBars(double[] data)
         {
-            //Clear hashmap.
-            _barValueMap.Clear();
+            //Clear
+            _bars = new Bar[data.Length];
 
             var barBrushHelper = new BarGraphUtility.BarBrushHelper(_compositor);
             var brushes = new CompositionBrush[data.Length];
@@ -332,7 +355,6 @@ namespace BarGraphUtility
             }
 
             var maxValue = _maxBarValue = GetMaxBarValue(data);
-            var bars = new Bar[data.Length];
             for (int i = 0; i < data.Length; i++)
             {
                 var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
@@ -343,11 +365,9 @@ namespace BarGraphUtility
                 bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, _shapeGraphContainerHeight, 0);
                 bar.Root.Offset = new System.Numerics.Vector3(xOffset, _shapeGraphContainerHeight, 0);
 
-                _barValueMap.Add(i, bar);
-
-                bars[i] = bar;
+                _bars[i] = bar;
             }
-            return bars;
+            return _bars;
         }
 
         private void AddBarsToTree(Bar[] bars)
@@ -359,7 +379,7 @@ namespace BarGraphUtility
                 BarRoot.Children.InsertAtTop(bars[i].Root);
             }
 
-            AddLight();
+            UpdateLightTargets();
         }
 
         public void UpdateGraphData(string title, string xAxisTitle, string yAxisTitle, double[] newData)
@@ -380,7 +400,7 @@ namespace BarGraphUtility
                 for (int i = 0; i < _graphData.Length; i++)
                 {
                     // Animate bar height.
-                    var oldBar = (Bar)(_barValueMap[i]);
+                    var oldBar = (Bar)(_bars[i]);
                     var newBarHeight = GetAdjustedBarHeight(maxValue, newData[i]);
 
                     // Update Bar.
@@ -399,43 +419,21 @@ namespace BarGraphUtility
             _graphData = newData;
         }
 
-        private void AddLight()
+        private void UpdateLightTargets()
         {
-            _ambientLight = _compositor.CreateAmbientLight();
-            _ambientLight.Color = Colors.White;
-            _ambientLight.Targets.Add(_mainContainer);
-
-            var innerConeColor = Colors.White;
-            var outerConeColor = Colors.AntiqueWhite;
-
-            _barOutlineLight = _compositor.CreateSpotLight();
-            _barOutlineLight.InnerConeColor = innerConeColor;
-            _barOutlineLight.OuterConeColor = outerConeColor;
-            _barOutlineLight.CoordinateSpace = _mainContainer;
-            _barOutlineLight.InnerConeAngleInDegrees = 45;
-            _barOutlineLight.OuterConeAngleInDegrees = 80;
-
-            _barOutlineLight.Offset = new System.Numerics.Vector3(0, 0, 80);
-
             // Target bars outlines with light.
-            for (int i = 0; i < _barValueMap.Count; i++)
+            _barOutlineLight.Targets.RemoveAll();
+            for (int i = 0; i < _bars.Length; i++)
             {
-                var bar = (Bar)_barValueMap[i];
+                var bar = (Bar)_bars[i];
                 _barOutlineLight.Targets.Add(bar.OutlineRoot);
             }
 
-
-            _barLight = _compositor.CreatePointLight();
-            _barLight.Color = outerConeColor;
-            _barLight.CoordinateSpace = _mainContainer;
-            _barLight.Intensity = 0.5f;
-
-            _barLight.Offset = new System.Numerics.Vector3(0, 0, 120);
-
             // Target bars with softer point light.
-            for (int i = 0; i < _barValueMap.Count; i++)
+            _barLight.Targets.RemoveAll();
+            for (int i = 0; i < _bars.Length; i++)
             {
-                var bar = _barValueMap[i];
+                var bar = _bars[i];
                 _barLight.Targets.Add(bar.Root);
             }
         }

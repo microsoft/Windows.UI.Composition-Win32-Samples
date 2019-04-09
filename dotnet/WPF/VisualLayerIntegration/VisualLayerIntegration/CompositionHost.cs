@@ -160,7 +160,6 @@ namespace VisualLayerIntegration
             DQTYPE_THREAD_CURRENT = 2,
         };
 
-        [StructLayout(LayoutKind.Sequential)]
         internal struct DispatcherQueueOptions
         {
             public int dwSize;
