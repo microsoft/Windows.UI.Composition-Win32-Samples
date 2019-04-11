@@ -309,11 +309,15 @@ namespace BarGraphUtility
         // Dispose of resources.
         public void Dispose()
         {
+            _textRenderTarget.Dispose();
             _textSceneColorBrush.Dispose();
             _textFormatTitle.Dispose();
             _textFormatHorizontal.Dispose();
             _textFormatVertical.Dispose();
-        }
+            _ambientLight.Dispose();
+            _barOutlineLight.Dispose();
+            _barLight.Dispose();
+    }
 
         private Bar[] CreateBars(double[] data)
         {

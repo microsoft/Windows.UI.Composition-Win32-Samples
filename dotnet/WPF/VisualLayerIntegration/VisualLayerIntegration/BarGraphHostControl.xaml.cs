@@ -40,7 +40,7 @@ namespace VisualLayerIntegration
     /// <summary>
     /// Interaction logic for BarGraphHostControl.xaml
     /// </summary>
-    public partial class BarGraphHostControl : UserControl
+    public partial class BarGraphHostControl : UserControl, IDisposable
     {
         private readonly CompositionHost _compositionHost;
         private Compositor _compositor;
@@ -68,6 +68,8 @@ namespace VisualLayerIntegration
 
             _compositionHost = new CompositionHost();
             CompositionHostElement.Child = _compositionHost;
+
+            _compositionHost.RegisterForDispose(this);
         }
 
         private void BarGraphHostControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -155,7 +157,7 @@ namespace VisualLayerIntegration
                 {                    
                     var graph = new BarGraph(_compositor, _compositionHost.hwndHost, graphTitle, _xAxisTitle, _yAxisTitle,
                         (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, _currentDpiX, _currentDpiY, customer.Data, _windowRenderTarget,
-                        true);
+                        true, BarGraph.GraphBarStyle.PerBarLinearGradient, _graphColors);
 
                     _currentGraph = graph;
                     _graphContainer.Children.InsertAtTop(graph.GraphRoot);
@@ -179,6 +181,12 @@ namespace VisualLayerIntegration
                 var currentDpi = VisualTreeHelper.GetDpi(this);
                 _currentGraph.UpdateSize(currentDpi, width, height);
             }
+        }
+
+        public void Dispose()
+        {
+            _windowRenderTarget.Dispose();
+            _currentGraph.Dispose();
         }
     }
 }

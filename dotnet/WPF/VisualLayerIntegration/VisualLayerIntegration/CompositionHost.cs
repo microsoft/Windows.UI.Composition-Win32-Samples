@@ -23,6 +23,7 @@
 //  ---------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -35,6 +36,7 @@ namespace VisualLayerIntegration
     {
         private object _dispatcherQueue;
         private ICompositionTarget _compositionTarget;
+        private List<IDisposable> registeredDisposables = new List<IDisposable>();
        
         public IntPtr hwndHost { get; private set; }
         public Compositor Compositor { get; private set; }
@@ -42,6 +44,7 @@ namespace VisualLayerIntegration
         public event EventHandler<HwndMouseEventArgs> MouseLClick;
         public event EventHandler<HwndMouseEventArgs> MouseMoved;
         public event EventHandler<InvalidateDrawingEventArgs> InvalidateDrawing;
+
 
         public CompositionHost() {   }
 
@@ -105,7 +108,18 @@ namespace VisualLayerIntegration
             {
                 _compositionTarget.Root.Dispose();
             }
+
             User32.DestroyWindow(hwnd.Handle);
+
+            foreach(IDisposable d in registeredDisposables)
+            {
+                d.Dispose();
+            }
+        }
+
+        public void RegisterForDispose(IDisposable d)
+        {
+            registeredDisposables.Add(d);
         }
 
         protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
