@@ -171,7 +171,7 @@ namespace VisualLayerIntegration
             public DISPATCHERQUEUE_THREAD_APARTMENTTYPE apartmentType;
         };
 
-        [DllImport("coremessaging.dll", EntryPoint = "CreateDispatcherQueueController", CharSet = CharSet.Unicode)]
+        [DllImport("coremessaging.dll")]
         internal static extern IntPtr CreateDispatcherQueueController(DispatcherQueueOptions options,
                                                 [MarshalAs(UnmanagedType.IUnknown)]
                                                out object dispatcherQueueController);

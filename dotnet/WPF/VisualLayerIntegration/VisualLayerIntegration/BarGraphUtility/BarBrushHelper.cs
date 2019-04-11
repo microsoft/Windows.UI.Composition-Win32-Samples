@@ -33,12 +33,11 @@ namespace BarGraphUtility
     sealed class BarBrushHelper
     {
         private readonly Compositor _compositor;
-        private readonly Random _rand;
+        private readonly Random _rand = new Random();
 
         public BarBrushHelper(Compositor c)
         {
-            _compositor = c;
-            _rand = new Random();
+            _compositor = c;            
         }
 
         internal CompositionBrush GenerateSingleColorBrush(Color color)

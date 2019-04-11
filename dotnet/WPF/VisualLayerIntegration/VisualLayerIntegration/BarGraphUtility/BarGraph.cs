@@ -26,20 +26,19 @@ using SharpDX;
 using SharpDX.Direct2D1;
 using SharpDX.DirectWrite;
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
 using Windows.UI;
 using Windows.UI.Composition;
 using SysWin = System.Windows;
 
 namespace BarGraphUtility
 {
-    class BarGraph
+    class BarGraph: IDisposable
     {
         private double[] _graphData;
 
-        private Compositor _compositor;
-        private IntPtr _hwnd;
+        private readonly Compositor _compositor;
+        private readonly IntPtr _hwnd;
 
         private float _graphWidth, _graphHeight;
         private float _shapeGraphContainerHeight, _shapeGraphContainerWidth, _shapeGraphOffsetY, _shapeGraphOffsetX;
@@ -47,12 +46,12 @@ namespace BarGraphUtility
         private double _maxBarValue;
 
         private GraphBarStyle _graphBarStyle;
-        private Windows.UI.Color[] _graphBarColors;
+        private readonly Windows.UI.Color[] _graphBarColors;
 
         private Bar[] _bars;
 
-        private WindowRenderTarget _textRenderTarget;
-        private SolidColorBrush _textSceneColorBrush;
+        private readonly WindowRenderTarget _textRenderTarget;
+        private readonly SolidColorBrush _textSceneColorBrush;
         private TextFormat _textFormatTitle;
         private TextFormat _textFormatHorizontal;
         private TextFormat _textFormatVertical;
@@ -67,22 +66,22 @@ namespace BarGraphUtility
 
         private static float _textSize = 20.0f;
 
-        private AmbientLight _ambientLight;
-        private SpotLight _barOutlineLight;
-        private PointLight _barLight;
+        private readonly AmbientLight _ambientLight;
+        private readonly SpotLight _barOutlineLight;
+        private readonly PointLight _barLight;
+        private string _graphTitle;
+        private string _xAxisLabel;
+        private string _yAxisLabel;
+        private readonly ContainerVisual _barRoot;
 
-        public string Title { get; set; }
-        public string XAxisLabel { get; set; }
-        public string YAxisLabel { get; set; }
-        public ContainerVisual BarRoot { get; }
         public ContainerVisual GraphRoot { get; }
 
         public enum GraphBarStyle
         {
-            Single = 0,
-            Random = 1,
-            PerBarLinearGradient = 3,
-            AmbientAnimatingPerBarLinearGradient = 4
+            Single,
+            Random,
+            PerBarLinearGradient,
+            AmbientAnimatingPerBarLinearGradient
         }
 
         // Constructor for bar graph.
@@ -109,29 +108,21 @@ namespace BarGraphUtility
 
             _graphData = data;
 
-            Title = title;
-            XAxisLabel = xAxisLabel;
-            YAxisLabel = yAxisLabel;
+            _graphTitle = title;
+            _xAxisLabel = xAxisLabel;
+            _yAxisLabel = yAxisLabel;
 
             _graphBarStyle = graphBarStyle;
-
             _graphBarColors = barColors ?? new Windows.UI.Color[] { Colors.Blue };
 
-            // Configure options for text.
-            var factory2D = new SharpDX.Direct2D1.Factory();
-
-            var properties = new HwndRenderTargetProperties();
-            properties.Hwnd = _hwnd;
-            properties.PixelSize = new Size2((int)(width * dpiX / 96.0), (int)(width * dpiY / 96.0));
-            properties.PresentOptions = PresentOptions.None;
-
             _textRenderTarget = renderTarget;
+            _textSceneColorBrush = new SolidColorBrush(renderTarget, _black);
 
             // Generate graph structure.
             GraphRoot = GenerateGraphStructure();
 
-            BarRoot = _compositor.CreateContainerVisual();
-            GraphRoot.Children.InsertAtBottom(BarRoot);
+            _barRoot = _compositor.CreateContainerVisual();
+            GraphRoot.Children.InsertAtBottom(_barRoot);
 
             // Ambient light
             _ambientLight = _compositor.CreateAmbientLight();
@@ -212,7 +203,7 @@ namespace BarGraphUtility
             UpdateSizeAndPositions();
 
             // Draw text.
-            DrawText(_textRenderTarget, Title, XAxisLabel, YAxisLabel, _textSize);
+            DrawText(_textRenderTarget, _graphTitle, _xAxisLabel, _yAxisLabel, _textSize);
 
             // Return root node for graph.
             return _mainContainer;
@@ -252,7 +243,7 @@ namespace BarGraphUtility
             // Update text render target and redraw text.
             _textRenderTarget.DotsPerInch = new Size2F((float)newDpiX, (float)newDpiY);
             _textRenderTarget.Resize(new Size2((int)(newWidth * newDpiX / 96.0), (int)(newWidth * newDpiY / 96.0)));
-            DrawText(_textRenderTarget, Title, XAxisLabel, YAxisLabel, _textSize);
+            DrawText(_textRenderTarget, _graphTitle, _xAxisLabel, _yAxisLabel, _textSize);
         }
 
         public void DrawText(WindowRenderTarget renderTarget, string titleText, string xAxisText, string yAxisText, float baseTextSize)
@@ -285,8 +276,6 @@ namespace BarGraphUtility
             renderTarget.AntialiasMode = AntialiasMode.PerPrimitive;
             renderTarget.TextAntialiasMode = SharpDX.Direct2D1.TextAntialiasMode.Cleartype;
 
-            _textSceneColorBrush = new SolidColorBrush(renderTarget, _black);
-
             var ClientRectangleTitle = new RectangleF(0, 0, textWidth, textHeight);
             var ClientRectangleXAxis = new RectangleF(0,
                 containerHeight - textHeight + sgOffsetY * 2, textWidth, textHeight);
@@ -295,7 +284,7 @@ namespace BarGraphUtility
 
             _textSceneColorBrush.Color = _black;
 
-            //Draw title and x axis text.
+            // Draw title and x axis text.
             renderTarget.BeginDraw();
 
             renderTarget.Clear(_white);
@@ -317,7 +306,7 @@ namespace BarGraphUtility
             renderTarget.Transform = SharpDX.Matrix3x2.Identity;
         }
 
-        //Dispose of resources.
+        // Dispose of resources.
         public void Dispose()
         {
             _textSceneColorBrush.Dispose();
@@ -328,7 +317,7 @@ namespace BarGraphUtility
 
         private Bar[] CreateBars(double[] data)
         {
-            //Clear
+            // Clear
             _bars = new Bar[data.Length];
 
             var barBrushHelper = new BarGraphUtility.BarBrushHelper(_compositor);
@@ -337,6 +326,7 @@ namespace BarGraphUtility
 
             switch (_graphBarStyle)
             {
+                default: // fall through to single by default
                 case GraphBarStyle.Single:
                     brush = barBrushHelper.GenerateSingleColorBrush(_graphBarColors[0]);
                     break;
@@ -349,12 +339,9 @@ namespace BarGraphUtility
                 case GraphBarStyle.AmbientAnimatingPerBarLinearGradient:
                     brush = barBrushHelper.GenerateAmbientAnimatingLinearGradient(_graphBarColors);
                     break;
-                default:
-                    brush = barBrushHelper.GenerateSingleColorBrush(_graphBarColors[0]);
-                    break;
             }
 
-            var maxValue = _maxBarValue = GetMaxBarValue(data);
+            var maxValue = _maxBarValue = Enumerable.Max(data);
             for (int i = 0; i < data.Length; i++)
             {
                 var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
@@ -372,11 +359,11 @@ namespace BarGraphUtility
 
         private void AddBarsToTree(Bar[] bars)
         {
-            BarRoot.Children.RemoveAll();
+            _barRoot.Children.RemoveAll();
             for (int i = 0; i < bars.Length; i++)
             {
-                BarRoot.Children.InsertAtTop(bars[i].OutlineRoot);
-                BarRoot.Children.InsertAtTop(bars[i].Root);
+                _barRoot.Children.InsertAtTop(bars[i].OutlineRoot);
+                _barRoot.Children.InsertAtTop(bars[i].Root);
             }
 
             UpdateLightTargets();
@@ -385,18 +372,18 @@ namespace BarGraphUtility
         public void UpdateGraphData(string title, string xAxisTitle, string yAxisTitle, double[] newData)
         {
             // Update properties.
-            Title = title;
-            XAxisLabel = xAxisTitle;
-            YAxisLabel = yAxisTitle;
+            _graphTitle = title;
+            _xAxisLabel = xAxisTitle;
+            _yAxisLabel = yAxisTitle;
 
             // Update text.
-            DrawText(_textRenderTarget, Title, XAxisLabel, YAxisLabel, _textSize);
+            DrawText(_textRenderTarget, _graphTitle, _xAxisLabel, _yAxisLabel, _textSize);
 
             // Generate bars.
             // If the same number of data points, update bars with new data. Otherwise, wipe and create new.
             if (_graphData.Length == newData.Length)
             {
-                var maxValue = GetMaxBarValue(newData);
+                var maxValue = Enumerable.Max(newData);
                 for (int i = 0; i < _graphData.Length; i++)
                 {
                     // Animate bar height.
@@ -444,19 +431,6 @@ namespace BarGraphUtility
                 (float)relativePoint.Y, _barOutlineLight.Offset.Z);
             _barLight.Offset = new System.Numerics.Vector3((float)relativePoint.X,
                 (float)relativePoint.Y, _barLight.Offset.Z);
-        }
-
-        private double GetMaxBarValue(double[] data)
-        {
-            double max = data[0];
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (data[i] > max)
-                {
-                    max = data[i];
-                }
-            }
-            return max;
         }
 
         // Adjust bar height relative to the max bar value.

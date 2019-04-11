@@ -51,8 +51,7 @@ namespace VisualLayerIntegration
             Customer[] customers = new Customer[customerFirstNames.Length];
             for (int i = 0; i < customerFirstNames.Length; i++)
             {
-                Customer c = GenerateRandomCustomer();
-                customers[i] = c;
+                customers[i] = GenerateRandomCustomer();
             }
 
             CustomerGrid.ItemsSource = customers;
@@ -66,7 +65,7 @@ namespace VisualLayerIntegration
 
         private static Customer GenerateRandomCustomer()
         {
-            Customer c = new Customer
+            return new Customer
             {
                 ID = GenerateRandomID(),
                 FirstName = customerFirstNames[random.Next(0, customerFirstNames.Length - 1)],
@@ -75,8 +74,6 @@ namespace VisualLayerIntegration
                 NewsletterSubscriber = random.NextDouble() >= 0.5,
                 Data = GenerateRandomData()
             };
-
-            return c;
         }
 
         // Generate random customer ID
