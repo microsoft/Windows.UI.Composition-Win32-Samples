@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include <functional>
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 using namespace winrt;
@@ -85,7 +86,7 @@ struct DesktopWindow
 			return HandleDpiChange(m_window, wparam, lparam);
 		}
 
-		case WM_DESTROY: message:
+		case WM_DESTROY: 
 		{
 			PostQuitMessage(0);
 			return 0;
