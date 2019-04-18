@@ -27,18 +27,19 @@ using SharpDX.Direct2D1;
 using SharpDX.DirectWrite;
 using System;
 using System.Linq;
+using SnVector2 = System.Numerics.Vector2;
+using SnVector3 = System.Numerics.Vector3;
 using Windows.UI;
 using Windows.UI.Composition;
 using SysWin = System.Windows;
 
 namespace BarGraphUtility
 {
-    class BarGraph: IDisposable
+    sealed class BarGraph: IDisposable
     {
         private double[] _graphData;
 
         private readonly Compositor _compositor;
-        private readonly IntPtr _hwnd;
 
         private float _graphWidth, _graphHeight;
         private float _shapeGraphContainerHeight, _shapeGraphContainerWidth, _shapeGraphOffsetY, _shapeGraphOffsetX;
@@ -86,8 +87,7 @@ namespace BarGraphUtility
 
         // Constructor for bar graph.
         // To insert graph, call the constructor then use barGraph.Root to get the container to parent.
-        public BarGraph(Compositor compositor, 
-            IntPtr hwnd, 
+        public BarGraph(Compositor compositor,
             string title, 
             string xAxisLabel, 
             string yAxisLabel, 
@@ -102,7 +102,6 @@ namespace BarGraphUtility
             Windows.UI.Color[] barColors = null)
         {
             _compositor = compositor;
-            _hwnd = hwnd;
             _graphWidth = (float)(width * dpiX / 96.0);
             _graphHeight = (float)(height * dpiY / 96.0);
 
@@ -138,14 +137,14 @@ namespace BarGraphUtility
             _barOutlineLight.CoordinateSpace = _mainContainer;
             _barOutlineLight.InnerConeAngleInDegrees = 45;
             _barOutlineLight.OuterConeAngleInDegrees = 80;
-            _barOutlineLight.Offset = new System.Numerics.Vector3(0, 0, 80);
+            _barOutlineLight.Offset = new SnVector3(0, 0, 80);
 
             // Point light
             _barLight = _compositor.CreatePointLight();
             _barLight.Color = outerConeColor;
             _barLight.CoordinateSpace = _mainContainer;
             _barLight.Intensity = 0.5f;
-            _barLight.Offset = new System.Numerics.Vector3(0, 0, 120);
+            _barLight.Offset = new SnVector3(0, 0, 120);
 
             // If data has been provided, initialize bars and animations; otherwise, leave graph empty.
             if (_graphData.Length > 0)
@@ -163,19 +162,19 @@ namespace BarGraphUtility
             _shapeGraphContainerHeight = _graphHeight - _shapeGraphOffsetY * 2;
             _shapeGraphContainerWidth = _graphWidth - _shapeGraphOffsetX * 2;
 
-            _mainContainer.Offset = new System.Numerics.Vector3(_shapeGraphOffsetX, _shapeGraphOffsetY, 0);
+            _mainContainer.Offset = new SnVector3(_shapeGraphOffsetX, _shapeGraphOffsetY, 0);
 
             _barWidth = ComputeBarWidth();
             _barSpacing = (float)(0.5 * _barWidth);
 
-            _shapeContainer.Offset = new System.Numerics.Vector3(_shapeGraphOffsetX, _shapeGraphOffsetY, 0);
-            _shapeContainer.Size = new System.Numerics.Vector2(_shapeGraphContainerWidth, _shapeGraphContainerHeight);
+            _shapeContainer.Offset = new SnVector3(_shapeGraphOffsetX, _shapeGraphOffsetY, 0);
+            _shapeContainer.Size = new SnVector2(_shapeGraphContainerWidth, _shapeGraphContainerHeight);
 
-            _xAxisLine.Start = new System.Numerics.Vector2(0, _shapeGraphContainerHeight - _shapeGraphOffsetY);
-            _xAxisLine.End = new System.Numerics.Vector2(_shapeGraphContainerWidth - _shapeGraphOffsetX, _shapeGraphContainerHeight - _shapeGraphOffsetY);
+            _xAxisLine.Start = new SnVector2(0, _shapeGraphContainerHeight - _shapeGraphOffsetY);
+            _xAxisLine.End = new SnVector2(_shapeGraphContainerWidth - _shapeGraphOffsetX, _shapeGraphContainerHeight - _shapeGraphOffsetY);
 
-            _yAxisLine.Start = new System.Numerics.Vector2(0, _shapeGraphContainerHeight - _shapeGraphOffsetY);
-            _yAxisLine.End = new System.Numerics.Vector2(0, 0);
+            _yAxisLine.Start = new SnVector2(0, _shapeGraphContainerHeight - _shapeGraphOffsetY);
+            _yAxisLine.End = new SnVector2(0, 0);
         }
 
         private ContainerVisual GenerateGraphStructure()
@@ -222,7 +221,7 @@ namespace BarGraphUtility
             UpdateSizeAndPositions();
 
             // Update bars.
-            for (int i = 0; i < _graphData.Length; i++)
+            for (var i = 0; i < _graphData.Length; i++)
             {
                 var bar = _bars[i];
 
@@ -234,8 +233,8 @@ namespace BarGraphUtility
                 }
 
                 bar.UpdateSize(_barWidth, height);
-                bar.Root.Offset = new System.Numerics.Vector3(xOffset, _shapeGraphContainerHeight, 0);
-                bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, _shapeGraphContainerHeight, 0);
+                bar.Root.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
+                bar.OutlineRoot.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
             }
 
             // Scale text size.
@@ -294,7 +293,7 @@ namespace BarGraphUtility
             renderTarget.EndDraw();
 
             // Rotate render target to draw y axis text.
-            renderTarget.Transform = SharpDX.Matrix3x2.Rotation((float)(-Math.PI / 2), new SharpDX.Vector2(0, containerHeight));
+            renderTarget.Transform = Matrix3x2.Rotation((float)(-Math.PI / 2), new SharpDX.Vector2(0, containerHeight));
 
             renderTarget.BeginDraw();
 
@@ -303,7 +302,7 @@ namespace BarGraphUtility
             renderTarget.EndDraw();
 
             // Rotate the RenderTarget back.
-            renderTarget.Transform = SharpDX.Matrix3x2.Identity;
+            renderTarget.Transform = Matrix3x2.Identity;
         }
 
         // Dispose of resources.
@@ -317,14 +316,14 @@ namespace BarGraphUtility
             _ambientLight.Dispose();
             _barOutlineLight.Dispose();
             _barLight.Dispose();
-    }
+        }
 
         private Bar[] CreateBars(double[] data)
         {
             // Clear
             _bars = new Bar[data.Length];
 
-            var barBrushHelper = new BarGraphUtility.BarBrushHelper(_compositor);
+            var barBrushHelper = new BarBrushHelper(_compositor);
             var brushes = new CompositionBrush[data.Length];
             CompositionBrush brush = null;
 
@@ -332,29 +331,29 @@ namespace BarGraphUtility
             {
                 default: // fall through to single by default
                 case GraphBarStyle.Single:
-                    brush = barBrushHelper.GenerateSingleColorBrush(_graphBarColors[0]);
+                    brush = barBrushHelper.GenerateColorBrush(_graphBarColors[0]);
                     break;
                 case GraphBarStyle.Random:
                     brushes = barBrushHelper.GenerateRandomColorBrushes(data.Length);
                     break;
                 case GraphBarStyle.PerBarLinearGradient:
-                    brush = barBrushHelper.GenerateLinearGradient(_graphBarColors);
+                    brush = barBrushHelper.CreateLinearGradientBrushes(_graphBarColors);
                     break;
                 case GraphBarStyle.AmbientAnimatingPerBarLinearGradient:
-                    brush = barBrushHelper.GenerateAmbientAnimatingLinearGradient(_graphBarColors);
+                    brush = barBrushHelper.CreateAnimatedLinearGradientBrushes(_graphBarColors);
                     break;
             }
 
             var maxValue = _maxBarValue = Enumerable.Max(data);
-            for (int i = 0; i < data.Length; i++)
+            for (var i = 0; i < data.Length; i++)
             {
                 var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
                 var height = GetAdjustedBarHeight(maxValue, _graphData[i]);
                 var barBrush = brush ?? brushes[i];
 
-                var bar = new BarGraphUtility.Bar(_compositor, _shapeGraphContainerHeight, (float)height, _barWidth, "something", _graphData[i], barBrush);
-                bar.OutlineRoot.Offset = new System.Numerics.Vector3(xOffset, _shapeGraphContainerHeight, 0);
-                bar.Root.Offset = new System.Numerics.Vector3(xOffset, _shapeGraphContainerHeight, 0);
+                var bar = new Bar(_compositor, _shapeGraphContainerHeight, (float)height, _barWidth, "something", _graphData[i], barBrush);
+                bar.OutlineRoot.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
+                bar.Root.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
 
                 _bars[i] = bar;
             }
@@ -364,7 +363,7 @@ namespace BarGraphUtility
         private void AddBarsToTree(Bar[] bars)
         {
             _barRoot.Children.RemoveAll();
-            for (int i = 0; i < bars.Length; i++)
+            for (var i = 0; i < bars.Length; i++)
             {
                 _barRoot.Children.InsertAtTop(bars[i].OutlineRoot);
                 _barRoot.Children.InsertAtTop(bars[i].Root);
@@ -388,16 +387,14 @@ namespace BarGraphUtility
             if (_graphData.Length == newData.Length)
             {
                 var maxValue = Enumerable.Max(newData);
-                for (int i = 0; i < _graphData.Length; i++)
+                for (var i = 0; i < _graphData.Length; i++)
                 {
                     // Animate bar height.
-                    var oldBar = (Bar)(_bars[i]);
+                    var oldBar = _bars[i];
                     var newBarHeight = GetAdjustedBarHeight(maxValue, newData[i]);
 
                     // Update Bar.
                     oldBar.Height = (float)newBarHeight; // Trigger height animation.
-                    oldBar.Label = "something2";
-                    oldBar.Value = newData[i];
                 }
             }
             else
@@ -414,15 +411,15 @@ namespace BarGraphUtility
         {
             // Target bars outlines with light.
             _barOutlineLight.Targets.RemoveAll();
-            for (int i = 0; i < _bars.Length; i++)
+            for (var i = 0; i < _bars.Length; i++)
             {
-                var bar = (Bar)_bars[i];
+                var bar = _bars[i];
                 _barOutlineLight.Targets.Add(bar.OutlineRoot);
             }
 
             // Target bars with softer point light.
             _barLight.Targets.RemoveAll();
-            for (int i = 0; i < _bars.Length; i++)
+            for (var i = 0; i < _bars.Length; i++)
             {
                 var bar = _bars[i];
                 _barLight.Targets.Add(bar.Root);
@@ -431,9 +428,9 @@ namespace BarGraphUtility
 
         public void UpdateLight(SysWin.Point relativePoint)
         {
-            _barOutlineLight.Offset = new System.Numerics.Vector3((float)relativePoint.X,
+            _barOutlineLight.Offset = new SnVector3((float)relativePoint.X,
                 (float)relativePoint.Y, _barOutlineLight.Offset.Z);
-            _barLight.Offset = new System.Numerics.Vector3((float)relativePoint.X,
+            _barLight.Offset = new SnVector3((float)relativePoint.X,
                 (float)relativePoint.Y, _barLight.Offset.Z);
         }
 

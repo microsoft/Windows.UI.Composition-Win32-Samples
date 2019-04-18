@@ -89,7 +89,7 @@ namespace VisualLayerIntegration
             var height = (float)CompositionHostElement.ActualHeight;
 
             var properties = new HwndRenderTargetProperties();
-            properties.Hwnd = _compositionHost.hwndHost;
+            properties.Hwnd = _compositionHost.HwndHost;
             properties.PixelSize = new SharpDX.Size2((int)(width * _currentDpiX / 96.0), (int)(width * _currentDpiY / 96.0));
             properties.PresentOptions = PresentOptions.None;
 
@@ -108,7 +108,7 @@ namespace VisualLayerIntegration
             if (_currentGraph != null)
             {
                 // Convert mouse position to DIP (is raised in physical pixels).
-                var posDip = GetPointInDIP(e.point);
+                var posDip = GetPointInDIP(e.Point);
 
                 // Get control position in DIP
                 var controlTopLeft = CompositionHostElement.PointToScreen(new SysWin.Point(0, 0));
@@ -155,7 +155,7 @@ namespace VisualLayerIntegration
                 }
                 else
                 {                    
-                    var graph = new BarGraph(_compositor, _compositionHost.hwndHost, graphTitle, _xAxisTitle, _yAxisTitle,
+                    var graph = new BarGraph(_compositor, graphTitle, _xAxisTitle, _yAxisTitle,
                         (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, _currentDpiX, _currentDpiY, customer.Data, _windowRenderTarget,
                         true, BarGraph.GraphBarStyle.PerBarLinearGradient, _graphColors);
 

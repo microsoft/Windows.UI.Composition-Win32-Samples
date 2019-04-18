@@ -40,7 +40,7 @@ namespace BarGraphUtility
             _compositor = c;            
         }
 
-        internal CompositionBrush GenerateSingleColorBrush(Color color)
+        internal CompositionBrush GenerateColorBrush(Color color)
         {
             return _compositor.CreateColorBrush(color);
         }
@@ -48,7 +48,7 @@ namespace BarGraphUtility
         internal CompositionBrush[] GenerateRandomColorBrushes(int numBrushes)
         {
             var brushes = new CompositionBrush[numBrushes];
-            for (int i = 0; i < numBrushes; i++)
+            for (var i = 0; i < numBrushes; i++)
             {
                 var rgb = new byte[3];
                 _rand.NextBytes(rgb);
@@ -59,7 +59,7 @@ namespace BarGraphUtility
             return brushes;
         }
 
-        internal CompositionBrush GenerateLinearGradient(Color[] colors)
+        internal CompositionBrush CreateLinearGradientBrushes(Color[] colors)
         {
             var linearGradientBrush = _compositor.CreateLinearGradientBrush();
             linearGradientBrush.RotationAngleInDegrees = 45;
@@ -77,27 +77,29 @@ namespace BarGraphUtility
             return linearGradientBrush;
         }
 
-        internal CompositionBrush GenerateAmbientAnimatingLinearGradient(Color[] colors)
+        internal CompositionBrush CreateAnimatedLinearGradientBrushes(Color[] colors)
         {
             var linearGradientBrush = _compositor.CreateLinearGradientBrush();
             linearGradientBrush.RotationAngleInDegrees = 45;
 
-            var i = 0;
+            // Set long animation duration so that animated effect is slow
             var animationDuration = TimeSpan.FromSeconds(100);
+
+            var i = 0;
             foreach (Color color in colors)
             {
                 var offset = i / ((float)colors.Length - 1);
 
                 var stop = _compositor.CreateColorGradientStop(offset, color);
                 linearGradientBrush.ColorStops.Add(stop);
-                InitLinearGradientAnimation(stop, animationDuration, 1.0f);
+                AnimateLinearGradientstopOffset(stop, animationDuration, 1);
 
                 // Create a second mirrored stop for all colors but the first.
                 if (offset > 0)
                 {
                     var stop2 = _compositor.CreateColorGradientStop(-offset, color);
                     linearGradientBrush.ColorStops.Add(stop2);
-                    InitLinearGradientAnimation(stop2, animationDuration, 1.0f);
+                    AnimateLinearGradientstopOffset(stop2, animationDuration, 1);
                 }
 
                 i++;
@@ -106,7 +108,7 @@ namespace BarGraphUtility
             return linearGradientBrush;
         }
 
-        private void InitLinearGradientAnimation(CompositionColorGradientStop stop, TimeSpan duration, float offsetAdjustment)
+        private void AnimateLinearGradientstopOffset(CompositionColorGradientStop stop, TimeSpan duration, float offsetAdjustment)
         {
             var animateStop = _compositor.CreateScalarKeyFrameAnimation();
             animateStop.InsertKeyFrame(0.0f, stop.Offset);

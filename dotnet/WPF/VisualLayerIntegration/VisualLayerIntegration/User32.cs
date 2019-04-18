@@ -69,7 +69,7 @@ namespace WinComp.Interop
            IntPtr hInstance,
            IntPtr lpParam);
 
-        [DllImport("user32.dll", EntryPoint = "DestroyWindow", CharSet = CharSet.Unicode, SetLastError = true)]
+        [DllImport("user32", SetLastError = true)]
         public static extern bool DestroyWindow(IntPtr hWnd);
     }
 

@@ -36,24 +36,28 @@ namespace VisualLayerIntegration
     {
         private object _dispatcherQueue;
         private ICompositionTarget _compositionTarget;
-        private List<IDisposable> registeredDisposables = new List<IDisposable>();
-       
-        public IntPtr hwndHost { get; private set; }
+        private readonly List<IDisposable> _registeredDisposables = new List<IDisposable>();
+        private readonly ICompositorDesktopInterop _compositorDesktopInterop;
+
+        public IntPtr HwndHost { get; private set; }
+
         public Compositor Compositor { get; private set; }
 
         public event EventHandler<HwndMouseEventArgs> MouseLClick;
         public event EventHandler<HwndMouseEventArgs> MouseMoved;
         public event EventHandler<InvalidateDrawingEventArgs> InvalidateDrawing;
 
+        public CompositionHost()
+        {
+            // Create dispatcher queue.
+            _dispatcherQueue = InitializeCoreDispatcher();
 
-        public CompositionHost() {   }
+            Compositor = new Compositor();
+            _compositorDesktopInterop = (ICompositorDesktopInterop)(object)Compositor;
+        }
 
         public void SetChild(Visual v)
         {
-            if (Compositor == null)
-            {
-                InitializeComposition(hwndHost);
-            }
             _compositionTarget.Root = v;
         }
 
@@ -61,7 +65,7 @@ namespace VisualLayerIntegration
         protected override HandleRef BuildWindowCore(HandleRef hwndParent)
         {
             // Create Window.
-            hwndHost = User32.CreateWindowExW(
+            HwndHost = User32.CreateWindowExW(
                                    dwExStyle: 0,
                                    lpClassName: "Message",
                                    lpWindowName: "CompositionHost",
@@ -73,13 +77,10 @@ namespace VisualLayerIntegration
                                    hInstance: IntPtr.Zero,
                                    lpParam: IntPtr.Zero);
 
-            // Create dispatcher queue.
-            _dispatcherQueue = InitializeCoreDispatcher();
-
             // Get compositor and target for hwnd.
-            InitializeComposition(hwndHost);
+            _compositorDesktopInterop.CreateDesktopWindowTarget(HwndHost, true, out _compositionTarget);
 
-            return new HandleRef(this, hwndHost);
+            return new HandleRef(this, HwndHost);
         }
 
         // Create dispatcher queue.
@@ -94,14 +95,6 @@ namespace VisualLayerIntegration
             return queue;
         }
 
-        // Get compositor and target for hwnd.
-        private void InitializeComposition(IntPtr hwndHost)
-        {
-            Compositor = new Compositor();
-            var compositorDesktopInterop = (ICompositorDesktopInterop)(object)Compositor;
-            compositorDesktopInterop.CreateDesktopWindowTarget(hwndHost, true, out _compositionTarget);
-        }
-
         protected override void DestroyWindowCore(HandleRef hwnd)
         {
             if (_compositionTarget.Root != null)
@@ -111,15 +104,16 @@ namespace VisualLayerIntegration
 
             User32.DestroyWindow(hwnd.Handle);
 
-            foreach(IDisposable d in registeredDisposables)
+            foreach(var d in _registeredDisposables)
             {
                 d.Dispose();
             }
         }
 
+        // Register a given IDisposable object for disposal during cleanup.
         public void RegisterForDispose(IDisposable d)
         {
-            registeredDisposables.Add(d);
+            _registeredDisposables.Add(d);
         }
 
         protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -128,7 +122,9 @@ namespace VisualLayerIntegration
             {
                 case User32.WM.WM_MOUSEMOVE:
                     var pos = PointToScreen(new Point((short)(((int)lParam) & 0xffff), (short)(((int)lParam) >> 16)));
-                    RaiseHwndMouseMove(new HwndMouseEventArgs(pos));
+                    var hwndMouseEventArgs = new HwndMouseEventArgs();
+                    hwndMouseEventArgs.Point = pos;
+                    RaiseHwndMouseMove(hwndMouseEventArgs);
                     break;
                 case User32.WM.WM_LBUTTONDOWN:
                     RaiseHwndMouseLClick(new HwndMouseEventArgs());
@@ -141,7 +137,7 @@ namespace VisualLayerIntegration
             return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
         }
 
-        void RaisePaint()
+        private void RaisePaint()
         {
             var args = new InvalidateDrawingEventArgs();
             args.Width = ActualWidth;
@@ -158,8 +154,6 @@ namespace VisualLayerIntegration
         {
             MouseLClick?.Invoke(this, args);
         }
-
-        #region PInvoke declarations
 
         internal enum DISPATCHERQUEUE_THREAD_APARTMENTTYPE
         {
@@ -189,8 +183,6 @@ namespace VisualLayerIntegration
         internal static extern IntPtr CreateDispatcherQueueController(DispatcherQueueOptions options,
                                                 [MarshalAs(UnmanagedType.IUnknown)]
                                                out object dispatcherQueueController);
-        
-        #endregion PInvoke declarations
     }
 
     sealed class InvalidateDrawingEventArgs : EventArgs
@@ -201,13 +193,7 @@ namespace VisualLayerIntegration
 
     sealed class HwndMouseEventArgs : EventArgs
     {
-        public Point point { get; set; }
-
-        public HwndMouseEventArgs(Point point)
-        {
-            this.point = point;
-        }
-        public HwndMouseEventArgs() { }
+        public Point Point { get; set; }
     }
 
 

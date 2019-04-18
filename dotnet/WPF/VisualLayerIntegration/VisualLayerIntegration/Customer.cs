@@ -26,7 +26,6 @@ using System;
 
 namespace VisualLayerIntegration
 {
-    // Base customer object with a selection of data.
     sealed public class Customer
     {
         public double[] Data { get; set; }

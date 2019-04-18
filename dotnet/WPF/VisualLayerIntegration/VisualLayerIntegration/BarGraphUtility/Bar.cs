@@ -53,8 +53,8 @@ namespace BarGraphUtility
         }
 
         public float Width { get; private set; }
-        public double Value { get; set; }
-        public string Label { get; set; }
+        public double Value { get; private set; }
+        public string Label { get; private set; }
 
         public ShapeVisual Root { get; private set; }
         public ShapeVisual OutlineRoot { get; private set; }

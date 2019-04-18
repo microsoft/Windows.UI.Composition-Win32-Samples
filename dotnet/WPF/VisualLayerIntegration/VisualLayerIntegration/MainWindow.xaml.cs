@@ -35,11 +35,11 @@ namespace VisualLayerIntegration
     {
         private static readonly Random random = new Random();
         private static readonly string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private static readonly string[] customerFirstNames = new string[] { "Angel", "Josephine",
+        private static readonly string[] customerFirstNames = new [] { "Angel", "Josephine",
             "Wade", "Christie", "Whitney", "Ismael", "Alexandra", "Rhonda", "Dawn", "Roman", "Emanuel",
             "Evan", "Aaron", "Bill", "Margaret", "Mandy", "Carlton", "Cornelius", "Cora", "Alejandro",
             "Annette", "Bertha", "John", "Billy", "Randall" };
-        private static readonly string[] customerLastNames = new string[] { "Murphy", "Swanson", "Sandoval",
+        private static readonly string[] customerLastNames = new [] { "Murphy", "Swanson", "Sandoval",
             "Moore", "Adkins", "Tucker", "Cook", "Fernandez", "Schwartz", "Sharp", "Bryant", "Gross", "Spencer",
             "Powers", "Hunter", "Moreno", "Baldwin", "Stewart", "Rice", "Watkins", "Hawkins", "Dean", "Howard",
             "Bailey", "Gill" };
@@ -48,13 +48,9 @@ namespace VisualLayerIntegration
         {
             InitializeComponent();
 
-            Customer[] customers = new Customer[customerFirstNames.Length];
-            for (int i = 0; i < customerFirstNames.Length; i++)
-            {
-                customers[i] = GenerateRandomCustomer();
-            }
+            var customers = new Customer[customerFirstNames.Length];
 
-            CustomerGrid.ItemsSource = customers;
+            CustomerGrid.ItemsSource = customerFirstNames.Select(_ => GenerateRandomCustomer()).ToArray();
         }
 
         // Send customer info to the control on row select.
