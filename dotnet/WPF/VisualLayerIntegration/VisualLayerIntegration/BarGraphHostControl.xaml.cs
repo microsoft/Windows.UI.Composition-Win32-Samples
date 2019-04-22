@@ -43,8 +43,8 @@ namespace VisualLayerIntegration
     public partial class BarGraphHostControl : UserControl, IDisposable
     {
         private readonly CompositionHost _compositionHost;
-        private Compositor _compositor;
-        private Windows.UI.Composition.ContainerVisual _graphContainer;
+        private readonly Compositor _compositor;
+        private readonly Windows.UI.Composition.ContainerVisual _graphContainer;
         private BarGraph _currentGraph;
 
         private double _currentDpiX = 96.0;
@@ -68,8 +68,10 @@ namespace VisualLayerIntegration
 
             _compositionHost = new CompositionHost();
             CompositionHostElement.Child = _compositionHost;
-
             _compositionHost.RegisterForDispose(this);
+
+            _compositor = _compositionHost.Compositor;
+            _graphContainer = _compositor.CreateContainerVisual();
         }
 
         private void BarGraphHostControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -79,10 +81,6 @@ namespace VisualLayerIntegration
 
         private void BarGraphHostControl_Loaded(object sender, RoutedEventArgs e)
         {
-            _compositor = _compositionHost.Compositor;
-            _graphContainer = _compositor.CreateContainerVisual();
-            _compositionHost.SetChild(_graphContainer);            
-
             // Create properties for render target
             var factory2D = new SharpDX.Direct2D1.Factory();
             var width = (float)CompositionHostElement.ActualWidth;
@@ -100,6 +98,27 @@ namespace VisualLayerIntegration
 
             _compositionHost.MouseMoved += HostControl_MouseMoved;
             _compositionHost.InvalidateDrawing += CompositionHost_InvalidateDrawing;
+
+            _compositionHost.SetChild(_graphContainer);
+
+            // Create graph.
+            Customer customer = DataContext as Customer;
+            var graphTitle = "Customer Investment History";
+            double[] customerData = null;
+            if (customer != null)
+            {
+                graphTitle = customer.FirstName + " Investment History" ?? "";
+                customerData = customer.Data;
+            }
+
+            var graph = new BarGraph(_compositor, graphTitle, _xAxisTitle, _yAxisTitle,
+                        (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, _currentDpiX, _currentDpiY,
+                        _windowRenderTarget, customerData,
+                        true, BarGraph.GraphBarStyle.PerBarLinearGradient, _graphColors);
+
+            _currentGraph = graph;
+
+            _graphContainer.Children.InsertAtTop(graph.GraphRoot);
         }
 
         private void HostControl_MouseMoved(object sender, HwndMouseEventArgs e)
@@ -145,22 +164,12 @@ namespace VisualLayerIntegration
             Customer customer = DataContext as Customer;
             if (customer != null)
             {
-                //Customer customer = DataContext as Customer;
                 var graphTitle = customer.FirstName + " Investment History";
 
                 // If graph already exists update values. Otherwise, create new graph.
                 if (_graphContainer.Children.Count > 0 && _currentGraph != null)
                 {
                     _currentGraph.UpdateGraphData(graphTitle, _xAxisTitle, _yAxisTitle, customer.Data);
-                }
-                else
-                {                    
-                    var graph = new BarGraph(_compositor, graphTitle, _xAxisTitle, _yAxisTitle,
-                        (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, _currentDpiX, _currentDpiY, customer.Data, _windowRenderTarget,
-                        true, BarGraph.GraphBarStyle.PerBarLinearGradient, _graphColors);
-
-                    _currentGraph = graph;
-                    _graphContainer.Children.InsertAtTop(graph.GraphRoot);
                 }
             }
         }

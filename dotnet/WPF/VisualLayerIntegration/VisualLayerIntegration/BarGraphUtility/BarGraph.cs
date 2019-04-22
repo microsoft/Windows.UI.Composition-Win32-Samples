@@ -94,9 +94,9 @@ namespace BarGraphUtility
             float width, 
             float height, 
             double dpiX, 
-            double dpiY, 
-            double[] data, 
-            WindowRenderTarget renderTarget, 
+            double dpiY,             
+            WindowRenderTarget renderTarget,
+            double[] data = null,
             bool AnimationsOn = true, 
             GraphBarStyle graphBarStyle = GraphBarStyle.Single,
             Windows.UI.Color[] barColors = null)
@@ -147,7 +147,7 @@ namespace BarGraphUtility
             _barLight.Offset = new SnVector3(0, 0, 120);
 
             // If data has been provided, initialize bars and animations; otherwise, leave graph empty.
-            if (_graphData.Length > 0)
+            if (_graphData != null && _graphData.Length > 0)
             {
                 _bars = new Bar[_graphData.Length];
                 var bars = CreateBars(_graphData);
@@ -163,7 +163,7 @@ namespace BarGraphUtility
             _shapeGraphContainerWidth = _graphWidth - _shapeGraphOffsetX * 2;
 
             _mainContainer.Offset = new SnVector3(_shapeGraphOffsetX, _shapeGraphOffsetY, 0);
-
+            
             _barWidth = ComputeBarWidth();
             _barSpacing = (float)(0.5 * _barWidth);
 
@@ -331,10 +331,10 @@ namespace BarGraphUtility
             {
                 default: // fall through to single by default
                 case GraphBarStyle.Single:
-                    brush = barBrushHelper.GenerateColorBrush(_graphBarColors[0]);
+                    brush = barBrushHelper.CreateColorBrush(_graphBarColors[0]);
                     break;
                 case GraphBarStyle.Random:
-                    brushes = barBrushHelper.GenerateRandomColorBrushes(data.Length);
+                    brushes = barBrushHelper.CreateRandomColorBrushes(data.Length);
                     break;
                 case GraphBarStyle.PerBarLinearGradient:
                     brush = barBrushHelper.CreateLinearGradientBrushes(_graphBarColors);
@@ -348,7 +348,7 @@ namespace BarGraphUtility
             for (var i = 0; i < data.Length; i++)
             {
                 var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
-                var height = GetAdjustedBarHeight(maxValue, _graphData[i]);
+                var height = GetAdjustedBarHeight(maxValue, data[i]);
                 var barBrush = brush ?? brushes[i];
 
                 var bar = new Bar(_compositor, _shapeGraphContainerHeight, (float)height, _barWidth, "something", _graphData[i], barBrush);
@@ -384,7 +384,7 @@ namespace BarGraphUtility
 
             // Generate bars.
             // If the same number of data points, update bars with new data. Otherwise, wipe and create new.
-            if (_graphData.Length == newData.Length)
+            if (_graphData != null && _graphData.Length == newData.Length)
             {
                 var maxValue = Enumerable.Max(newData);
                 for (var i = 0; i < _graphData.Length; i++)
@@ -399,6 +399,8 @@ namespace BarGraphUtility
             }
             else
             {
+                _graphData = newData;
+                UpdateSizeAndPositions();
                 var bars = CreateBars(newData);
                 AddBarsToTree(bars);
             }
@@ -443,9 +445,13 @@ namespace BarGraphUtility
         // Return computed bar width for graph. Default spacing is 1/2 bar width.
         private float ComputeBarWidth()
         {
-            var spacingUnits = (_graphData.Length + 1) / 2;
+            if(_graphData != null)
+            {
+                var spacingUnits = (_graphData.Length + 1) / 2;
 
-            return ((_shapeGraphContainerWidth - (2 * _shapeGraphOffsetX)) / (_graphData.Length + spacingUnits));
+                return ((_shapeGraphContainerWidth - (2 * _shapeGraphOffsetX)) / (_graphData.Length + spacingUnits));
+            }
+            return -1;
         }
     }
 }

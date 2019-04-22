@@ -40,12 +40,12 @@ namespace BarGraphUtility
             _compositor = c;            
         }
 
-        internal CompositionBrush GenerateColorBrush(Color color)
+        internal CompositionBrush CreateColorBrush(Color color)
         {
             return _compositor.CreateColorBrush(color);
         }
 
-        internal CompositionBrush[] GenerateRandomColorBrushes(int numBrushes)
+        internal CompositionBrush[] CreateRandomColorBrushes(int numBrushes)
         {
             var brushes = new CompositionBrush[numBrushes];
             for (var i = 0; i < numBrushes; i++)
