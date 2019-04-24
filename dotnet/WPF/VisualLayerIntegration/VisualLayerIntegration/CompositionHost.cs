@@ -91,7 +91,12 @@ namespace VisualLayerIntegration
             options.threadType = DISPATCHERQUEUE_THREAD_TYPE.DQTYPE_THREAD_CURRENT;
             options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
 
-            CreateDispatcherQueueController(options, out object queue);
+            var hresult = CreateDispatcherQueueController(options, out object queue);
+            if (hresult != 0)
+            {
+                Marshal.ThrowExceptionForHR(hresult);
+            }
+
             return queue;
         }
 
@@ -180,7 +185,7 @@ namespace VisualLayerIntegration
         };
 
         [DllImport("coremessaging.dll")]
-        internal static extern IntPtr CreateDispatcherQueueController(DispatcherQueueOptions options,
+        internal static extern int CreateDispatcherQueueController(DispatcherQueueOptions options,
                                                 [MarshalAs(UnmanagedType.IUnknown)]
                                                out object dispatcherQueueController);
     }

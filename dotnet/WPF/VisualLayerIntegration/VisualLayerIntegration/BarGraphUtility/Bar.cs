@@ -38,6 +38,58 @@ namespace BarGraphUtility
 
         private const float _strokeThickness = 8;
 
+        public Bar(Compositor compositor, float maxBarHeight, float height, float width, string label, double value, CompositionBrush brush = null)
+        {
+            _compositor = compositor;
+
+            Height = height;
+            Width = width;
+            Value = value;
+            Label = label;
+            
+            var barBrush = brush ?? compositor.CreateColorBrush(Colors.Blue);
+            
+            // Define shape visual for bar outline.
+            var shapeOutlineVisual = _compositor.CreateShapeVisual();
+            shapeOutlineVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
+            shapeOutlineVisual.RotationAngleInDegrees = -90f;
+
+            // Create geometry and shape for the bar outline.
+            _rectOutlineGeometry = _compositor.CreateRectangleGeometry();
+            // Reverse width and height since rect will be at a 90* angle.
+            _rectOutlineGeometry.Size = new Vector2(Height, Width);
+            var barOutlineVisual = _compositor.CreateSpriteShape(_rectOutlineGeometry);
+            barOutlineVisual.StrokeThickness = _strokeThickness;
+            barOutlineVisual.StrokeBrush = barBrush;
+
+            shapeOutlineVisual.Shapes.Add(barOutlineVisual);
+
+            // Define shape visual. 
+            var shapeVisual = _compositor.CreateShapeVisual();
+            shapeVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
+            shapeVisual.RotationAngleInDegrees = -90f;
+
+            // Create rectangle geometry and shape for the bar.
+            _rectGeometry = _compositor.CreateRectangleGeometry();
+            // Reverse width and height since rect will be at a 90* angle.
+            _rectGeometry.Size = new Vector2(Height, Width);
+
+            var barVisual = _compositor.CreateSpriteShape(_rectGeometry);
+            barVisual.FillBrush = barBrush;
+
+            shapeVisual.Shapes.Add(barVisual);
+
+            Root = shapeVisual;
+            OutlineRoot = shapeOutlineVisual;
+
+            // Add implict animation to bar.
+            var implicitAnimations = _compositor.CreateImplicitAnimationCollection();
+            // Trigger animation when the size property changes. 
+            implicitAnimations["Size"] = CreateAnimation();
+            _rectGeometry.ImplicitAnimations = implicitAnimations;
+            _rectOutlineGeometry.ImplicitAnimations = implicitAnimations;
+        }
+
         public float Height
         {
             get { return _height; }
@@ -58,58 +110,6 @@ namespace BarGraphUtility
 
         public ShapeVisual Root { get; private set; }
         public ShapeVisual OutlineRoot { get; private set; }
-
-        public Bar(Compositor compositor, float maxBarHeight, float height, float width, string label, double value, CompositionBrush brush = null)
-        {
-            _compositor = compositor;
-
-            Height = height;
-            Width = width;
-            Value = value;
-            Label = label;
-            
-            var barBrush = brush ?? compositor.CreateColorBrush(Colors.Blue);
-            
-            // Define shape visual for bar outline.
-            var _shapeOutlineVisual = _compositor.CreateShapeVisual();
-            _shapeOutlineVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
-            _shapeOutlineVisual.RotationAngleInDegrees = -90f;
-
-            // Create geometry and shape for the bar outline.
-            _rectOutlineGeometry = _compositor.CreateRectangleGeometry();
-            // Reverse width and height since rect will be at a 90* angle.
-            _rectOutlineGeometry.Size = new Vector2(Height, Width);
-            var barOutlineVisual = _compositor.CreateSpriteShape(_rectOutlineGeometry);
-            barOutlineVisual.StrokeThickness = _strokeThickness;
-            barOutlineVisual.StrokeBrush = barBrush;
-
-            _shapeOutlineVisual.Shapes.Add(barOutlineVisual);
-
-            // Define shape visual. 
-            var _shapeVisual = _compositor.CreateShapeVisual();
-            _shapeVisual.Size = new Vector2(maxBarHeight, maxBarHeight);
-            _shapeVisual.RotationAngleInDegrees = -90f;
-
-            // Create rectangle geometry and shape for the bar.
-            _rectGeometry = _compositor.CreateRectangleGeometry();
-            // Reverse width and height since rect will be at a 90* angle.
-            _rectGeometry.Size = new Vector2(Height, Width);
-
-            var _barVisual = _compositor.CreateSpriteShape(_rectGeometry);
-            _barVisual.FillBrush = barBrush;
-
-            _shapeVisual.Shapes.Add(_barVisual);
-
-            Root = _shapeVisual;
-            OutlineRoot = _shapeOutlineVisual;
-
-            // Add implict animation to bar.
-            var implicitAnimations = _compositor.CreateImplicitAnimationCollection();
-            // Trigger animation when the size property changes. 
-            implicitAnimations["Size"] = CreateAnimation();
-            _rectGeometry.ImplicitAnimations = implicitAnimations;
-            _rectOutlineGeometry.ImplicitAnimations = implicitAnimations;
-        }
 
         public void UpdateSize(float width, float height)
         {

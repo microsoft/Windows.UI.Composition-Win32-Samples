@@ -48,8 +48,6 @@ namespace VisualLayerIntegration
         {
             InitializeComponent();
 
-            var customers = new Customer[customerFirstNames.Length];
-
             CustomerGrid.ItemsSource = customerFirstNames.Select(_ => GenerateRandomCustomer()).ToArray();
         }
 

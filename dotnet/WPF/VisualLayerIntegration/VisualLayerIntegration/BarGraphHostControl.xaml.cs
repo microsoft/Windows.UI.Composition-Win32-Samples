@@ -42,19 +42,20 @@ namespace VisualLayerIntegration
     /// </summary>
     public partial class BarGraphHostControl : UserControl, IDisposable
     {
+        private const string c_xAxisTitle = "Investment #";
+        private const string c_yAxisTitle = "# Shares of Stock";
+
+        private static readonly RawColor4 _backgroundColor = new RawColor4(255, 255, 255, 255);
+        
         private readonly CompositionHost _compositionHost;
         private readonly Compositor _compositor;
         private readonly Windows.UI.Composition.ContainerVisual _graphContainer;
-        private BarGraph _currentGraph;
+        private readonly Windows.UI.Color[] _graphColors = { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) };
 
+        private BarGraph _currentGraph;
         private double _currentDpiX = 96.0;
         private double _currentDpiY = 96.0;
-
         private WindowRenderTarget _windowRenderTarget;
-        private readonly static RawColor4 _backgroundColor = new RawColor4(255, 255, 255, 255);
-        private readonly Windows.UI.Color[] _graphColors = { Windows.UI.Color.FromArgb(255, 246, 65, 108), Windows.UI.Color.FromArgb(255, 255, 246, 183) };
-        private readonly string _xAxisTitle = "Investment #";
-        private readonly string _yAxisTitle = "# Shares of Stock";
 
         public BarGraphHostControl()
         {
@@ -111,7 +112,7 @@ namespace VisualLayerIntegration
                 customerData = customer.Data;
             }
 
-            var graph = new BarGraph(_compositor, graphTitle, _xAxisTitle, _yAxisTitle,
+            var graph = new BarGraph(_compositor, graphTitle, c_xAxisTitle, c_yAxisTitle,
                         (float)CompositionHostElement.ActualWidth, (float)CompositionHostElement.ActualHeight, _currentDpiX, _currentDpiY,
                         _windowRenderTarget, customerData,
                         true, BarGraph.GraphBarStyle.PerBarLinearGradient, _graphColors);
@@ -169,7 +170,7 @@ namespace VisualLayerIntegration
                 // If graph already exists update values. Otherwise, create new graph.
                 if (_graphContainer.Children.Count > 0 && _currentGraph != null)
                 {
-                    _currentGraph.UpdateGraphData(graphTitle, _xAxisTitle, _yAxisTitle, customer.Data);
+                    _currentGraph.UpdateGraphData(graphTitle, c_xAxisTitle, c_yAxisTitle, customer.Data);
                 }
             }
         }

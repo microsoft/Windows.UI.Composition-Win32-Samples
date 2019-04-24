@@ -23,7 +23,6 @@
 //  ---------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using Windows.UI;
 using Windows.UI.Composition;
 
@@ -111,9 +110,9 @@ namespace BarGraphUtility
         private void AnimateLinearGradientstopOffset(CompositionColorGradientStop stop, TimeSpan duration, float offsetAdjustment)
         {
             var animateStop = _compositor.CreateScalarKeyFrameAnimation();
-            animateStop.InsertKeyFrame(0.0f, stop.Offset);
+            animateStop.InsertKeyFrame(0, stop.Offset);
             animateStop.InsertKeyFrame(0.5f, stop.Offset + offsetAdjustment);
-            animateStop.InsertKeyFrame(1.0f, stop.Offset);
+            animateStop.InsertKeyFrame(1, stop.Offset);
             animateStop.IterationBehavior = AnimationIterationBehavior.Forever;
             animateStop.Duration = duration;
             stop.StartAnimation(nameof(stop.Offset), animateStop);
