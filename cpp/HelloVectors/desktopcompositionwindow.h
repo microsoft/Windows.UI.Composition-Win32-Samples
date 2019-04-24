@@ -1,3 +1,27 @@
+//  ---------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+//  The MIT License (MIT)
+// 
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+// 
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+// 
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//  ---------------------------------------------------------------------------------
+
 #pragma once
 #include "pch.h"
 extern "C" IMAGE_DOS_HEADER __ImageBase;
@@ -57,13 +81,15 @@ struct DesktopWindow
 		return DefWindowProc(window, message, wparam, lparam);
 	}
 
-	// DPI Change handler. on WM_DPICHANGE resize the window
-	static LRESULT HandleDpiChange(HWND hWnd, WPARAM wParam, LPARAM lParam) {
+	// DPI Change handler. On WM_DPICHANGE, resize the window.
+	static LRESULT HandleDpiChange(HWND hWnd, WPARAM wParam, LPARAM lParam)
+	{
 		//HWND hWndStatic = GetWindow(hWnd, GW_CHILD);
-		if (hWnd != nullptr) {
+		if (hWnd != nullptr)
+		{
 			UINT uDpi = HIWORD(wParam);
 
-			// Resize the window
+			// Resize the window.
 			auto lprcNewScale = reinterpret_cast<RECT *>(lParam);
 
 			SetWindowPos(hWnd, nullptr, lprcNewScale->left, lprcNewScale->top,
@@ -71,7 +97,8 @@ struct DesktopWindow
 				lprcNewScale->bottom - lprcNewScale->top,
 				SWP_NOZORDER | SWP_NOACTIVATE);
 
-			if (T *that = GetThisFromHandle(hWnd)) {
+			if (T *that = GetThisFromHandle(hWnd))
+			{
 				that->NewScale(uDpi);
 			}
 		}
@@ -80,29 +107,32 @@ struct DesktopWindow
 
 	LRESULT MessageHandler(UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept
 	{
-		switch (message) {
-		case WM_DPICHANGED: {
-			return HandleDpiChange(m_window, wparam, lparam);
-		}
-
-		case WM_DESTROY: message:
+		switch (message)
 		{
-			PostQuitMessage(0);
-			return 0;
+		    case WM_DPICHANGED:
+		    {
+			    return HandleDpiChange(m_window, wparam, lparam);
+		    }
+		    
+		    case WM_DESTROY: message:
+		    {
+		    	PostQuitMessage(0);
+		    	return 0;
+		    }
+		    
+		    case WM_SIZE: 
+			{
+		    	UINT width = LOWORD(lparam);
+		    	UINT height = HIWORD(lparam);
+		    
+		    	mCurrentWidth = width;
+		    	mCurrentHeight = height;
+		    	if (T *that = GetThisFromHandle(m_window)) 
+				{
+		    		that->DoResize(width, height);
+		    	}
+		    }
 		}
-
-		case WM_SIZE: {
-			UINT width = LOWORD(lparam);
-			UINT height = HIWORD(lparam);
-
-			mCurrentWidth = width;
-			mCurrentHeight = height;
-			if (T *that = GetThisFromHandle(m_window)) {
-				that->DoResize(width, height);
-			}
-		}
-		}
-
 		return DefWindowProc(m_window, message, wparam, lparam);
 	}
 
@@ -119,7 +149,7 @@ protected:
 	int mCurrentHeight = 0;
 };
 
-//Specialization of DesktopWindow that binds a composition tree to the HWND
+// Specialization of DesktopWindow that binds a composition tree to the HWND.
 struct CompositionWindow : DesktopWindow<CompositionWindow>
 {
 	CompositionWindow(std::function<void(const Windows::UI::Composition::Compositor &, const Windows::UI::Composition::Visual &)> func) noexcept : CompositionWindow()
@@ -149,20 +179,22 @@ struct CompositionWindow : DesktopWindow<CompositionWindow>
 		WINRT_ASSERT(m_window);
 	}
 
-	~CompositionWindow() {
+	~CompositionWindow()
+	{
 	}
 
 	LRESULT MessageHandler(UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept
 	{
-		// TODO: handle messages here...
+		// Handle messages here...
 		return base_type::MessageHandler(message, wparam, lparam);
 	}
 
-	void NewScale(UINT dpi) {
-
+	void NewScale(UINT dpi)
+	{
 		auto scaleFactor = (float)dpi / 100;
 
-		if (m_root != nullptr && scaleFactor > 0) {
+		if (m_root != nullptr && scaleFactor > 0)
+		{
 			m_root.Scale({ scaleFactor, scaleFactor, 1.0 });
 		}
 	}
