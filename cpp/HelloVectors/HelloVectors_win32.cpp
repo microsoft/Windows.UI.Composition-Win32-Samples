@@ -106,7 +106,7 @@ void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & 
 	// Create, size, and host a ShapeVisual.
 	ShapeVisual shape = compositor.CreateShapeVisual();
 	shape.Size({ 500.0f, 500.0f });
-	shape.Offset({ 300.0f, 0.0f, 1.0f });
+	shape.Offset({ 400.0f, 25.0f, 1.0f });
 
 	// Create a D2D Factory
 	com_ptr<ID2D1Factory> d2dFactory;
@@ -216,7 +216,7 @@ void Scenario3PathMorphImperative(const Compositor & compositor, const Container
 	// Create, size, and host a ShapeVisual.
 	ShapeVisual shape = compositor.CreateShapeVisual();
 	shape.Size({ 500.0f, 500.0f });
-	shape.Offset({ 600.0f, 0.0f, 1.0f });
+	shape.Offset({ 0.0f, 350.0f, 1.0f });
 
 	com_ptr<ID2D1Factory> d2dFactory;
 	check_hresult(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.put()));
@@ -282,7 +282,7 @@ void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVis
 	float width = 400.0f, height = 400.0f;
 	SpriteVisual container = compositor.CreateSpriteVisual();
 	container.Size({ width, height });
-	container.Offset({ 0.0f, 350.0f, 1.0f });
+	container.Offset({ 400.0f, 400.0f, 1.0f });
 	root.Children().InsertAtTop(container);
 
 	AnimatedVisuals::LottieLogo1 bmv;
