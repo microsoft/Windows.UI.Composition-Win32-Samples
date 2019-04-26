@@ -44,12 +44,21 @@ namespace WPFCaptureSample
     /// </summary>
     public partial class MainWindow : Window
     {
+        private IntPtr hwnd;
+        private Compositor compositor;
+        private CompositionTarget target;
+        private ContainerVisual root;
+
+        private BasicSampleApplication sample;
+        private ObservableCollection<Process> processes;
+        private ObservableCollection<MonitorInfo> monitors;
+
         public MainWindow()
         {
             InitializeComponent();
 
 #if DEBUG
-            // Force grpahicscapture.dll to load
+            // Force graphicscapture.dll to load.
             var picker = new GraphicsCapturePicker();
 #endif
         }
@@ -73,11 +82,11 @@ namespace WPFCaptureSample
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var interopWindow = new WindowInteropHelper(this);
-            _hwnd = interopWindow.Handle;
+            hwnd = interopWindow.Handle;
 
             var presentationSource = PresentationSource.FromVisual(this);
-            var dpiX = 1.0;
-            var dpiY = 1.0;
+            double dpiX = 1.0;
+            double dpiY = 1.0;
             if (presentationSource != null)
             {
                 dpiX = presentationSource.CompositionTarget.TransformToDevice.M11;
@@ -114,7 +123,7 @@ namespace WPFCaptureSample
                 catch (Exception)
                 {
                     Debug.WriteLine($"Hwnd 0x{hwnd.ToInt32():X8} is not valid for capture!");
-                    _processes.Remove(process);
+                    processes.Remove(process);
                     comboBox.SelectedIndex = -1;
                 }
             }
@@ -137,7 +146,7 @@ namespace WPFCaptureSample
                 catch (Exception)
                 {
                     Debug.WriteLine($"Hmon 0x{hmon.ToInt32():X8} is not valid for capture!");
-                    _monitors.Remove(monitor);
+                    monitors.Remove(monitor);
                     comboBox.SelectedIndex = -1;
                 }
             }
@@ -145,22 +154,22 @@ namespace WPFCaptureSample
 
         private void InitComposition(float controlsWidth)
         {
-            // Create our compositor
-            _compositor = new Compositor();
+            // Create the compositor.
+            compositor = new Compositor();
 
-            // Create a target for our window
-            _target = _compositor.CreateDesktopWindowTarget(_hwnd, true);
+            // Create a target for the window.
+            target = compositor.CreateDesktopWindowTarget(hwnd, true);
 
-            // Attach our root visual
-            _root = _compositor.CreateContainerVisual();
-            _root.RelativeSizeAdjustment = Vector2.One;
-            _root.Size = new Vector2(-controlsWidth, 0);
-            _root.Offset = new Vector3(controlsWidth, 0, 0);
-            _target.Root = _root;
+            // Attach the root visual.
+            root = compositor.CreateContainerVisual();
+            root.RelativeSizeAdjustment = Vector2.One;
+            root.Size = new Vector2(-controlsWidth, 0);
+            root.Offset = new Vector3(controlsWidth, 0, 0);
+            target.Root = root;
 
-            // Setup the rest of our sample application
-            _sample = new BasicSampleApplication(_compositor);
-            _root.Children.InsertAtTop(_sample.Visual);
+            // Setup the rest of the sample application.
+            sample = new BasicSampleApplication(compositor);
+            root.Children.InsertAtTop(sample.Visual);
         }
 
         private void InitWindowList()
@@ -170,8 +179,8 @@ namespace WPFCaptureSample
                 var processesWithWindows = from p in Process.GetProcesses()
                                            where !string.IsNullOrWhiteSpace(p.MainWindowTitle) && WindowEnumerationHelper.IsWindowValidForCapture(p.MainWindowHandle)
                                            select p;
-                _processes = new ObservableCollection<Process>(processesWithWindows);
-                WindowComboBox.ItemsSource = _processes;
+                processes = new ObservableCollection<Process>(processesWithWindows);
+                WindowComboBox.ItemsSource = processes;
             }
             else
             {
@@ -183,9 +192,8 @@ namespace WPFCaptureSample
         {
             if (ApiInformation.IsApiContractPresent(typeof(Windows.Foundation.UniversalApiContract).FullName, 8))
             {
-                var monitors = MonitorEnumerationHelper.GetMonitors();
-                _monitors = new ObservableCollection<MonitorInfo>(monitors);
-                MonitorComboBox.ItemsSource = _monitors;
+                monitors = new ObservableCollection<MonitorInfo>(MonitorEnumerationHelper.GetMonitors());
+                MonitorComboBox.ItemsSource = monitors;
             }
             else
             {
@@ -197,36 +205,36 @@ namespace WPFCaptureSample
         private async Task StartPickerCaptureAsync()
         {
             var picker = new GraphicsCapturePicker();
-            picker.SetWindow(_hwnd);
-            var item = await picker.PickSingleItemAsync();
+            picker.SetWindow(hwnd);
+            GraphicsCaptureItem item = await picker.PickSingleItemAsync();
 
             if (item != null)
             {
-                _sample.StartCaptureFromItem(item);
+                sample.StartCaptureFromItem(item);
             }
         }
 
         private void StartHwndCapture(IntPtr hwnd)
         {
-            var item = CaptureHelper.CreateItemForWindow(hwnd);
+            GraphicsCaptureItem item = CaptureHelper.CreateItemForWindow(hwnd);
             if (item != null)
             {
-                _sample.StartCaptureFromItem(item);
+                sample.StartCaptureFromItem(item);
             }
         }
 
         private void StartHmonCapture(IntPtr hmon)
         {
-            var item = CaptureHelper.CreateItemForMonitor(hmon);
+            GraphicsCaptureItem item = CaptureHelper.CreateItemForMonitor(hmon);
             if (item != null)
             {
-                _sample.StartCaptureFromItem(item);
+                sample.StartCaptureFromItem(item);
             }
         }
 
         private void StartPrimaryMonitorCapture()
         {
-            var monitor = (from m in MonitorEnumerationHelper.GetMonitors()
+            MonitorInfo monitor = (from m in MonitorEnumerationHelper.GetMonitors()
                            where m.IsPrimary
                            select m).First();
             StartHmonCapture(monitor.Hmon);
@@ -234,16 +242,7 @@ namespace WPFCaptureSample
 
         private void StopCapture()
         {
-            _sample.StopCapture();
+            sample.StopCapture();
         }
-
-        private IntPtr _hwnd;
-        private Compositor _compositor;
-        private CompositionTarget _target;
-        private ContainerVisual _root;
-
-        private BasicSampleApplication _sample;
-        private ObservableCollection<Process> _processes;
-        private ObservableCollection<MonitorInfo> _monitors;
     }
 }

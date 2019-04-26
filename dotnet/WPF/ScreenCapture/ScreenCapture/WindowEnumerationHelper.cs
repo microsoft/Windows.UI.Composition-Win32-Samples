@@ -31,17 +31,11 @@ namespace WPFCaptureSample
     {
         enum GetAncestorFlags
         {
-            /// <summary>
-            /// Retrieves the parent window. This does not include the owner, as it does with the GetParent function.
-            /// </summary>
+            // Retrieves the parent window. This does not include the owner, as it does with the GetParent function.
             GetParent = 1,
-            /// <summary>
-            /// Retrieves the root window by walking the chain of parent windows.
-            /// </summary>
+            // Retrieves the root window by walking the chain of parent windows.
             GetRoot = 2,
-            /// <summary>
-            /// Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent.
-            /// </summary>
+            // Retrieves the owned root window by walking the chain of parent and owner windows returned by GetParent.
             GetRootOwner = 3
         }
 
@@ -119,7 +113,7 @@ namespace WPFCaptureSample
         static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
 
         // This static method is required because Win32 does not support
-        // GetWindowLongPtr directly
+        // GetWindowLongPtr directly.
         // http://pinvoke.net/default.aspx/user32/GetWindowLong.html
         static IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex)
         {
