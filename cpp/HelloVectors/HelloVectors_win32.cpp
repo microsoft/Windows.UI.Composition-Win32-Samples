@@ -70,7 +70,7 @@ Windows::UI::Composition::CompositionLinearGradientBrush CreateGradientBrush(con
 {
 	auto gradBrush = compositor.CreateLinearGradientBrush();
 	gradBrush.ColorStops().InsertAt(0, compositor.CreateColorGradientStop(0.0f, ColorHelper::FromArgb(255, 0, 120, 134)));
-	gradBrush.ColorStops().InsertAt(1, compositor.CreateColorGradientStop(0.5f, ColorHelper::FromArgb(255, 255, 255, 255)));
+	gradBrush.ColorStops().InsertAt(1, compositor.CreateColorGradientStop(0.5f, ColorHelper::FromArgb(255, 245, 245, 245)));
 	gradBrush.ColorStops().InsertAt(2, compositor.CreateColorGradientStop(1.0f, ColorHelper::FromArgb(255, 0, 209, 193)));
 	return gradBrush;
 }

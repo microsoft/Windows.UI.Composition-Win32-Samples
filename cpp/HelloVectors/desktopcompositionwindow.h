@@ -219,7 +219,7 @@ struct CompositionWindow : DesktopWindow<CompositionWindow>
 		m_target = CreateDesktopWindowTarget(compositor, m_window);
 		m_root = compositor.CreateSpriteVisual();
 		m_root.RelativeSizeAdjustment({ 1.05f, 1.05f });
-		m_root.Brush(compositor.CreateColorBrush({ 0xFF, 0xE7, 0xD5 , 0xB5 }));
+		m_root.Brush(compositor.CreateColorBrush({ 0xFF, 0xFF, 0xFF , 0xFF }));
 		m_target.Root(m_root);
 	}
 
