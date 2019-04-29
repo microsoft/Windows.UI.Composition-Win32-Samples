@@ -173,7 +173,7 @@ struct CompositionWindow : DesktopWindow<CompositionWindow>
 		WINRT_VERIFY(CreateWindow(wc.lpszClassName,
 			L"Vectors in Win32",
 			WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-			CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+			CW_USEDEFAULT, CW_USEDEFAULT, 850, 874,
 			nullptr, nullptr, wc.hInstance, this));
 
 		WINRT_ASSERT(m_window);
@@ -218,8 +218,8 @@ struct CompositionWindow : DesktopWindow<CompositionWindow>
 	{
 		m_target = CreateDesktopWindowTarget(compositor, m_window);
 		m_root = compositor.CreateSpriteVisual();
-		m_root.RelativeSizeAdjustment({ 1.0f, 1.0f });
-		m_root.Brush(compositor.CreateColorBrush({ 0xFF, 0xEF, 0xE4 , 0xB0 }));
+		m_root.RelativeSizeAdjustment({ 1.05f, 1.05f });
+		m_root.Brush(compositor.CreateColorBrush({ 0xFF, 0xE7, 0xD5 , 0xB5 }));
 		m_target.Root(m_root);
 	}
 

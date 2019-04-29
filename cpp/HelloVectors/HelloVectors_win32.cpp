@@ -41,7 +41,7 @@ void Scenario1SimpleShape(const Compositor & compositor, const ContainerVisual &
 
 	// Create a new ShapeVisual that will contain our drawings.
 	ShapeVisual shape = compositor.CreateShapeVisual();
-	shape.Size({ 100.0f,100.0f });
+	shape.Size({ 400.0f,400.0f });
 
 	// Create a circle geometry and set its radius.
 	auto circleGeometry = compositor.CreateEllipseGeometry();
@@ -49,8 +49,8 @@ void Scenario1SimpleShape(const Compositor & compositor, const ContainerVisual &
 
 	// Create a shape object from the geometry and give it a color and offset.
 	auto circleShape = compositor.CreateSpriteShape(circleGeometry);
-	circleShape.FillBrush(compositor.CreateColorBrush(Windows::UI::Colors::Orange()));
-	circleShape.Offset({ 50.0f, 50.0f });
+	circleShape.FillBrush(compositor.CreateColorBrush(ColorHelper::FromArgb(255, 0, 209, 193)));
+	circleShape.Offset({ 200.0f, 200.0f });
 
 	// Add the circle to our shape visual.
 	shape.Shapes().Append(circleShape);
@@ -69,9 +69,9 @@ void Scenario1SimpleShape(const Compositor & compositor, const ContainerVisual &
 Windows::UI::Composition::CompositionLinearGradientBrush CreateGradientBrush(const Compositor & compositor)
 {
 	auto gradBrush = compositor.CreateLinearGradientBrush();
-	gradBrush.ColorStops().InsertAt(0, compositor.CreateColorGradientStop(0.0f, Windows::UI::Colors::Orange()));
-	gradBrush.ColorStops().InsertAt(1, compositor.CreateColorGradientStop(0.5f, Windows::UI::Colors::Yellow()));
-	gradBrush.ColorStops().InsertAt(2, compositor.CreateColorGradientStop(1.0f, Windows::UI::Colors::Red()));
+	gradBrush.ColorStops().InsertAt(0, compositor.CreateColorGradientStop(0.0f, ColorHelper::FromArgb(255, 0, 120, 134)));
+	gradBrush.ColorStops().InsertAt(1, compositor.CreateColorGradientStop(0.5f, ColorHelper::FromArgb(255, 255, 255, 255)));
+	gradBrush.ColorStops().InsertAt(2, compositor.CreateColorGradientStop(1.0f, ColorHelper::FromArgb(255, 0, 209, 193)));
 	return gradBrush;
 }
 
