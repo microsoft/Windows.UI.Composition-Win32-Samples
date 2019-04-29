@@ -34,17 +34,26 @@ namespace CaptureSampleCore
 {
     public class BasicCapture : IDisposable
     {
-        public BasicCapture(IDirect3DDevice device, GraphicsCaptureItem item)
+        private GraphicsCaptureItem item;
+        private Direct3D11CaptureFramePool framePool;
+        private GraphicsCaptureSession session;
+        private SizeInt32 lastSize;
+
+        private IDirect3DDevice device;
+        private SharpDX.Direct3D11.Device d3dDevice;
+        private SharpDX.DXGI.SwapChain1 swapChain;
+
+        public BasicCapture(IDirect3DDevice d, GraphicsCaptureItem i)
         {
-            _item = item;
-            _device = device;
-            _d3dDevice = Direct3D11Helper.CreateSharpDXDevice(_device);
+            item = i;
+            device = d;
+            d3dDevice = Direct3D11Helper.CreateSharpDXDevice(device);
 
             var dxgiFactory = new SharpDX.DXGI.Factory2();
             var description = new SharpDX.DXGI.SwapChainDescription1()
             {
-                Width = _item.Size.Width,
-                Height = _item.Size.Height,
+                Width = item.Size.Width,
+                Height = item.Size.Height,
                 Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm,
                 Stereo = false,
                 SampleDescription = new SharpDX.DXGI.SampleDescription()
@@ -59,35 +68,35 @@ namespace CaptureSampleCore
                 AlphaMode = SharpDX.DXGI.AlphaMode.Premultiplied,
                 Flags = SharpDX.DXGI.SwapChainFlags.None
             };
-            _swapChain = new SharpDX.DXGI.SwapChain1(dxgiFactory, _d3dDevice, ref description);
+            swapChain = new SharpDX.DXGI.SwapChain1(dxgiFactory, d3dDevice, ref description);
 
-            _framePool = Direct3D11CaptureFramePool.Create(
-                _device,
+            framePool = Direct3D11CaptureFramePool.Create(
+                device,
                 DirectXPixelFormat.B8G8R8A8UIntNormalized,
                 2,
-                item.Size);
-            _session = _framePool.CreateCaptureSession(item);
-            _lastSize = item.Size;
+                i.Size);
+            session = framePool.CreateCaptureSession(i);
+            lastSize = i.Size;
 
-            _framePool.FrameArrived += OnFrameArrived;
+            framePool.FrameArrived += OnFrameArrived;
         }
 
         public void Dispose()
         {
-            _session?.Dispose();
-            _framePool?.Dispose();
-            _swapChain?.Dispose();
-            _d3dDevice?.Dispose();
+            session?.Dispose();
+            framePool?.Dispose();
+            swapChain?.Dispose();
+            d3dDevice?.Dispose();
         }
 
         public void StartCapture()
         {
-            _session.StartCapture();
+            session.StartCapture();
         }
 
         public ICompositionSurface CreateSurface(Compositor compositor)
         {
-            return compositor.CreateCompositionSurfaceForSwapChain(_swapChain);
+            return compositor.CreateCompositionSurfaceForSwapChain(swapChain);
         }
 
         private void OnFrameArrived(Direct3D11CaptureFramePool sender, object args)
@@ -96,49 +105,40 @@ namespace CaptureSampleCore
 
             using (var frame = sender.TryGetNextFrame())
             {
-                if (frame.ContentSize.Width != _lastSize.Width ||
-                    frame.ContentSize.Height != _lastSize.Height)
+                if (frame.ContentSize.Width != lastSize.Width ||
+                    frame.ContentSize.Height != lastSize.Height)
                 {
                     // The thing we have been capturing has changed size.
-                    // We need to resize our swap chain first, then blit the pixels.
-                    // After we do that, retire the frame and then recreate our frame pool.
+                    // We need to resize the swap chain first, then blit the pixels.
+                    // After we do that, retire the frame and then recreate the frame pool.
                     newSize = true;
-                    _lastSize = frame.ContentSize;
-                    _swapChain.ResizeBuffers(
+                    lastSize = frame.ContentSize;
+                    swapChain.ResizeBuffers(
                         2, 
-                        _lastSize.Width, 
-                        _lastSize.Height, 
+                        lastSize.Width, 
+                        lastSize.Height, 
                         SharpDX.DXGI.Format.B8G8R8A8_UNorm, 
                         SharpDX.DXGI.SwapChainFlags.None);
                 }
 
-                using (var backBuffer = _swapChain.GetBackBuffer<SharpDX.Direct3D11.Texture2D>(0))
+                using (var backBuffer = swapChain.GetBackBuffer<SharpDX.Direct3D11.Texture2D>(0))
                 using (var bitmap = Direct3D11Helper.CreateSharpDXTexture2D(frame.Surface))
                 {
-                    _d3dDevice.ImmediateContext.CopyResource(bitmap, backBuffer);
+                    d3dDevice.ImmediateContext.CopyResource(bitmap, backBuffer);
                 }
 
-            } // retire the frame
+            } // Retire the frame.
 
-            _swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
+            swapChain.Present(0, SharpDX.DXGI.PresentFlags.None);
 
             if (newSize)
             {
-                _framePool.Recreate(
-                    _device,
+                framePool.Recreate(
+                    device,
                     DirectXPixelFormat.B8G8R8A8UIntNormalized,
                     2,
-                    _lastSize);
+                    lastSize);
             }
         }
-
-        private GraphicsCaptureItem _item;
-        private Direct3D11CaptureFramePool _framePool;
-        private GraphicsCaptureSession _session;
-        private SizeInt32 _lastSize;
-
-        private IDirect3DDevice _device;
-        private SharpDX.Direct3D11.Device _d3dDevice;
-        private SharpDX.DXGI.SwapChain1 _swapChain;
     }
 }
