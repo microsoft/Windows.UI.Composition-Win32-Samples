@@ -31,5 +31,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="900"
              Loaded="CompositionHostControl_Loaded">
-    <Border Name="CompositionHostElement"/>
+    <Grid>
+        <Image Source="Assets/Nature-6.jpg" />
+        <Border Name="CompositionHostElement"/>
+    </Grid>
 </UserControl>

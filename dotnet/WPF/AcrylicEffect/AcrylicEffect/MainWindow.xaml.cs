@@ -35,5 +35,10 @@ namespace AcrylicEffect
         {
             InitializeComponent();
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            CompositionHostControl1.ToggleAcrylic();
+        }
     }
 }

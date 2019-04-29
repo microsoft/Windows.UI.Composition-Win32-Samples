@@ -41,9 +41,10 @@
             <RowDefinition Height="550"/>
         </Grid.RowDefinitions>
         
-        <Button Content="WPF Button"
+        <Button Content="Show/Hide Acrylic Visual"
                 Grid.Row="1" Margin="12,0"
-                VerticalAlignment="Top" Height="40"/>
+                VerticalAlignment="Top" Height="40"
+                Click="Button_Click"/>
         <TextBlock Text="Composition content" FontSize="20" 
                    Grid.Column="1" Margin="0,12,0,4"
                    HorizontalAlignment="Center"/>

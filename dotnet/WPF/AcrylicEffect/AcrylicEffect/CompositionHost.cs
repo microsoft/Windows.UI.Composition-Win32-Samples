@@ -33,10 +33,11 @@ namespace AcrylicEffect
 {
     sealed class CompositionHost : HwndHost
     {
-        private object _dispatcherQueue;
-        private ICompositionTarget _compositionTarget;
+        private readonly object _dispatcherQueue;
         private readonly List<IDisposable> _registeredDisposables = new List<IDisposable>();
         private readonly ICompositorDesktopInterop _compositorDesktopInterop;
+
+        private ICompositionTarget _compositionTarget;
 
         public IntPtr HwndHost { get; private set; }
         public Compositor Compositor { get; private set; }
@@ -60,7 +61,7 @@ namespace AcrylicEffect
             // Create Window
             HwndHost = IntPtr.Zero;
             HwndHost = User32.CreateWindowExW(
-                                   dwExStyle: 0,
+                                   dwExStyle: User32.WS_EX.WS_EX_TRANSPARENT,
                                    lpClassName: "Message",
                                    lpWindowName: "CompositionHost",
                                    dwStyle: User32.WS.WS_CHILD,
@@ -100,10 +101,12 @@ namespace AcrylicEffect
 
         private object InitializeCoreDispatcher()
         {
-            DispatcherQueueOptions options = new DispatcherQueueOptions();
-            options.apartmentType = DISPATCHERQUEUE_THREAD_APARTMENTTYPE.DQTAT_COM_STA;
-            options.threadType = DISPATCHERQUEUE_THREAD_TYPE.DQTYPE_THREAD_CURRENT;
-            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+            DispatcherQueueOptions options = new DispatcherQueueOptions
+            {
+                apartmentType = DISPATCHERQUEUE_THREAD_APARTMENTTYPE.DQTAT_COM_STA,
+                threadType = DISPATCHERQUEUE_THREAD_TYPE.DQTYPE_THREAD_CURRENT,
+                dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions))
+            };
 
             var hresult = CreateDispatcherQueueController(options, out object queue);
             if (hresult != 0)

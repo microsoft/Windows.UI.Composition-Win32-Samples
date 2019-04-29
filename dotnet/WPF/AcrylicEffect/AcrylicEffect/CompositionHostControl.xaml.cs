@@ -44,7 +44,6 @@ namespace AcrylicEffect
     sealed partial class CompositionHostControl : UserControl, IDisposable
     {
         private readonly CanvasDevice _canvasDevice;
-        private readonly IGraphicsEffect _saturationEffect;
         private readonly IGraphicsEffect _acrylicEffect;
         private readonly CompositionHost _compositionHost;
         private readonly Compositor _compositor;
@@ -52,10 +51,10 @@ namespace AcrylicEffect
 
         private static double _rectWidth;
         private static double _rectHeight;
-        
+        private static bool _isAcrylicVisible = false;
+        private static SpriteVisual _acrylicVisual;
         private static DpiScale _currentDpi;
         private static CompositionGraphicsDevice _compositionGraphicsDevice;
-        private static CompositionSurfaceBrush _coloredSurfaceBrush;
         private static CompositionSurfaceBrush _noiseSurfaceBrush; 
 
         public CompositionHostControl()
@@ -73,12 +72,7 @@ namespace AcrylicEffect
             _compositor = _compositionHost.Compositor;
             _containerVisual = _compositor.CreateContainerVisual();
             
-            // Create effect graphs.
-            _saturationEffect = new SaturationEffect
-            {
-                Saturation = 0.3f,
-                Source = new CompositionEffectSourceParameter("mySource")
-            };
+            // Create effect graph.
             _acrylicEffect = CreateAcrylicEffectGraph();
         }
 
@@ -92,20 +86,15 @@ namespace AcrylicEffect
             // Get graphics device.
             _compositionGraphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(_compositor, _canvasDevice);
 
-            // Create surfaces. 
-            var coloredDrawingSurface = _compositionGraphicsDevice.CreateDrawingSurface(
-                new Windows.Foundation.Size(_rectWidth, _rectHeight),
-                DirectXPixelFormat.B8G8R8A8UIntNormalized,
-                DirectXAlphaMode.Premultiplied);
+            // Create surface. 
             var noiseDrawingSurface = _compositionGraphicsDevice.CreateDrawingSurface(
                 new Windows.Foundation.Size(_rectWidth, _rectHeight),
                 DirectXPixelFormat.B8G8R8A8UIntNormalized,
                 DirectXAlphaMode.Premultiplied);
 
-            // Draw to each surface and create surface brushes.
-            DrawColorSurface(coloredDrawingSurface);
-            _coloredSurfaceBrush = _compositor.CreateSurfaceBrush(coloredDrawingSurface);
-            LoadNoiseSurface(noiseDrawingSurface);
+            // Draw to surface and create surface brush.
+            var noiseFilePath = AppDomain.CurrentDomain.BaseDirectory + "Assets\\noise.png";
+            LoadSurface(noiseDrawingSurface, noiseFilePath);
             _noiseSurfaceBrush = _compositor.CreateSurfaceBrush(noiseDrawingSurface);
 
             // Add composition content to tree.
@@ -131,29 +120,16 @@ namespace AcrylicEffect
 
         public void AddCompositionContent()
         {
-            var desaturatedVisualOffset = new Vector3((float)(_rectWidth * _currentDpi.DpiScaleX), 0, 0);
             var acrylicVisualOffset = new Vector3(
                 (float)(_rectWidth * _currentDpi.DpiScaleX) / 2,
                 (float)(_rectHeight * _currentDpi.DpiScaleY) / 2,
                 0);
 
-            // Create visuals.
-            var baselineVisual = CreateCompositionVisual(new Vector3());
-            var desaturatedVisual = CreateCompositionVisual(desaturatedVisualOffset);
-            var acrylicVisual = CreateCompositionVisual(acrylicVisualOffset);
-
-            // Set brushes for each visual.            
-            baselineVisual.Brush = _coloredSurfaceBrush;
-            desaturatedVisual.Brush = CreateDesaturationEffectBrush(_coloredSurfaceBrush);
-            acrylicVisual.Brush = CreateAcrylicEffectBrush();
-
-            // Add visuals to tree.
-            _containerVisual.Children.InsertAtTop(desaturatedVisual);            
-            _containerVisual.Children.InsertAtTop(baselineVisual);            
-            // Insert acrylic visual on top of others.
-            _containerVisual.Children.InsertAtTop(acrylicVisual);
+            // Create visual and set brush.
+            _acrylicVisual = CreateCompositionVisual(acrylicVisualOffset);         
+            _acrylicVisual.Brush = CreateAcrylicEffectBrush();
         }
-
+        
         SpriteVisual CreateCompositionVisual(Vector3 offset)
         {
             var visual = _compositor.CreateSpriteVisual();
@@ -164,26 +140,10 @@ namespace AcrylicEffect
             return visual;
         }
 
-        void DrawColorSurface(CompositionDrawingSurface surface)
+        async void LoadSurface(CompositionDrawingSurface surface, string path)
         {
-            using (var ds = CanvasComposition.CreateDrawingSession(surface))
-            {
-                // Clear surface.
-                ds.Clear(Colors.Transparent);
-
-                // Draw colored rectangle to surface.
-                var rect = new Windows.Foundation.Rect(0, 0, _rectWidth, _rectHeight);
-                ds.FillRectangle(rect, Colors.Blue);
-                ds.DrawRectangle(rect, Colors.Green);
-            }
-        }
-
-        async void LoadNoiseSurface(CompositionDrawingSurface surface)
-        {
-            var noiseFilePath = AppDomain.CurrentDomain.BaseDirectory + "Assets\\noise.png"; 
-
             // Load from stream.
-            var storageFile = await StorageFile.GetFileFromPathAsync(noiseFilePath);
+            var storageFile = await StorageFile.GetFileFromPathAsync(path);
             var stream = await storageFile.OpenAsync(FileAccessMode.Read);
             var bitmap = await CanvasBitmap.LoadAsync(_canvasDevice, stream);
 
@@ -239,18 +199,6 @@ namespace AcrylicEffect
             };
         }
 
-        CompositionEffectBrush CreateDesaturationEffectBrush(CompositionBrush surfaceBrush)
-        {
-            // Compile the effect.
-            var effectFactory = _compositor.CreateEffectFactory(_saturationEffect);
-
-            // Create Brush and set source.
-            var effectBrush = effectFactory.CreateBrush();
-            effectBrush.SetSourceParameter("mySource", surfaceBrush);
-
-            return effectBrush;
-        }
-
         CompositionEffectBrush CreateAcrylicEffectBrush()
         {
             // Compile the effect.
@@ -269,9 +217,26 @@ namespace AcrylicEffect
 
         public void Dispose()
         {
-
+            _acrylicVisual.Dispose();
             _noiseSurfaceBrush.Dispose();
-            _coloredSurfaceBrush.Dispose();
+
+            _canvasDevice.Dispose();
+            _compositionGraphicsDevice.Dispose();
+    }
+
+        internal void ToggleAcrylic()
+        {
+            // Toggle visibility of acrylic visual by adding or removing from tree.
+            if (_isAcrylicVisible)
+            {
+                _containerVisual.Children.Remove(_acrylicVisual);
+            }
+            else
+            {
+                _containerVisual.Children.InsertAtTop(_acrylicVisual);
+            }
+
+            _isAcrylicVisible = !_isAcrylicVisible;
         }
     }
 }
