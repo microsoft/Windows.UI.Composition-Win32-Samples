@@ -171,9 +171,6 @@
     <Content Include="Assets\Nature-6.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\noise.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Assets\NoiseAsset_256X256.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
