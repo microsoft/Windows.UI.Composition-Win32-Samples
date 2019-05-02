@@ -69,17 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompositionHost.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CompositionHost.Designer.cs">
-      <DependentUpon>CompositionHost.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CompositionHostControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="CompositionHostControl.Designer.cs">
-      <DependentUpon>CompositionHostControl.cs</DependentUpon>
+    <Compile Include="CompositionHostForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
