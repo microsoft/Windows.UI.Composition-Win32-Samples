@@ -2,15 +2,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Effects;
 using Windows.Storage;
@@ -37,6 +29,12 @@ namespace AcrylicEffect
         {
             InitializeComponent();
 
+            // Get graphics device.
+            canvasDevice = CanvasDevice.GetSharedDevice();
+
+            // Create effect graph.
+            acrylicEffect = CreateAcrylicEffectGraph();
+
             currentDpi = DeviceDpi / 96;
         }
 
@@ -59,7 +57,7 @@ namespace AcrylicEffect
             // Get graphics device.
             compositionGraphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
 
-            // Create surface. 
+            // Create surface.
             var noiseDrawingSurface = compositionGraphicsDevice.CreateDrawingSurface(
                 new Windows.Foundation.Size(rectWidth, rectHeight),
                 DirectXPixelFormat.B8G8R8A8UIntNormalized,
