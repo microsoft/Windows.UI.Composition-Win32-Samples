@@ -93,7 +93,7 @@ namespace AcrylicEffect
                 DirectXAlphaMode.Premultiplied);
 
             // Draw to surface and create surface brush.
-            var noiseFilePath = AppDomain.CurrentDomain.BaseDirectory + "Assets\\noise.png";
+            var noiseFilePath = AppDomain.CurrentDomain.BaseDirectory + "Assets\\NoiseAsset_256X256.png";
             LoadSurface(noiseDrawingSurface, noiseFilePath);
             _noiseSurfaceBrush = _compositor.CreateSurfaceBrush(noiseDrawingSurface);
 
@@ -170,32 +170,37 @@ namespace AcrylicEffect
                             new BlendEffect
                             {
                                 Mode = BlendEffectMode.Exclusion,
-                                Background = new GaussianBlurEffect
+                                Background = new SaturationEffect
                                 {
-                                    Name = "Blur",
-                                    Source = new CompositionEffectSourceParameter("Backdrop"),
-                                    BorderMode = EffectBorderMode.Hard,
-                                    BlurAmount = 50
-                                },
+                                    Saturation = 1,
+                                    Source = new GaussianBlurEffect
+                                    {
+                                        Source = new CompositionEffectSourceParameter("Backdrop"),
+                                        BorderMode = EffectBorderMode.Hard,
+                                        BlurAmount = 30
+                                    },
+                                },                                
                                 Foreground = new ColorSourceEffect()
                                 {
-                                    Name = "ExclusionColor",
                                     Color = Color.FromArgb(26, 255, 255, 255)
                                 }
                             },
                             new ColorSourceEffect
                             {
-                                Name = "OverlayColor",
-                                Color = Color.FromArgb(204, 255, 255, 255)
+                                Color = Color.FromArgb(153, 255, 255, 255)
                             }
                         }
                 },
                 Foreground = new OpacityEffect
                 {
-                    Name = "Noise",
-                    Opacity = 0.04f,
-                    Source = new CompositionEffectSourceParameter("Noise")
-                }
+                    Opacity = 0.03f,
+                    Source = new BorderEffect()
+                    {
+                        ExtendX = CanvasEdgeBehavior.Wrap,
+                        ExtendY = CanvasEdgeBehavior.Wrap,
+                        Source = new CompositionEffectSourceParameter("Noise")
+                    },
+                },
             };
         }
 
