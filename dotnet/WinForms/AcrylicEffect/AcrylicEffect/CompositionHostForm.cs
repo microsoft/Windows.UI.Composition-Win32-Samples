@@ -14,17 +14,17 @@ namespace AcrylicEffect
         protected Compositor compositor;
         private ICompositionTarget compositionTarget;
 
-        public Visual Child
-        {
-            set
-            {
-                if (compositor == null)
-                {
-                    InitComposition(hwndHost);
-                }
-                compositionTarget.Root = value;
-            }
-        }
+        //public Visual Child
+        //{
+        //    set
+        //    {
+        //        if (compositor == null)
+        //        {
+        //            InitComposition(hwndHost);
+        //        }
+        //        compositionTarget.Root = value;
+        //    }
+        //}
 
         public CompositionHostForm()
         {
@@ -38,15 +38,26 @@ namespace AcrylicEffect
             InitComposition(hwndHost);
         }
 
+        public void SetChild(Visual v)
+        {
+            compositionTarget.Root = v;
+        }
+
         private object InitializeCoreDispatcher()
         {
-            DispatcherQueueOptions options = new DispatcherQueueOptions();
-            options.apartmentType = DISPATCHERQUEUE_THREAD_APARTMENTTYPE.DQTAT_COM_STA;
-            options.threadType = DISPATCHERQUEUE_THREAD_TYPE.DQTYPE_THREAD_CURRENT;
-            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+            DispatcherQueueOptions options = new DispatcherQueueOptions
+            {
+                apartmentType = DISPATCHERQUEUE_THREAD_APARTMENTTYPE.DQTAT_COM_STA,
+                threadType = DISPATCHERQUEUE_THREAD_TYPE.DQTYPE_THREAD_CURRENT,
+                dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions))
+            };
 
-            object queue = null;
-            CreateDispatcherQueueController(options, out queue);
+            var hresult = CreateDispatcherQueueController(options, out object queue);
+            if ((int)hresult != 0)
+            {
+                Marshal.ThrowExceptionForHR((int)hresult);
+            }
+
             return queue;
         }
 
@@ -66,7 +77,7 @@ namespace AcrylicEffect
             if (raw == null) { throw new Exception("QI Failed"); }
 
             containerVisual = compositor.CreateContainerVisual();
-            Child = containerVisual;
+            SetChild(containerVisual);
         }
 
         #region PInvoke declarations
