@@ -1,8 +1,15 @@
 # WPF Effects Sample
 
-!!! TODO !!! fill more of this out
 
-temporarily, steps needed are as follows: 
+![Acrylic Effect in WPF](acrylic-effect.png)
+
+
+## Features
+
+- Demonstrates loading and using Win2D in WPF
+- Showcases an acrylic effect graph
+
+## Run the sample
 
 - Clone
 - NuGet Updates
@@ -15,44 +22,56 @@ temporarily, steps needed are as follows:
 
 - Add an app.manifest to the project. 
    - At the bottom, add the following: 
- `<file name="Microsoft.Graphics.Canvas.dll">
+
+```
+
+<file name="Microsoft.Graphics.Canvas.dll">
     <activatableClass
       name="Microsoft.Graphics.Canvas.CanvasDevice"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
-   <activatableClass
-      name="Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition"
+
+   <activatableClass      name="Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
       name="Microsoft.Graphics.Canvas.Effects.SaturationEffect"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
-        name="Microsoft.Graphics.Canvas.Effects.BlendEffect"
+       name="Microsoft.Graphics.Canvas.Effects.BlendEffect"
         threadingModel="both"
         xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
       name="Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
       name="Microsoft.Graphics.Canvas.Effects.ColorSourceEffect"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
       name="Microsoft.Graphics.Canvas.Effects.CompositeEffect"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
       name="Microsoft.Graphics.Canvas.Effects.OpacityEffect"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+
     <activatableClass
       name="Microsoft.Graphics.Canvas.CanvasBitmap"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
-  </file>`
+  </file>
+
+```
 
 
 - Add Win2D dll
@@ -62,9 +81,3 @@ temporarily, steps needed are as follows:
    - Extract zip, find Microsoft.Graphics.Canvas.dll. Copy and add to this project's main folder/bin/x64/Debug
 
 - Build and Run as Debug, x64
-
-## Features
-
-
-
-## Run the sample
