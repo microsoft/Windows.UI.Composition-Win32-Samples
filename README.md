@@ -18,7 +18,7 @@ For related documentation, see [Modernize your desktop app using the Visual laye
 
 Minimum requirements for using the Visual layer in desktop apps are listed here. Individual samples might have different requirements, which are listed in the readme for the sample.
 
-- Visual Studio 2017 - [Get a free copy of Visual Studio 2017 with support for building Universal Windows apps](http://go.microsoft.com/fwlink/?LinkID=280676)
+- Visual Studio 2017 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
 - .NET Framework 4.7.2 or later
 - Windows 10 version 1803 or later
 - Windows 10 SDK 17134 or later
@@ -40,6 +40,7 @@ Minimum requirements for using the Visual layer in desktop apps are listed here.
 | - | - |
 | [**Hello Composition sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WinForms/HelloComposition)</br>Demonstrates how to set up a project to use Composition APIs in a Windows Forms app.</br>See the [Using the Visual layer with Windows Forms](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-windows-forms) tutorial for more info. | ![Hello Composition sample](images/hello-comp-wf.png) |
 | [**Visual Layer Integration sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WinForms/VisualLayerIntegration)</br>Demonstrates how to use a bar graph created with Composition APIs in a Windows Forms app. | ![Bar graph UI](images/bar-graph-winforms.png) |
+| [**Win2D Effects (Acrylic) sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WinForms/AcrylicEffect)</br>Demonstrates how to use Win2D effects to show an acrylic overlay on top of a picture. | ![Acrylic effect](images/acrylic-effect-winforms.png) |
 
 ### WPF
 
@@ -48,6 +49,7 @@ Minimum requirements for using the Visual layer in desktop apps are listed here.
 | [**Hello Composition sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/HelloComposition)</br>Demonstrates how to set up a project to use Composition APIs in a WPF app.</br>See the [Using the Visual layer with WPF](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-wpf) tutorial for more info. | ![Hello Composition sample](images/hello-comp-wpf.png) |
 | [**Visual Layer Integration sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/VisualLayerIntegration)</br>Demonstrates how to use a bar graph created with Composition APIs in a WPF app. | ![Bar graph UI](images/bar-graph-wpf.png) |
 | [**Screen Capture sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/ScreenCapture)</br>Demonstrates how to use screen capture APIs. | ![Screen capture UI](images/capture-wpf.png) |
+| [**Win2D Effects (Acrylic) sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/AcrylicEffect)</br>Demonstrates how to use Win2D effects to show an acrylic overlay on top of a picture. | ![Acrylic effect](images/acrylic-effect.png) |
 
 ## Limitations
 
