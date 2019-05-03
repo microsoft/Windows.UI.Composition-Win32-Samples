@@ -31,8 +31,7 @@
         xmlns:interop="clr-namespace:System.Windows.Interop;assembly=PresentationFramework"
         xmlns:local="clr-namespace:VisualLayerIntegration"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized"  
-        Loaded="Window_Loaded">
+        Title="MainWindow" WindowState="Maximized">
 
     <Window.Resources>
         <SolidColorBrush x:Key="AccentColorLight" Color="#FDCBA5" Opacity="0.2"/>
