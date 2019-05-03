@@ -1,4 +1,29 @@
-// HelloVectors_win32_cpp.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//  ---------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation.  All rights reserved.
+// 
+//  The MIT License (MIT)
+// 
+//  Permission is hereby granted, free of charge, to any person obtaining a copy
+//  of this software and associated documentation files (the "Software"), to deal
+//  in the Software without restriction, including without limitation the rights
+//  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//  copies of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+// 
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+// 
+//  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//  THE SOFTWARE.
+//  ---------------------------------------------------------------------------------
+
+// HelloVectors_win32_cpp.cpp : 
+// This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include "pch.h"
@@ -9,48 +34,48 @@ using namespace winrt;
 using namespace Windows::Foundation::Numerics;
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// Scenario 1: construct a simple shape using ShapeVisual
+// Scenario 1: Construct a simple shape using ShapeVisual.
 ///////////////////////////////////////////////////////////////////////////////////////
 
 void Scenario1SimpleShape(const Compositor & compositor, const ContainerVisual & root) {
 
-	// Create a new ShapeVisual that will contain our drawings
+	// Create a new ShapeVisual that will contain our drawings.
 	ShapeVisual shape = compositor.CreateShapeVisual();
-	shape.Size({ 100.0f,100.0f });
+	shape.Size({ 400.0f,400.0f });
 
-	// Create a circle geometry and set its radius
+	// Create a circle geometry and set its radius.
 	auto circleGeometry = compositor.CreateEllipseGeometry();
 	circleGeometry.Radius({ 30.0f, 30.0f });
 
-	// Create a shape object from the geometry and give it a color and offset
+	// Create a shape object from the geometry and give it a color and offset.
 	auto circleShape = compositor.CreateSpriteShape(circleGeometry);
-	circleShape.FillBrush(compositor.CreateColorBrush(Windows::UI::Colors::Orange()));
-	circleShape.Offset({ 50.0f, 50.0f });
+	circleShape.FillBrush(compositor.CreateColorBrush(ColorHelper::FromArgb(255, 0, 209, 193)));
+	circleShape.Offset({ 200.0f, 200.0f });
 
-	// Add the circle to our shape visual
+	// Add the circle to our shape visual.
 	shape.Shapes().Append(circleShape);
 
-	// Add to the visual tree
+	// Add to the visual tree.
 	root.Children().InsertAtTop(shape);
 }
 
 // end Scenario 1
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// Scenario 2 construct a simple path using ShapeVisual, Composition Path and Direct2D
+// Scenario 2: Construct a simple path using ShapeVisual, CompositionPath, and Direct2D.
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// Helper function to create a GradientBrush
+// Helper function to create a GradientBrush.
 Windows::UI::Composition::CompositionLinearGradientBrush CreateGradientBrush(const Compositor & compositor)
 {
 	auto gradBrush = compositor.CreateLinearGradientBrush();
-	gradBrush.ColorStops().InsertAt(0, compositor.CreateColorGradientStop(0.0f, Windows::UI::Colors::Orange()));
-	gradBrush.ColorStops().InsertAt(1, compositor.CreateColorGradientStop(0.5f, Windows::UI::Colors::Yellow()));
-	gradBrush.ColorStops().InsertAt(2, compositor.CreateColorGradientStop(1.0f, Windows::UI::Colors::Red()));
+	gradBrush.ColorStops().InsertAt(0, compositor.CreateColorGradientStop(0.0f, ColorHelper::FromArgb(255, 0, 120, 134)));
+	gradBrush.ColorStops().InsertAt(1, compositor.CreateColorGradientStop(0.5f, ColorHelper::FromArgb(255, 245, 245, 245)));
+	gradBrush.ColorStops().InsertAt(2, compositor.CreateColorGradientStop(1.0f, ColorHelper::FromArgb(255, 0, 209, 193)));
 	return gradBrush;
 }
 
-// Helper class for converting geometry to a composition compatible geometry source
+// Helper class for converting geometry to a composition compatible geometry source.
 struct GeoSource final : implements<GeoSource,
 	Windows::Graphics::IGeometrySource2D,
 	ABI::Windows::Graphics::IGeometrySource2DInterop>
@@ -76,11 +101,12 @@ private:
 	com_ptr<ID2D1Geometry> _cpGeometry;
 };
 
-void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & root) {
-	// Same steps as for SimpleShapeImperative_Click to create, size and host a ShapeVisual
+void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & root) 
+{
+	// Create, size, and host a ShapeVisual.
 	ShapeVisual shape = compositor.CreateShapeVisual();
 	shape.Size({ 500.0f, 500.0f });
-	shape.Offset({ 300.0f, 0.0f, 1.0f });
+	shape.Offset({ 400.0f, 25.0f, 1.0f });
 
 	// Create a D2D Factory
 	com_ptr<ID2D1Factory> d2dFactory;
@@ -89,51 +115,52 @@ void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & 
 	com_ptr<GeoSource> result;
 	com_ptr<ID2D1PathGeometry> path;
 
-	// use D2D factory to create a path geometry
+	// Use D2D factory to create a path geometry.
 	check_hresult(d2dFactory->CreatePathGeometry(path.put()));
 
-	// for the path created above, create a Geometry Sink used to add points to the path
+	// For the path created above, create a geometry sink used to add points to the path.
 	com_ptr<ID2D1GeometrySink> sink;
 	check_hresult(path->Open(sink.put()));
 
-	// Add points to the path
+	// Add points to the path.
 	sink->SetFillMode(D2D1_FILL_MODE_WINDING);
 	sink->BeginFigure({ 1, 1 }, D2D1_FIGURE_BEGIN_FILLED);
 	sink->AddLine({ 300, 300 });
 	sink->AddLine({ 1, 300 });
 	sink->EndFigure(D2D1_FIGURE_END_CLOSED);
 	
-	// Close geometry sink
+	// Close geometry sink.
 	check_hresult(sink->Close());
 
-	// Create a GeoSource helper object wrapping the path
+	// Create a GeoSource helper object to wrap the path.
 	result.attach(new GeoSource(path));
 	CompositionPath trianglePath = CompositionPath(result.as<Windows::Graphics::IGeometrySource2D>());
 
-	// create a CompositionPathGeometry from the composition path
+	// Create a CompositionPathGeometry from the composition path.
 	CompositionPathGeometry compositionPathGeometry = compositor.CreatePathGeometry(trianglePath);
 
-	// create a SpriteShape from the CompositionPathGeometry, give it a gradient fill and add to our ShapeVisual
+	// Create a SpriteShape from the CompositionPathGeometry, give it a gradient fill, and add to our ShapeVisual.
 	CompositionSpriteShape spriteShape = compositor.CreateSpriteShape(compositionPathGeometry);
 	spriteShape.FillBrush(CreateGradientBrush(compositor));
 
-	// Add the SpriteShape to our shape visual
+	// Add the SpriteShape to our shape visual.
 	shape.Shapes().Append(spriteShape);
 
-	// Add to the visual tree
+	// Add to the visual tree.
 	root.Children().InsertAtTop(shape);
 }
 
 // end Scenario 2
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// Scenario 3: Build a morph animation using ShapeVisual, two CompositionPath's and a animated CompositionPathGeometry
+// Scenario 3: Build a morph animation using ShapeVisual, two CompositionPaths, 
+// and an animated CompositionPathGeometry
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// Helper to build a CompositionPath using a provided callback function
+// Helper to build a CompositionPath using a provided callback function.
 CompositionPath BuildPath(com_ptr<ID2D1Factory> const & d2dFactory, std::function<void(com_ptr<ID2D1GeometrySink> const & sink)> builder)
 {
-	// See scenario 2 for a more detailed explanation of the items here
+	// See scenario 2 for a more detailed explanation of the items here.
 	com_ptr<GeoSource> result;
 	com_ptr<ID2D1PathGeometry> path;
 	check_hresult(d2dFactory->CreatePathGeometry(path.put()));
@@ -150,7 +177,7 @@ CompositionPath BuildPath(com_ptr<ID2D1Factory> const & d2dFactory, std::functio
 	return trianglePath;
 }
 
-// Helper to build a square CompositionPath
+// Helper to build a square CompositionPath.
 CompositionPath BuildSquarePath(com_ptr<ID2D1Factory> const & d2dFactory)
 {
 	auto squareBuilder = [](com_ptr<ID2D1GeometrySink> const & sink) {
@@ -167,7 +194,7 @@ CompositionPath BuildSquarePath(com_ptr<ID2D1Factory> const & d2dFactory)
 	return BuildPath(d2dFactory, squareBuilder);
 }
 
-// Helper to build a circular CompositionPath
+// Helper to build a circular CompositionPath.
 CompositionPath BuildCirclePath(com_ptr<ID2D1Factory> const & d2dFactory)
 {
 	auto circleBuilder = [](com_ptr<ID2D1GeometrySink> const & sink) {
@@ -186,26 +213,27 @@ CompositionPath BuildCirclePath(com_ptr<ID2D1Factory> const & d2dFactory)
 
 // Scenario 3: create morph animation
 void Scenario3PathMorphImperative(const Compositor & compositor, const ContainerVisual & root) {
-	// Same steps as for SimpleShapeImperative_Click to create, size and host a ShapeVisual
+	// Create, size, and host a ShapeVisual.
 	ShapeVisual shape = compositor.CreateShapeVisual();
 	shape.Size({ 500.0f, 500.0f });
-	shape.Offset({ 600.0f, 0.0f, 1.0f });
+	shape.Offset({ 0.0f, 350.0f, 1.0f });
 
 	com_ptr<ID2D1Factory> d2dFactory;
 	check_hresult(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.put()));
 
-	// Call helper functions that use Win2D to build square and circle path geometries and create CompositionPath's for them
+	// Call helper functions that use Win2D to build square and circle 
+	// path geometries and create CompositionPaths for them.
 	auto squarePath = BuildSquarePath(d2dFactory);
 
 	auto circlePath = BuildCirclePath(d2dFactory);
 
-	// Create a CompositionPathGeometry, CompositionSpriteShape and set offset and fill
+	// Create a CompositionPathGeometry & CompositionSpriteShape, and set offset and fill.
 	CompositionPathGeometry compositionPathGeometry = compositor.CreatePathGeometry(squarePath);
 	CompositionSpriteShape spriteShape = compositor.CreateSpriteShape(compositionPathGeometry);
 	spriteShape.Offset({ 150.0f, 200.0f });
 	spriteShape.FillBrush(CreateGradientBrush(compositor));
 
-	// Create a PathKeyFrameAnimation to set up the path morph passing in the circle and square paths
+	// Create a PathKeyFrameAnimation to set up the path morph, passing in the circle and square paths.
 	auto playAnimation = compositor.CreatePathKeyFrameAnimation();
 	playAnimation.Duration(std::chrono::seconds(4));
 	playAnimation.InsertKeyFrame(0, squarePath);
@@ -213,27 +241,28 @@ void Scenario3PathMorphImperative(const Compositor & compositor, const Container
 	playAnimation.InsertKeyFrame(0.6F, circlePath);
 	playAnimation.InsertKeyFrame(1.0F, squarePath);
 
-	// Make animation repeat forever and start it
+	// Make animation repeat forever and start it.
 	playAnimation.IterationBehavior(AnimationIterationBehavior::Forever);
 	playAnimation.Direction(AnimationDirection::Alternate);
 	compositionPathGeometry.StartAnimation(L"Path", playAnimation);
 
-	// Add the SpriteShape to our shape visual
+	// Add the SpriteShape to our shape visual.
 	shape.Shapes().Append(spriteShape);
 
-	// Add to the visual tree
+	// Add to the visual tree.
 	root.Children().InsertAtTop(shape);
 }
 
 // end Scenario 3
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// Scenario 4: Use output from LottieViewer https://www.microsoft.com/store/productId/9P7X9K692TMW 
-// to play back anamiation generated in Adobe After Effects and converted using Bodymovin
+// Scenario 4: Use output from LottieViewer (https://www.microsoft.com/store/productId/9P7X9K692TMW) 
+// to play back animation generated in Adobe After Effects and converted using Bodymovin.
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// Helper funciton for playing back lottie generated animations
-ScalarKeyFrameAnimation Play(const Compositor & compositor, Visual const & visual) {
+// Helper function for playing back Lottie generated animations.
+ScalarKeyFrameAnimation Play(const Compositor & compositor, Visual const & visual) 
+{
 	auto progressAnimation = compositor.CreateScalarKeyFrameAnimation();
 	progressAnimation.Duration(std::chrono::seconds(5));
 	progressAnimation.IterationBehavior(AnimationIterationBehavior::Forever);
@@ -246,19 +275,21 @@ ScalarKeyFrameAnimation Play(const Compositor & compositor, Visual const & visua
 	return progressAnimation;
 }
 
-// Scenario 4
-void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVisual & root) {
-	//configure a container visual
+// Scenario 4.
+void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVisual & root) 
+{
+	// Configure a container visual.
 	float width = 400.0f, height = 400.0f;
 	SpriteVisual container = compositor.CreateSpriteVisual();
 	container.Size({ width, height });
-	container.Offset({ 0.0f, 350.0f, 1.0f });
+	container.Offset({ 400.0f, 400.0f, 1.0f });
 	root.Children().InsertAtTop(container);
 
 	AnimatedVisuals::LottieLogo1 bmv;
 
-	//NOTE to make this scenario compile with prerelease Microsoft.UI.Xaml package 190131001 you need to edit: …\UWPCompositionDemos\HelloVectors\packages\Microsoft.UI.Xaml.2.1.190131001-prerelease\build\native\Microsoft.UI.Xaml.targets
-	//and change <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'"> with <ItemGroup>
+	// NOTE: To make this scenario compile with prerelease Microsoft.UI.Xaml package 190131001 you need to edit:
+	// HelloVectors\packages\Microsoft.UI.Xaml.2.1.190131001-prerelease\build\native\Microsoft.UI.Xaml.targets
+	// and change <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'"> to <ItemGroup>.
 
 	winrt::Windows::Foundation::IInspectable diags;
 	auto avptr = bmv.TryCreateAnimatedVisual(compositor, diags);
@@ -266,23 +297,23 @@ void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVis
 	auto visual = avptr.RootVisual();
 	container.Children().InsertAtTop(visual);
 
-	//// Calculate a scale to make the animation fit into the specified visual size
+	// Calculate a scale to make the animation fit into the specified visual size.
 	container.Scale({ width / avptr.Size().x, height / avptr.Size().y, 1.0f });
 
 	auto playanimation = Play(compositor, visual);
 }
 
-// end scenario 3
+// end scenario 4
 
-// Bootstap the app
+// Bootstap the app.
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 {
 	init_apartment(apartment_type::single_threaded);
 
-	// Create a dispatcher controller required when using Windows::UI::Composition in win32
+	// Create a dispatcher controller required when using Windows::UI::Composition in Win32.
 	auto controller = CreateDispatcherQueueController();
 
-	// Callback that will build a visual tree containing each sample
+	// Callback that will build a visual tree containing each sample.
 	auto buildvisualtree =
 		[](const Compositor & compositor, const Visual & root) {
 
@@ -292,7 +323,7 @@ int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 		Scenario4PlayLottieOutput(compositor, root.as<ContainerVisual>());
 	};
 
-	// Composition Window.  For more details see TODO: link to basic walkthrough
+	// Composition Window.
 	CompositionWindow window(buildvisualtree);
 
 	// Win32 MessageLoop
