@@ -76,6 +76,10 @@ This sample requires:
       name="Microsoft.Graphics.Canvas.CanvasBitmap"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass 
+      name="Microsoft.Graphics.Canvas.Effects.BorderEffect" 
+      threadingModel="both" 
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
   </file>
 
 ```
