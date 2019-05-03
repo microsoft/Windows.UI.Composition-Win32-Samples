@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloComposition", "HelloComposition\HelloComposition\HelloComposition.csproj", "{04E01937-68C6-444A-87D1-B0BEA385F493}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualLayerIntegration", "VisualLayerIntegration\VisualLayerIntegration\VisualLayerIntegration.csproj", "{7C408E7A-3256-4C5A-A169-ADDF41697D20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HelloComposition", "HelloComposition", "{48B79E75-D951-4254-8F6D-B5D8491D629A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VisualLayerIntegration", "VisualLayerIntegration", "{A2D16545-5717-4256-9BE2-F68A2B711F66}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Debug|x64.Build.0 = Debug|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Debug|x86.Build.0 = Debug|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Release|x64.ActiveCfg = Release|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Release|x64.Build.0 = Release|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Release|x86.ActiveCfg = Release|Any CPU
+		{04E01937-68C6-444A-87D1-B0BEA385F493}.Release|x86.Build.0 = Release|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Debug|x64.Build.0 = Debug|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Debug|x86.Build.0 = Debug|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Release|x64.ActiveCfg = Release|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Release|x64.Build.0 = Release|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Release|x86.ActiveCfg = Release|Any CPU
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{04E01937-68C6-444A-87D1-B0BEA385F493} = {48B79E75-D951-4254-8F6D-B5D8491D629A}
+		{7C408E7A-3256-4C5A-A169-ADDF41697D20} = {A2D16545-5717-4256-9BE2-F68A2B711F66}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D9C5091E-EC23-4865-A811-7C99D33573F2}
+	EndGlobalSection
+EndGlobal

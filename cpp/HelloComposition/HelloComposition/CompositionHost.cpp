@@ -63,11 +63,12 @@ void CompositionHost::CreateDesktopWindowTarget(HWND window)
 	m_target = target;
 }
 
+
 void CompositionHost::CreateCompositionRoot()
 {
 	auto root = m_compositor.CreateContainerVisual();
 	root.RelativeSizeAdjustment({ 1.0f, 1.0f });
-	root.Offset({ 24, 24, 0 });
+	root.Offset({ 124, 12, 0 });
 	m_target.Root(root);
 }
 
@@ -78,9 +79,28 @@ void CompositionHost::AddElement(float size, float x, float y)
 		auto visuals = m_target.Root().as<ContainerVisual>().Children();
 		auto visual = m_compositor.CreateSpriteVisual();
 
-		visual.Brush(m_compositor.CreateColorBrush({ 0xDC, 0x5B, 0x9B, 0xD5 }));
-		visual.Size({ size, size });
-		visual.Offset({ x, y, 0.0f, });
+		auto element = m_compositor.CreateSpriteVisual();
+		uint8_t r = (double)(double)(rand() % 255);;
+		uint8_t g = (double)(double)(rand() % 255);;
+		uint8_t b = (double)(double)(rand() % 255);;
+
+		element.Brush(m_compositor.CreateColorBrush({ 255, r, g, b }));
+		element.Size({ size, size });
+		element.Offset({ x, y, 0.0f, });
+
+		auto animation = m_compositor.CreateVector3KeyFrameAnimation();
+		auto bottom = (float)600 - element.Size().y;
+		animation.InsertKeyFrame(1, { element.Offset().x, bottom, 0 });
+
+		using timeSpan = std::chrono::duration<int, std::ratio<1, 1>>;
+
+		std::chrono::seconds duration(2);
+		std::chrono::seconds delay(3);
+
+		animation.Duration(timeSpan(duration));
+		animation.DelayTime(timeSpan(delay));
+		element.StartAnimation(L"Offset", animation);
+		visuals.InsertAtTop(element);
 
 		visuals.InsertAtTop(visual);
 	}

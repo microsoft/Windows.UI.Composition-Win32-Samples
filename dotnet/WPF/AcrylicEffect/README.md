@@ -1,6 +1,8 @@
 # WPF Effects Sample
 
 
+This sample demonstrates the use of [Win2D](https://microsoft.github.io/Win2D/html/Introduction.htm) effects in a WPF app. It shows how to place an [acrylic](https://docs.microsoft.com/windows/uwp/design/style/acrylic) overlay on top of a picture.
+
 ![Acrylic Effect in WPF](acrylic-effect-wpf.png)
 
 
@@ -11,13 +13,20 @@
 
 ## Run the sample
 
+This sample requires: 
+
+- Visual Studio 2017 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676) 
+- .NET Framework 4.7.2 or later 
+- Windows 10 version 1903 or later 
+- Windows 10 SDK 18362 or later - [Get the SDK](https://developer.microsoft.com/windows/downloads/windows-10-sdk) 
+
 - Clone
 - NuGet Updates
    - Right click project > Manage NuGet Packages
    - Make sure 'Include prerelease' is checked
    - From Source nuget.org, install the following:
        - Win2D.uwp
-       - Microsoft.Windows.SDK.Contracts
+       - Microsoft.Windows.SDK.Contracts (version 10.0.18362.2002-preview or later)
        - Microsoft.VCRTForwarders package
 
 - Add an app.manifest to the project. 
@@ -68,6 +77,10 @@
     <activatableClass
       name="Microsoft.Graphics.Canvas.CanvasBitmap"
       threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass 
+      name="Microsoft.Graphics.Canvas.Effects.BorderEffect" 
+      threadingModel="both" 
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
   </file>
 
