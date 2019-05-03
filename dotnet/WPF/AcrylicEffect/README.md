@@ -1,6 +1,8 @@
 # WPF Effects Sample
 
 
+This sample demonstrates the use of [Win2D](https://microsoft.github.io/Win2D/html/Introduction.htm) effects in a WPF app. It shows how to place an [acrylic](https://docs.microsoft.com/windows/uwp/design/style/acrylic) overlay on top of a picture.
+
 ![Acrylic Effect in WPF](acrylic-effect.png)
 
 
@@ -24,7 +26,7 @@ This sample requires:
    - Make sure 'Include prerelease' is checked
    - From Source nuget.org, install the following:
        - Win2D.uwp
-       - Microsoft.Windows.SDK.Contracts
+       - Microsoft.Windows.SDK.Contracts (version 10.0.18362.2002-preview or later)
        - Microsoft.VCRTForwarders package
 
 - Add an app.manifest to the project. 
