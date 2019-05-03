@@ -51,7 +51,7 @@ Windows::UI::Composition::CompositionLinearGradientBrush CreateGradientBrush(con
 }
 
 // Helper class for converting geometry to a composition compatible geometry source
-struct GeoSource final : implements<GeoSource,
+struct GeoSource : implements<GeoSource,
 	Windows::Graphics::IGeometrySource2D,
 	ABI::Windows::Graphics::IGeometrySource2DInterop>
 {
@@ -86,7 +86,6 @@ void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & 
 	com_ptr<ID2D1Factory> d2dFactory;
 	check_hresult(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, d2dFactory.put()));
 
-	com_ptr<GeoSource> result;
 	com_ptr<ID2D1PathGeometry> path;
 
 	// use D2D factory to create a path geometry
@@ -107,8 +106,7 @@ void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & 
 	check_hresult(sink->Close());
 
 	// Create a GeoSource helper object wrapping the path
-	result.attach(new GeoSource(path));
-	CompositionPath trianglePath = CompositionPath(result.as<Windows::Graphics::IGeometrySource2D>());
+	CompositionPath trianglePath = CompositionPath(make<GeoSource>(path));
 
 	// create a CompositionPathGeometry from the composition path
 	CompositionPathGeometry compositionPathGeometry = compositor.CreatePathGeometry(trianglePath);
@@ -134,7 +132,6 @@ void Scenario2SimplePath(const Compositor & compositor, const ContainerVisual & 
 CompositionPath BuildPath(com_ptr<ID2D1Factory> const & d2dFactory, std::function<void(com_ptr<ID2D1GeometrySink> const & sink)> builder)
 {
 	// See scenario 2 for a more detailed explanation of the items here
-	com_ptr<GeoSource> result;
 	com_ptr<ID2D1PathGeometry> path;
 	check_hresult(d2dFactory->CreatePathGeometry(path.put()));
 	com_ptr<ID2D1GeometrySink> sink;
@@ -145,8 +142,7 @@ CompositionPath BuildPath(com_ptr<ID2D1Factory> const & d2dFactory, std::functio
 
 	check_hresult(sink->Close());
 
-	result.attach(new GeoSource(path));
-	CompositionPath trianglePath = CompositionPath(result.as<Windows::Graphics::IGeometrySource2D>());
+	CompositionPath trianglePath = CompositionPath(make<GeoSource>(path));
 	return trianglePath;
 }
 
@@ -255,12 +251,11 @@ void Scenario4PlayLottieOutput(const Compositor & compositor, const ContainerVis
 	container.Offset({ 0.0f, 350.0f, 1.0f });
 	root.Children().InsertAtTop(container);
 
-	AnimatedVisuals::LottieLogo1 bmv;
-
 	//NOTE to make this scenario compile with prerelease Microsoft.UI.Xaml package 190131001 you need to edit: …\UWPCompositionDemos\HelloVectors\packages\Microsoft.UI.Xaml.2.1.190131001-prerelease\build\native\Microsoft.UI.Xaml.targets
 	//and change <ItemGroup Condition="'$(TargetPlatformIdentifier)' == 'UAP'"> with <ItemGroup>
 
 	winrt::Windows::Foundation::IInspectable diags;
+	auto bmv = make<AnimatedVisuals::LottieLogo1>();
 	auto avptr = bmv.TryCreateAnimatedVisual(compositor, diags);
 
 	auto visual = avptr.RootVisual();

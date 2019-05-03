@@ -21,7 +21,7 @@ using namespace Microsoft::UI::Xaml::Controls;
 
 namespace
 {
-struct GeoSource final : implements<GeoSource,
+struct GeoSource : implements<GeoSource,
 	Windows::Graphics::IGeometrySource2D,
 	ABI::Windows::Graphics::IGeometrySource2DInterop>
 {
@@ -126,60 +126,6 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     CompositionColorBrush ColorBrush_White()
     {
         return _colorBrush_White = _c.CreateColorBrush({ 0xFF, 0xFF, 0xFF, 0xFF });
-    }
-
-    CompositionPath CompositionPath_00()
-    {
-        auto result = _compositionPath_00 =  CompositionPath(Geometry_00().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_01()
-    {
-        auto result = _compositionPath_01 =  CompositionPath(Geometry_01().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_02()
-    {
-        auto result = _compositionPath_02 =  CompositionPath(Geometry_02().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_03()
-    {
-        auto result = _compositionPath_03 =  CompositionPath(Geometry_03().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_04()
-    {
-        auto result = _compositionPath_04 =  CompositionPath(Geometry_04().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_05()
-    {
-        auto result = _compositionPath_05 =  CompositionPath(Geometry_05().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_06()
-    {
-        auto result = _compositionPath_06 =  CompositionPath(Geometry_06().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_07()
-    {
-        auto result = _compositionPath_07 =  CompositionPath(Geometry_07().as<IGeometrySource2D>());
-        return result;
-    }
-
-    CompositionPath CompositionPath_08()
-    {
-        auto result = _compositionPath_08 =  CompositionPath(Geometry_08().as<IGeometrySource2D>());
-        return result;
     }
 
     // Layer (Shape): Dot-Y
@@ -1711,9 +1657,8 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         return result;
     }
 
-    CanvasGeometry Geometry_00()
+    auto Geometry_00()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1722,13 +1667,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 75.663002F, 0.289999992F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_01()
+    auto Geometry_01()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1737,13 +1680,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -4.35900021F, 70.3919983F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_02()
+    auto Geometry_02()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1752,13 +1693,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 99.1709976F, 0.0659999996F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_03()
+    auto Geometry_03()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1767,13 +1706,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 62.1629982F, 0.289999992F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_04()
+    auto Geometry_04()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1786,13 +1723,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddBezier({ { -13.1960001F, -27.0459995F }, { 8.96000004F, 11.559F }, { 49.5060005F, 11.559F } });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_05()
+    auto Geometry_05()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1801,13 +1736,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 340.955994F, 213.628006F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_06()
+    auto Geometry_06()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1816,13 +1749,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -1.68099999F, 29.9920006F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_07()
+    auto Geometry_07()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1831,13 +1762,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -1.76800001F, 25.9659996F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_08()
+    auto Geometry_08()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1851,13 +1780,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddBezier({ { 53.6889992F, 43.6080017F }, { 68.9710007F, 41.3569984F }, { 140.393997F, 43.6720009F } });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_09()
+    auto Geometry_09()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1867,13 +1794,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddBezier({ { -78.625F, -72 }, { -79.375F, -58.25F }, { -80.375F, -39.25F } });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_10()
+    auto Geometry_10()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1883,13 +1808,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddBezier({ { -75.5F, -66.25F }, { -75.5F, -56.75F }, { -76.5F, -37.75F } });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_11()
+    auto Geometry_11()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1899,13 +1822,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddBezier({ { -61.4720001F, -34.3689995F }, { -62.25F, -5.75F }, { -62.25F, -5.75F } });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_12()
+    auto Geometry_12()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1916,13 +1837,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddBezier({ { -53.5F, -20.5790005F }, { -42.25F, 4.25F }, { -42.25F, 4.25F } });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_13()
+    auto Geometry_13()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1931,13 +1850,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -32.769001F, 57.3650017F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_14()
+    auto Geometry_14()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1946,13 +1863,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -32.75F, 55.75F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_15()
+    auto Geometry_15()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1961,13 +1876,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -48.769001F, 55.3650017F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_16()
+    auto Geometry_16()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1976,13 +1889,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ -48.75F, 54.75F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_17()
+    auto Geometry_17()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -1991,13 +1902,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 136.731003F, 7.11499977F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_18()
+    auto Geometry_18()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2006,13 +1915,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 132, 2.75F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_19()
+    auto Geometry_19()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2021,13 +1928,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 137.481003F, 11.3649998F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_20()
+    auto Geometry_20()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2036,13 +1941,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 82.75F, -44.75F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_21()
+    auto Geometry_21()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2051,13 +1954,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 63.5F, -20.5F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_22()
+    auto Geometry_22()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2066,13 +1967,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 78.25F, 3.5F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_23()
+    auto Geometry_23()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2081,13 +1980,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 136.647995F, 10.1560001F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_24()
+    auto Geometry_24()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2096,13 +1993,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 132.274994F, 4.73099995F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_25()
+    auto Geometry_25()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2111,13 +2006,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 134.921997F, 14.7489996F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_26()
+    auto Geometry_26()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2126,13 +2019,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 133.195007F, 13.21F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_27()
+    auto Geometry_27()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2141,13 +2032,11 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 130.029007F, 5.01599979F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
-        return result;
+        return make<GeoSource>(path);
     }
 
-    CanvasGeometry Geometry_28()
+    auto Geometry_28()
     {
-        CanvasGeometry result;
         com_ptr<ID2D1PathGeometry> path;
         check_hresult(_d2dFactory->CreatePathGeometry(path.put()));
         com_ptr<ID2D1GeometrySink> sink;
@@ -2156,7 +2045,60 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
         sink->AddLine({ 131.281998F, 21.8069992F });
         sink->EndFigure(D2D1_FIGURE_END_OPEN);
         check_hresult(sink->Close());
-        result.attach(new GeoSource(path));
+        return make<GeoSource>(path);
+    }
+
+    CompositionPath CompositionPath_00()
+    {
+        auto result = _compositionPath_00 = CompositionPath(Geometry_00());
+        return result;
+    }
+
+    CompositionPath CompositionPath_01()
+    {
+        auto result = _compositionPath_01 = CompositionPath(Geometry_01());
+        return result;
+    }
+
+    CompositionPath CompositionPath_02()
+    {
+        auto result = _compositionPath_02 = CompositionPath(Geometry_02());
+        return result;
+    }
+
+    CompositionPath CompositionPath_03()
+    {
+        auto result = _compositionPath_03 = CompositionPath(Geometry_03());
+        return result;
+    }
+
+    CompositionPath CompositionPath_04()
+    {
+        auto result = _compositionPath_04 = CompositionPath(Geometry_04());
+        return result;
+    }
+
+    CompositionPath CompositionPath_05()
+    {
+        auto result = _compositionPath_05 = CompositionPath(Geometry_05());
+        return result;
+    }
+
+    CompositionPath CompositionPath_06()
+    {
+        auto result = _compositionPath_06 = CompositionPath(Geometry_06());
+        return result;
+    }
+
+    CompositionPath CompositionPath_07()
+    {
+        auto result = _compositionPath_07 = CompositionPath(Geometry_07());
+        return result;
+    }
+
+    CompositionPath CompositionPath_08()
+    {
+        auto result = _compositionPath_08 = CompositionPath(Geometry_08());
         return result;
     }
 
@@ -2510,7 +2452,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_19()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_09().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_09()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2536,7 +2478,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_20()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_10().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_10()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2562,7 +2504,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_21()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_11().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_11()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2588,7 +2530,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_22()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_12().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_12()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2614,7 +2556,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_23()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_13().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_13()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2640,7 +2582,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_24()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_14().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_14()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2666,7 +2608,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_25()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_15().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_15()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2692,7 +2634,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_26()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_16().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_16()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2718,7 +2660,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_27()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_17().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_17()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2744,7 +2686,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_28()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_18().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_18()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2770,7 +2712,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_29()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_19().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_19()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2796,7 +2738,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_30()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_20().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_20()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2822,7 +2764,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_31()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_21().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_21()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2848,7 +2790,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_32()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_22().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_22()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2874,7 +2816,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_33()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_23().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_23()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2900,7 +2842,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_34()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_24().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_24()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2926,7 +2868,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_35()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_25().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_25()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2952,7 +2894,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_36()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_26().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_26()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -2978,7 +2920,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_37()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_27().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_27()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
@@ -3004,7 +2946,7 @@ struct AnimatedVisual : implements<AnimatedVisual,IAnimatedVisual>
     // Path 1.PathGeometry
     CompositionPathGeometry PathGeometry_38()
     {
-        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_28().as<IGeometrySource2D>()));
+        auto result = _c.CreatePathGeometry( CompositionPath(Geometry_28()));
         auto propertySet = result.Properties();
         propertySet.InsertScalar(L"TStart", 0.870000005F);
         propertySet.InsertScalar(L"TEnd", 1);
