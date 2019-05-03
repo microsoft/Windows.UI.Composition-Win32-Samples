@@ -52,6 +52,6 @@
                                       Grid.Row="1" Grid.Column="1"
                                       Width="600" Height="500"
                                       VerticalAlignment="Top"
-                                      BorderBrush="LightGray" BorderThickness="3"/>
+                                      BorderBrush="Transparent" BorderThickness="3"/>
     </Grid>
 </Window>

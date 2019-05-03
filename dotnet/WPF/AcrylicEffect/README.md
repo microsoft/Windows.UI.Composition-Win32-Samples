@@ -1,7 +1,7 @@
 # WPF Effects Sample
 
 
-![Acrylic Effect in WPF](acrylic-effect.png)
+![Acrylic Effect in WPF](acrylic-effect-wpf.png)
 
 
 ## Features

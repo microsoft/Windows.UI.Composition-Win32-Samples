@@ -32,7 +32,7 @@
              d:DesignHeight="600" d:DesignWidth="900"
              Loaded="CompositionHostControl_Loaded">
     <Grid>
-        <Image Source="Assets/Nature-6.jpg" />
+        <Image Source="Assets/Lake.jpg"/>
         <Border Name="CompositionHostElement"/>
     </Grid>
 </UserControl>
