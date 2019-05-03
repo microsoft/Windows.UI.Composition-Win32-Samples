@@ -2,15 +2,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Composition;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using Windows.Graphics.DirectX;
 using Windows.Graphics.Effects;
 using Windows.Storage;
@@ -27,7 +19,6 @@ namespace AcrylicEffect
         private static double rectHeight;
         private static bool isAcrylicVisible = false;
         private static SpriteVisual acrylicVisual;
-        private static double currentDpi;
         private static CompositionGraphicsDevice compositionGraphicsDevice;
         private static CompositionSurfaceBrush noiseSurfaceBrush;
 
@@ -37,17 +28,29 @@ namespace AcrylicEffect
         {
             InitializeComponent();
 
-            currentDpi = DeviceDpi / 96;
+            // Get graphics device.
+            canvasDevice = CanvasDevice.GetSharedDevice();
+
+            // Create effect graph.
+            acrylicEffect = CreateAcrylicEffectGraph();
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        public new void Dispose()
         {
-            ToggleAcrylic();
-        }
+            base.Dispose();
 
+            acrylicVisual.Dispose();
+            noiseSurfaceBrush.Dispose();
+
+            canvasDevice.Dispose();
+            compositionGraphicsDevice.Dispose();
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // This container visual is optional - content could go directly into the root
+            // containerVisual. This lets you overlay just the picture box, and you could add
+            // other container visuals to overlay other areas of the UI.
             pictureOverlayVisual = compositor.CreateContainerVisual();
             pictureOverlayVisual.Offset = new Vector3(pictureBox1.Bounds.Left, pictureBox1.Bounds.Top, 0);
             pictureOverlayVisual.Size = new Vector2(pictureBox1.Width, pictureBox1.Height);
@@ -59,14 +62,14 @@ namespace AcrylicEffect
             // Get graphics device.
             compositionGraphicsDevice = CanvasComposition.CreateCompositionGraphicsDevice(compositor, canvasDevice);
 
-            // Create surface. 
+            // Create surface.
             var noiseDrawingSurface = compositionGraphicsDevice.CreateDrawingSurface(
                 new Windows.Foundation.Size(rectWidth, rectHeight),
                 DirectXPixelFormat.B8G8R8A8UIntNormalized,
                 DirectXAlphaMode.Premultiplied);
 
             // Draw to surface and create surface brush.
-            var noiseFilePath = AppDomain.CurrentDomain.BaseDirectory + "Assets\\noise.png";
+            var noiseFilePath = AppDomain.CurrentDomain.BaseDirectory + "Assets\\NoiseAsset_256X256.png";
             LoadSurface(noiseDrawingSurface, noiseFilePath);
             noiseSurfaceBrush = compositor.CreateSurfaceBrush(noiseDrawingSurface);
 
@@ -74,12 +77,11 @@ namespace AcrylicEffect
             AddCompositionContent();
         }
 
-
         public void AddCompositionContent()
         {
             var acrylicVisualOffset = new Vector3(
-                (float)(rectWidth * currentDpi) / 2,
-                (float)(rectHeight * currentDpi) / 2,
+                (float)rectWidth / 2,
+                (float)rectHeight / 2,
                 0);
 
             // Create visual and set brush.
@@ -87,17 +89,16 @@ namespace AcrylicEffect
             acrylicVisual.Brush = CreateAcrylicEffectBrush();
         }
 
-        SpriteVisual CreateCompositionVisual(Vector3 offset)
+        private SpriteVisual CreateCompositionVisual(Vector3 offset)
         {
             var visual = compositor.CreateSpriteVisual();
             visual.Size = new Vector2((float)rectWidth, (float)rectHeight);
-            visual.Scale = new Vector3((float)currentDpi, (float)currentDpi, 1);
             visual.Offset = offset;
 
             return visual;
         }
 
-        async void LoadSurface(CompositionDrawingSurface surface, string path)
+        private async void LoadSurface(CompositionDrawingSurface surface, string path)
         {
             // Load from stream.
             var storageFile = await StorageFile.GetFileFromPathAsync(path);
@@ -114,7 +115,7 @@ namespace AcrylicEffect
             }
         }
 
-        IGraphicsEffect CreateAcrylicEffectGraph()
+        private IGraphicsEffect CreateAcrylicEffectGraph()
         {
             return new BlendEffect
             {
@@ -127,36 +128,41 @@ namespace AcrylicEffect
                             new BlendEffect
                             {
                                 Mode = BlendEffectMode.Exclusion,
-                                Background = new GaussianBlurEffect
+                                Background = new SaturationEffect
                                 {
-                                    Name = "Blur",
-                                    Source = new CompositionEffectSourceParameter("Backdrop"),
-                                    BorderMode = EffectBorderMode.Hard,
-                                    BlurAmount = 50
+                                    Saturation = 1,
+                                    Source = new GaussianBlurEffect
+                                    {
+                                        Source = new CompositionEffectSourceParameter("Backdrop"),
+                                        BorderMode = EffectBorderMode.Hard,
+                                        BlurAmount = 30
+                                    },
                                 },
                                 Foreground = new ColorSourceEffect()
                                 {
-                                    Name = "ExclusionColor",
                                     Color = Windows.UI.Color.FromArgb(26, 255, 255, 255)
                                 }
                             },
                             new ColorSourceEffect
                             {
-                                Name = "OverlayColor",
-                                Color = Windows.UI.Color.FromArgb(204, 255, 255, 255)
+                                Color = Windows.UI.Color.FromArgb(153, 255, 255, 255)
                             }
                         }
                 },
                 Foreground = new OpacityEffect
                 {
-                    Name = "Noise",
-                    Opacity = 0.04f,
-                    Source = new CompositionEffectSourceParameter("Noise")
-                }
+                    Opacity = 0.03f,
+                    Source = new BorderEffect()
+                    {
+                        ExtendX = CanvasEdgeBehavior.Wrap,
+                        ExtendY = CanvasEdgeBehavior.Wrap,
+                        Source = new CompositionEffectSourceParameter("Noise")
+                    },
+                },
             };
         }
 
-        CompositionEffectBrush CreateAcrylicEffectBrush()
+        private CompositionEffectBrush CreateAcrylicEffectBrush()
         {
             // Compile the effect.
             var effectFactory = compositor.CreateEffectFactory(acrylicEffect);
@@ -172,16 +178,7 @@ namespace AcrylicEffect
             return acrylicEffectBrush;
         }
 
-        //public void Dispose()
-        //{
-        //    _acrylicVisual.Dispose();
-        //    _noiseSurfaceBrush.Dispose();
-
-        //    _canvasDevice.Dispose();
-        //    _compositionGraphicsDevice.Dispose();
-        //}
-
-        internal void ToggleAcrylic()
+        private void ToggleAcrylic()
         {
             // Toggle visibility of acrylic visual by adding or removing from tree.
             if (isAcrylicVisible)
@@ -194,6 +191,11 @@ namespace AcrylicEffect
             }
 
             isAcrylicVisible = !isAcrylicVisible;
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            ToggleAcrylic();
         }
     }
 }

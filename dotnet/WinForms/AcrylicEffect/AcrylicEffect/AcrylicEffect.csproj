@@ -123,7 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Nature-6.jpg" />
-    <Content Include="Assets\noise.png" />
+    <Content Include="Assets\NoiseAsset_256X256.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
