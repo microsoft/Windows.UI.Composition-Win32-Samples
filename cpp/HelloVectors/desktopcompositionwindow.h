@@ -24,6 +24,7 @@
 
 #pragma once
 #include "pch.h"
+#include <functional>
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 using namespace winrt;
@@ -107,14 +108,13 @@ struct DesktopWindow
 
 	LRESULT MessageHandler(UINT const message, WPARAM const wparam, LPARAM const lparam) noexcept
 	{
-		switch (message)
-		{
+		switch (message) {
 		    case WM_DPICHANGED:
 		    {
 			    return HandleDpiChange(m_window, wparam, lparam);
 		    }
 		    
-		    case WM_DESTROY: message:
+		    case WM_DESTROY: 
 		    {
 		    	PostQuitMessage(0);
 		    	return 0;
