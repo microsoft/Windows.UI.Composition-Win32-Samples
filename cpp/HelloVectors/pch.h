@@ -34,6 +34,9 @@
 #define PCH_H
 
 #include <windows.h>
+#ifdef GetCurrentTime
+#undef GetCurrentTime
+#endif
 #include <unknwn.h>
 
 #include <windows.ui.composition.interop.h>
@@ -41,6 +44,7 @@
 #include <DispatcherQueue.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.UI.Composition.Desktop.h>
+#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Metadata.h>
 
 #include "winrt/Microsoft.UI.Xaml.Automation.Peers.h"
