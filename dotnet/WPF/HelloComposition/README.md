@@ -21,7 +21,7 @@ This sample includes the following features:
 
 This sample requires:
 
-- Visual Studio 2017 - [Get a free copy of Visual Studio 2017 with support for building Universal Windows apps](http://go.microsoft.com/fwlink/?LinkID=280676)
+- Visual Studio 2017 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
 - .NET Framework 4.7.2 or later
 - Windows 10 version 1803 or later
 - Windows 10 SDK 17134 or later
@@ -48,7 +48,7 @@ See the [Add the user control to your XAML page](https://docs.microsoft.com/wind
 
 ## See also
 
-For a more complete example that builds on this infrastructure, see the [WPF Visual layer integration sample]().
+For a more complete example that builds on this infrastructure, see the [WPF Visual layer integration sample](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/VisualLayerIntegration).
 
 - [Visual Layer documentation](https://docs.microsoft.com/windows/uwp/composition/visual-layer)
 - [Windows.UI.Composition](https://docs.microsoft.com/uwp/api/windows.ui.composition)
