@@ -26,10 +26,9 @@ This sample includes the following features:
 
 This sample requires:
 
-- Visual Studio 2017 - [Get a free copy of Visual Studio 2017 with support for building Universal Windows apps](http://go.microsoft.com/fwlink/?LinkID=280676)
-- Windows 10 insider version 18351 or later
-- Windows 10 insider SDK 18351 or later
-
+- Visual Studio 2017 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
+- Windows 10 version 1903 or later
+- Windows 10 SDK 18362 or later - [Get the SDK](https://developer.microsoft.com/windows/downloads/windows-10-sdk)
 
 ## Limitations
 
