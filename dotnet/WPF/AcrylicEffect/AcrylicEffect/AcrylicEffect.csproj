@@ -95,6 +95,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="User32.cs" />
     <Page Include="CompositionHostControl.xaml">
       <SubType>Designer</SubType>
