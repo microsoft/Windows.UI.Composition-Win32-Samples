@@ -63,9 +63,9 @@ namespace AcrylicEffect.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Nature_6 {
+        internal static System.Drawing.Bitmap Lake {
             get {
-                object obj = ResourceManager.GetObject("Nature_6", resourceCulture);
+                object obj = ResourceManager.GetObject("Lake", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
