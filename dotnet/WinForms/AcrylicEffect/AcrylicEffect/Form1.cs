@@ -130,7 +130,7 @@ namespace AcrylicEffect
                                 Mode = BlendEffectMode.Exclusion,
                                 Background = new SaturationEffect
                                 {
-                                    Saturation = 1,
+                                    Saturation = 2,
                                     Source = new GaussianBlurEffect
                                     {
                                         Source = new CompositionEffectSourceParameter("Backdrop"),
