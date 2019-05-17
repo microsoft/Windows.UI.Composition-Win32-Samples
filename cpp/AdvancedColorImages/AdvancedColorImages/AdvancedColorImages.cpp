@@ -152,7 +152,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	m_winComp->Initialize(m_childHWnd);
 	m_winComp->PrepareVisuals();
 	m_winComp->ConfigureInteraction();
-	m_winComp->LoadImageFromFileName(L"hdr-image.jpg");
+	m_winComp->LoadImageFromFileName(L"hdr-image.jxr");
 	m_winComp->UpdateViewPort(true);
 	return TRUE;
 }
