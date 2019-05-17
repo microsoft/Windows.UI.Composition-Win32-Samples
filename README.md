@@ -32,6 +32,7 @@ Minimum requirements for using the Visual layer in desktop apps are listed here.
 | [**Hello Composition sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/HelloComposition)</br>Demonstrates how to set up a project to use Composition APIs in a C++ Win32 app.</br>See the [Using the Visual layer with Win32](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-win32) tutorial for more info. | ![Hello Composition sample](images/hello-comp-win32.png) |
 | [**Hello Vectors sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/HelloVectors)</br>Demonstrates how to use vectors in the Visual layer. | ![Vector graphics UI](images/hello-vectors-win32.png)   |
 | [**Virtual Surfaces sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/VirtualSurfaces)</br>Demonstrates how to use virtual surfaces in the Visual layer. | ![Virtual surfaces UI](images/virtual-surfaces-win32.png)  |
+| [**Advanced Color sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/AdvancedColorImages)</br>Demonstrates how to load advanced color (HDR, High Color Gamut, High precision) images into a Virtual Surface and use an Interaction Tracker that helps create a smooth scrollable surface that responds well to touch, mouse, and precision touchpad. | ![Advanced color image UI](images/advanced-color-win32.png)  |
 | [**Screen Capture sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/cpp/ScreenCaptureforHWND)</br>Demonstrates how to use screen capture APIs. | ![Screen capture UI](images/screen-capture-win32.png)  |
 
 ### Windows Forms
@@ -49,7 +50,7 @@ Minimum requirements for using the Visual layer in desktop apps are listed here.
 | [**Hello Composition sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/HelloComposition)</br>Demonstrates how to set up a project to use Composition APIs in a WPF app.</br>See the [Using the Visual layer with WPF](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-wpf) tutorial for more info. | ![Hello Composition sample](images/hello-comp-wpf.png) |
 | [**Visual Layer Integration sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/VisualLayerIntegration)</br>Demonstrates how to use a bar graph created with Composition APIs in a WPF app. | ![Bar graph UI](images/bar-graph-wpf.png) |
 | [**Screen Capture sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/ScreenCapture)</br>Demonstrates how to use screen capture APIs. | ![Screen capture UI](images/capture-wpf.png) |
-| [**Win2D Effects (Acrylic) sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/AcrylicEffect)</br>Demonstrates how to use Win2D effects to show an acrylic overlay on top of a picture. | ![Acrylic effect](images/acrylic-effect.png) |
+| [**Win2D Effects (Acrylic) sample**](https://github.com/Microsoft/Windows.UI.Composition-Win32-Samples/tree/master/dotnet/WPF/AcrylicEffect)</br>Demonstrates how to use Win2D effects to show an acrylic overlay on top of a picture. | ![Acrylic effect](images/acrlyic-effect-wpf.png) |
 
 ## Limitations
 
