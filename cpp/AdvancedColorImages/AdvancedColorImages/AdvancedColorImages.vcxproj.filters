@@ -71,6 +71,8 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="hdr-image.jxr" />
+    <None Include="hdr-image.jxr">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
