@@ -155,6 +155,9 @@ namespace AcrylicEffect
                 var rect = new Windows.Foundation.Rect(0, 0, _rectWidth, _rectHeight);
                 ds.DrawImage(bitmap, 0, 0, rect);
             }
+
+            stream.Dispose();
+            bitmap.Dispose();
         }
 
         IGraphicsEffect CreateAcrylicEffectGraph()
