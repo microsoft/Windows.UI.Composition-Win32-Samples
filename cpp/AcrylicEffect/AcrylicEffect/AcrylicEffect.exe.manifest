@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+
+  <file name="Microsoft.Graphics.Canvas.dll">
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.CanvasDevice"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+       name="Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition"
+       threadingModel="both"
+       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.Effects.SaturationEffect"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+        name="Microsoft.Graphics.Canvas.Effects.BlendEffect"
+        threadingModel="both"
+        xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.Effects.ColorSourceEffect"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.Effects.CompositeEffect"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.Effects.OpacityEffect"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.CanvasBitmap"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+    <activatableClass
+      name="Microsoft.Graphics.Canvas.Effects.BorderEffect"
+      threadingModel="both"
+      xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+  </file>
+</assembly>
