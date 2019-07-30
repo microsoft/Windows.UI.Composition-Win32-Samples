@@ -59,12 +59,6 @@ struct DesktopWindow
 			that->m_window = window;
 			SetWindowLongPtr(window, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(that));
 		}
-		else if (WM_ERASEBKGND == message)
-		{
-			RECT rect;
-			GetClientRect(window, &rect);
-			FillRect((HDC)wparam, &rect, CreateSolidBrush(RGB(255, 0, 255)));
-		}
 		else if (T* that = GetThisFromHandle(window))
 		{
 			return that->MessageHandler(message, wparam, lparam);
@@ -103,7 +97,7 @@ struct Window : DesktopWindow<Window>
 		RegisterClass(&wc);
 		WINRT_ASSERT(!m_window);
 		DWORD Flags1 = WS_EX_COMPOSITED | WS_EX_LAYERED | WS_EX_TOPMOST | WS_EX_TRANSPARENT;
-		DWORD Flags2 = WS_POPUP;
+		DWORD Flags2 = WS_OVERLAPPEDWINDOW | WS_VISIBLE;
 		HWND hWnd;
 		
 		hWnd = CreateWindowEx(Flags1, wc.lpszClassName,
@@ -111,17 +105,8 @@ struct Window : DesktopWindow<Window>
 			Flags2,
 			0, 0, 1920, 1200,
 			nullptr, nullptr, wc.hInstance, this);
-
-		HRGN GGG = CreateRectRgn(0, 0, 1920, 1200);
-		InvertRgn(GetDC(hWnd), GGG);
-		SetWindowRgn(hWnd, GGG, false);
-
-		COLORREF RRR = RGB(255, 0, 255);
-		SetLayeredWindowAttributes(hWnd, RRR, (BYTE)0, LWA_COLORKEY);
+				
 		ShowWindow(hWnd, SW_SHOWDEFAULT);
-		UpdateWindow(hWnd);
-
-		DeleteObject(GGG);
 		WINRT_ASSERT(m_window);
 	}
 
@@ -142,10 +127,7 @@ struct Window : DesktopWindow<Window>
 		m_target.Root(root);
 		auto visuals = root.Children();
 
-		AddVisual(visuals, 200.0f, 200.0f);
-		AddVisual(visuals, 440.0f, 200.0f);
-		AddVisual(visuals, 200.0f, 440.0f);
-		AddBlurVisual(visuals, 440.0f, 440.0f);
+		AddBlurVisual(visuals, 0.0f, 0.0f);
 	}
 
 	void AddVisual(VisualCollection const& visuals, float x, float y)
@@ -188,7 +170,7 @@ struct Window : DesktopWindow<Window>
 		auto compositor = visuals.Compositor();
 		auto visual = compositor.CreateSpriteVisual();
 		AddBlurEffect(visual);
-		visual.Size({ 200.0f, 200.0f });
+		visual.Size({ 1920.0f, 1200.0f });
 		visual.Offset({ x, y, 0.0f, });
 
 		visuals.InsertAtTop(visual);
@@ -226,7 +208,7 @@ private:
 	DesktopWindowTarget m_target{ nullptr };
 };
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int nCommandShow)
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int )
 {
 	init_apartment(apartment_type::single_threaded);
 	auto controller = CreateDispatcherQueueController();
