@@ -1,3 +1,18 @@
+---
+page_type: sample
+languages:
+- csharp
+- xaml
+- cpp
+- cppwinrt
+products:
+- windows
+- windows-uwp
+- windows-wpf
+- dotnet
+- dotnet-core
+---
+
 # Visual layer samples for desktop applications
 
 This repository contains samples that demonstrate the use of Window.UI.Composition APIs in WPF, Windows Forms, and C++ Win32 applications.
