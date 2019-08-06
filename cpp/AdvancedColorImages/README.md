@@ -1,3 +1,13 @@
+---
+page_type: sample
+languages:
+- cpp
+- cppwinrt
+products:
+- windows
+- windows-uwp
+---
+
 # Advanced Color Images in Native C++
 
 An example app user interface (UI) that demonstrates the use of the Universal Windows Platform (UWP) [Visual Layer](https://docs.microsoft.com/windows/uwp/composition/visual-layer) APIs ([Windows.UI.Composition](https://docs.microsoft.com/uwp/api/windows.ui.composition)) in a native Win32 C++ App.
