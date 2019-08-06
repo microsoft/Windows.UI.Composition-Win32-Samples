@@ -1,3 +1,13 @@
+---
+page_type: sample
+languages:
+- cpp
+- cppwinrt
+products:
+- windows
+- windows-uwp
+---
+
 # Win32 HelloComposition sample
 
 This sample contains the code created in the [Using the Visual Layer with Win32](https://docs.microsoft.com/windows/uwp/composition/using-the-visual-layer-with-win32) tutorial. It's a simple user interface (UI) that demonstrates how to add Universal Windows Platform (UWP) [Visual Layer](https://docs.microsoft.com/windows/uwp/composition/visual-layer) content to a C++ Win32 app.
