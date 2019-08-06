@@ -1,3 +1,13 @@
+---
+page_type: sample
+languages:
+- cpp
+- cppwinrt
+products:
+- windows
+- windows-uwp
+---
+
 # Screen capture for HWND
 
 This sample demonstrates how to use the Windows.Graphics.Capture APIs in a Win32 application.
