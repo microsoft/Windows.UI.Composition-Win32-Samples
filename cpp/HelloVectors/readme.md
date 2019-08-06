@@ -1,3 +1,13 @@
+---
+page_type: sample
+languages:
+- cpp
+- cppwinrt
+products:
+- windows
+- windows-uwp
+---
+
 # Introduction to using vector animation in a Win32 client app
 
 
