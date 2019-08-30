@@ -151,7 +151,6 @@ namespace AcrylicEffect
             using (var ds = CanvasComposition.CreateDrawingSession(surface))
             {
                 ds.Clear(Colors.Transparent);
-
                 var rect = new Windows.Foundation.Rect(0, 0, _rectWidth, _rectHeight);
                 ds.DrawImage(bitmap, 0, 0, rect);
             }

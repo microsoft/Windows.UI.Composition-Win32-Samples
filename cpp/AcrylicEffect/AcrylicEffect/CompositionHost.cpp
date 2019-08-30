@@ -9,8 +9,6 @@ using namespace Windows::UI::Composition::Desktop;
 using namespace Windows::Foundation::Numerics;
 
 
-
-
 CompositionHost::CompositionHost()
 {
 }

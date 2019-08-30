@@ -51,4 +51,12 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Lake.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\NoiseAsset_256X256.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

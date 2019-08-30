@@ -2,15 +2,24 @@
 
 extern "C" IMAGE_DOS_HEADER __ImageBase;
 
+using namespace concurrency;
+using namespace ::winrt::impl;
 using namespace winrt;
+using namespace Windows::Foundation;
 using namespace Windows::UI;
 using namespace Windows::UI::Composition;
 using namespace Windows::UI::Composition::Desktop;
 using namespace Microsoft::Graphics::Canvas;
+using namespace Microsoft::Graphics::Canvas::UI;
 using namespace Microsoft::Graphics::Canvas::Effects;
 using namespace Microsoft::Graphics::Canvas::UI::Composition;
 using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::Effects;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Pickers;
+using namespace Windows::Web::Syndication;
+using namespace Windows::Storage::Streams;
+
 
 auto CreateDispatcherQueueController()
 {
@@ -120,10 +129,11 @@ struct Window : DesktopWindow<Window>
 	void PrepareVisuals()
 	{
 		Compositor compositor;
-		m_target = CreateDesktopWindowTarget(compositor, m_window);
-		auto root = compositor.CreateSpriteVisual();
+		_compositor = compositor;
+		m_target = CreateDesktopWindowTarget(_compositor, m_window);
+		auto root = _compositor.CreateSpriteVisual();
 		root.RelativeSizeAdjustment({ 1.0f, 1.0f });
-		//root.Brush(compositor.CreateColorBrush({ 0xFF, 0xEF, 0xE4 , 0xB0 }));
+		//root.Brush(_compositor.CreateColorBrush({ 0xFF, 0xEF, 0xE4 , 0xB0 }));
 		m_target.Root(root);
 		auto visuals = root.Children();
 
@@ -132,8 +142,7 @@ struct Window : DesktopWindow<Window>
 
 	void AddVisual(VisualCollection const& visuals, float x, float y)
 	{
-		auto compositor = visuals.Compositor();
-		auto visual = compositor.CreateSpriteVisual();
+		auto visual = _compositor.CreateSpriteVisual();
 
 		static Color colors[] =
 		{
@@ -145,7 +154,7 @@ struct Window : DesktopWindow<Window>
 
 		static unsigned last = 0;
 		unsigned const next = ++last % _countof(colors);
-		visual.Brush(compositor.CreateColorBrush(colors[next]));
+		visual.Brush(_compositor.CreateColorBrush(colors[next]));
 		visual.Size({ 200.0f, 200.0f });
 		visual.Offset({ x, y, 0.0f, });
 
@@ -154,9 +163,8 @@ struct Window : DesktopWindow<Window>
 
 	void AddBackdropVisual(VisualCollection const& visuals, float x, float y)
 	{
-		auto compositor = visuals.Compositor();
-		auto visual = compositor.CreateSpriteVisual();
-		visual.Brush(compositor.CreateBackdropBrush());
+		auto visual = _compositor.CreateSpriteVisual();
+		visual.Brush(_compositor.CreateBackdropBrush());
 		
 		visual.Size({ 200.0f, 200.0f });
 		visual.Offset({ x, y, 0.0f, });
@@ -167,8 +175,7 @@ struct Window : DesktopWindow<Window>
 
 	void AddBlurVisual(VisualCollection const& visuals, float x, float y)
 	{
-		auto compositor = visuals.Compositor();
-		auto visual = compositor.CreateSpriteVisual();
+		auto visual = _compositor.CreateSpriteVisual();
 		AddBlurEffect(visual);
 		visual.Size({ 1920.0f, 1200.0f });
 		visual.Offset({ x, y, 0.0f, });
@@ -178,34 +185,142 @@ struct Window : DesktopWindow<Window>
 
 	void AddEffect(SpriteVisual visual) 
 	{
-		auto compositor = visual.Compositor();
 		ColorSourceEffect _acrylicEffect;
 		_acrylicEffect.Color(ColorHelper::FromArgb(255, 0, 209, 193));
-		auto effectFactory = compositor.CreateEffectFactory(_acrylicEffect);
+		auto effectFactory = _compositor.CreateEffectFactory(_acrylicEffect);
 		auto acrylicEffectBrush = effectFactory.CreateBrush();
 		visual.Brush(acrylicEffectBrush);
 	}
 
-	void AddBlurEffect(SpriteVisual visual)
+	CompositionEffectBrush CreateAcrylicEffectBrush(Compositor _compositor)
 	{
-		auto compositor = visual.Compositor();
+		IGraphicsEffect acrylicEffect;
+		// Compile the effect.
+		auto effectFactory = _compositor.CreateEffectFactory(acrylicEffect);
 		
+		// Create Brush.
+		auto acrylicEffectBrush = effectFactory.CreateBrush();
+
+		// Set sources.
+		auto destinationBrush = _compositor.CreateBackdropBrush();
+		acrylicEffectBrush.SetSourceParameter(L"Backdrop", destinationBrush);
+		acrylicEffectBrush.SetSourceParameter(L"Noise", GetNoiseSurfaceBrush());
+
+		return acrylicEffectBrush;
+	}
+
+	IGraphicsEffect CreateAcrylicEffectGraph()
+	{
+		BlendEffect blendEffect;
 		
-		GaussianBlurEffect _acrylicEffect;
+		/*{
+			SaturationEffect sat
+			BlendEffect backDropEffect;
+			backDropEffect.Mode = BlendEffectMode::Exclusion;
+
+
+			CompositeEffect compositeEffect;
+			compositeEffect.Mode = CanvasComposite::SourceOver;
+			compositeEffect.Sources = {backDropEffect};
+			blendEffect.Mode = BlendEffectMode::Overlay,
+			blendEffect.Background = compositeEffect;
+				,
+				Sources =
+						{
+						new BlendEffect
+						{
+							Mode = ,
+							Background = new SaturationEffect
+							{
+								Saturation = 2,
+								Source = new GaussianBlurEffect
+								{
+									Source = new CompositionEffectSourceParameter("Backdrop"),
+									BorderMode = EffectBorderMode.Hard,
+									BlurAmount = 30
+								},
+							},
+							Foreground = new ColorSourceEffect()
+							{
+								Color = Color.FromArgb(26, 255, 255, 255)
+							}
+						},
+						new ColorSourceEffect
+						{
+							Color = Color.FromArgb(153, 255, 255, 255)
+						}
+					}
+			},
+			Foreground = new OpacityEffect
+			{
+				Opacity = 0.03f,
+				Source = new BorderEffect()
+				{
+					ExtendX = CanvasEdgeBehavior.Wrap,
+					ExtendY = CanvasEdgeBehavior.Wrap,
+					Source = new CompositionEffectSourceParameter("Noise")
+				},
+			},
+		};
+
+		return blendEffect;*/
+	}
+
+	CompositionSurfaceBrush GetNoiseSurfaceBrush()
+	{
+
+		// Get graphics device.
+		auto compositionGraphicsDevice = CanvasComposition::CreateCompositionGraphicsDevice(_compositor, _canvasDevice);
+		// Create surface. 
+		auto noiseDrawingSurface = compositionGraphicsDevice.CreateDrawingSurface(
+			Windows::Foundation::Size(_rectWidth, _rectHeight),
+			DirectXPixelFormat::B8G8R8A8UIntNormalized,
+			DirectXAlphaMode::Premultiplied);
+
+		// Draw to surface and create surface brush.
+		auto noiseFilePath = L"Assets\\NoiseAsset_256X256.png";
+		LoadSurface(noiseDrawingSurface, noiseFilePath);
+		auto noiseSurfaceBrush = _compositor.CreateSurfaceBrush(noiseDrawingSurface);
+		return noiseSurfaceBrush;
+	}
+
+
+
+	void LoadSurface(CompositionDrawingSurface surface, const wchar_t* path)
+	{
+		// Load from stream.
+		IAsyncOperation<StorageFile> storageFile =  StorageFile::GetFileFromPathAsync(path);
+		auto stream = storageFile.get().OpenAsync(FileAccessMode::Read);
+		auto bitmap = CanvasBitmap::LoadAsync(_canvasDevice, stream.get());
+
+		// Draw to surface.
+		auto ds = CanvasComposition::CreateDrawingSession(surface);
+		ds.Clear(Colors::Transparent());
+		auto rect = Windows::Foundation::Rect(0, 0, _rectWidth, _rectHeight);
+		ds.DrawImage(bitmap.get(), 0, 0, rect);
+		
+	}
+
+	void AddBlurEffect(SpriteVisual visual)
+	{GaussianBlurEffect _acrylicEffect;
 		_acrylicEffect.Source(CompositionEffectSourceParameter(L"Backdrop"));
 		_acrylicEffect.BorderMode(EffectBorderMode::Hard),
 		_acrylicEffect.BlurAmount(30);
 
-		auto effectFactory = compositor.CreateEffectFactory(_acrylicEffect);
+		auto effectFactory = _compositor.CreateEffectFactory(_acrylicEffect);
 		auto acrylicEffectBrush = effectFactory.CreateBrush();
 		// Set sources.
-		auto   destinationBrush = compositor.CreateBackdropBrush();
+		auto   destinationBrush = _compositor.CreateBackdropBrush();
 		acrylicEffectBrush.SetSourceParameter(L"Backdrop", destinationBrush);
 		visual.Brush(acrylicEffectBrush);
 	}
 private:
+	int _rectWidth = 400;
+	int _rectHeight = 400;
 
-	DesktopWindowTarget m_target{ nullptr };
+	DesktopWindowTarget m_target { nullptr };
+	Compositor _compositor {nullptr};
+	CanvasDevice _canvasDevice;
 };
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int )
