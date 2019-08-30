@@ -211,59 +211,45 @@ struct Window : DesktopWindow<Window>
 
 	IGraphicsEffect CreateAcrylicEffectGraph()
 	{
-		BlendEffect blendEffect;
+		BlendEffect acrylicEffect;
 		
-		/*{
-			SaturationEffect sat
-			BlendEffect backDropEffect;
-			backDropEffect.Mode = BlendEffectMode::Exclusion;
+		//Acrylic Effect Graph
+		GaussianBlurEffect blurEffect;
+		blurEffect.Source(CompositionEffectSourceParameter(L"Backdrop"));
+		blurEffect.BorderMode(EffectBorderMode::Hard);
+		blurEffect.BlurAmount(30);
 
+		SaturationEffect saturationEffect;
+		saturationEffect.Saturation(2);
+		saturationEffect.Source(blurEffect);
 
-			CompositeEffect compositeEffect;
-			compositeEffect.Mode = CanvasComposite::SourceOver;
-			compositeEffect.Sources = {backDropEffect};
-			blendEffect.Mode = BlendEffectMode::Overlay,
-			blendEffect.Background = compositeEffect;
-				,
-				Sources =
-						{
-						new BlendEffect
-						{
-							Mode = ,
-							Background = new SaturationEffect
-							{
-								Saturation = 2,
-								Source = new GaussianBlurEffect
-								{
-									Source = new CompositionEffectSourceParameter("Backdrop"),
-									BorderMode = EffectBorderMode.Hard,
-									BlurAmount = 30
-								},
-							},
-							Foreground = new ColorSourceEffect()
-							{
-								Color = Color.FromArgb(26, 255, 255, 255)
-							}
-						},
-						new ColorSourceEffect
-						{
-							Color = Color.FromArgb(153, 255, 255, 255)
-						}
-					}
-			},
-			Foreground = new OpacityEffect
-			{
-				Opacity = 0.03f,
-				Source = new BorderEffect()
-				{
-					ExtendX = CanvasEdgeBehavior.Wrap,
-					ExtendY = CanvasEdgeBehavior.Wrap,
-					Source = new CompositionEffectSourceParameter("Noise")
-				},
-			},
-		};
+		ColorSourceEffect colorSourceEffect1;
+		colorSourceEffect1.Color(ColorHelper::FromArgb(26, 255, 255, 255));
 
-		return blendEffect;*/
+		BlendEffect backDropEffect;
+		backDropEffect.Mode(BlendEffectMode::Exclusion);
+		backDropEffect.Background(saturationEffect);
+		backDropEffect.Foreground(colorSourceEffect1);
+
+		ColorSourceEffect colorSourceEffect2;
+		colorSourceEffect2.Color(ColorHelper::FromArgb(153, 255, 255, 255));
+		BorderEffect borderEffect;
+		borderEffect.ExtendX(CanvasEdgeBehavior::Wrap);
+		borderEffect.ExtendY(CanvasEdgeBehavior::Wrap);
+		borderEffect.Source(CompositionEffectSourceParameter(L"Noise"));
+
+		OpacityEffect opacityEffect;
+		opacityEffect.Opacity(0.03);
+		opacityEffect.Source(borderEffect);
+
+		CompositeEffect compositeEffect;
+		compositeEffect.Mode(CanvasComposite::SourceOver);
+		//TODO fix this - compositeEffect.Sources= {backDropEffect, colorSourceEffect2};
+		acrylicEffect.Mode(BlendEffectMode::Overlay);
+		acrylicEffect.Background(compositeEffect);
+		acrylicEffect.Foreground(opacityEffect);
+		
+		return acrylicEffect;
 	}
 
 	CompositionSurfaceBrush GetNoiseSurfaceBrush()
