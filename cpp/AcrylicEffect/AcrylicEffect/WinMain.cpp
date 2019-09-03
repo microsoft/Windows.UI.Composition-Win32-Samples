@@ -18,7 +18,7 @@ using namespace Windows::Graphics::Effects;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Pickers;
 using namespace Windows::Web::Syndication;
-using namespace Windows::Storage::Streams;
+using namespace Windows::Storage::Streams; 
 
 
 auto CreateDispatcherQueueController()
@@ -137,7 +137,7 @@ struct Window : DesktopWindow<Window>
 		m_target.Root(root);
 		auto visuals = root.Children();
 
-		AddBlurVisual(visuals, 0.0f, 0.0f);
+		AddAcrylicVisual(visuals, 0.0f, 0.0f);
 	}
 
 	void AddVisual(VisualCollection const& visuals, float x, float y)
@@ -172,6 +172,15 @@ struct Window : DesktopWindow<Window>
 		visuals.InsertAtTop(visual);
 	}
 
+	void AddAcrylicVisual(VisualCollection const& visuals, float x, float y)
+	{
+		auto visual = _compositor.CreateSpriteVisual();
+		AddAcrylicEffect(visual);
+		visual.Size({ 1920.0f, 1200.0f });
+		visual.Offset({ x, y, 0.0f, });
+
+		visuals.InsertAtTop(visual);
+	}
 
 	void AddBlurVisual(VisualCollection const& visuals, float x, float y)
 	{
@@ -185,18 +194,17 @@ struct Window : DesktopWindow<Window>
 
 	void AddEffect(SpriteVisual visual) 
 	{
-		ColorSourceEffect _acrylicEffect;
-		_acrylicEffect.Color(ColorHelper::FromArgb(255, 0, 209, 193));
-		auto effectFactory = _compositor.CreateEffectFactory(_acrylicEffect);
-		auto acrylicEffectBrush = effectFactory.CreateBrush();
-		visual.Brush(acrylicEffectBrush);
+		ColorSourceEffect colorSourceEffect;
+		colorSourceEffect.Color(ColorHelper::FromArgb(255, 0, 209, 193));
+		auto effectFactory = _compositor.CreateEffectFactory(colorSourceEffect);
+		auto colorEffectBrush = effectFactory.CreateBrush();
+		visual.Brush(colorEffectBrush);
 	}
 
-	CompositionEffectBrush CreateAcrylicEffectBrush(Compositor _compositor)
+	CompositionEffectBrush CreateAcrylicEffectBrush()
 	{
-		IGraphicsEffect acrylicEffect;
 		// Compile the effect.
-		auto effectFactory = _compositor.CreateEffectFactory(acrylicEffect);
+		auto effectFactory = _compositor.CreateEffectFactory(_acrylicEffect);
 		
 		// Create Brush.
 		auto acrylicEffectBrush = effectFactory.CreateBrush();
@@ -244,7 +252,9 @@ struct Window : DesktopWindow<Window>
 
 		CompositeEffect compositeEffect;
 		compositeEffect.Mode(CanvasComposite::SourceOver);
-		//TODO fix this - compositeEffect.Sources= {backDropEffect, colorSourceEffect2};
+		compositeEffect.Sources().Append(backDropEffect);
+		compositeEffect.Sources().Append(colorSourceEffect2);
+
 		acrylicEffect.Mode(BlendEffectMode::Overlay);
 		acrylicEffect.Background(compositeEffect);
 		acrylicEffect.Foreground(opacityEffect);
@@ -264,7 +274,8 @@ struct Window : DesktopWindow<Window>
 			DirectXAlphaMode::Premultiplied);
 
 		// Draw to surface and create surface brush.
-		auto noiseFilePath = L"Assets\\NoiseAsset_256X256.png";
+		//TODO: Fix this path to be dynamic
+		auto noiseFilePath = L"E:\\repos\\Windows.UI.Composition-Win32-Samples\\cpp\\AcrylicEffect\\AcrylicEffect\\Assets\\NoiseAsset_256X256.png";
 		LoadSurface(noiseDrawingSurface, noiseFilePath);
 		auto noiseSurfaceBrush = _compositor.CreateSurfaceBrush(noiseDrawingSurface);
 		return noiseSurfaceBrush;
@@ -287,18 +298,29 @@ struct Window : DesktopWindow<Window>
 		
 	}
 
-	void AddBlurEffect(SpriteVisual visual)
-	{GaussianBlurEffect _acrylicEffect;
-		_acrylicEffect.Source(CompositionEffectSourceParameter(L"Backdrop"));
-		_acrylicEffect.BorderMode(EffectBorderMode::Hard),
-		_acrylicEffect.BlurAmount(30);
+	void AddAcrylicEffect(SpriteVisual visual)
+	{
+		
+		_acrylicEffect = CreateAcrylicEffectGraph();
+		
+		auto acrylicEffectBrush = CreateAcrylicEffectBrush();
+		visual.Brush(acrylicEffectBrush);
+	}
 
-		auto effectFactory = _compositor.CreateEffectFactory(_acrylicEffect);
-		auto acrylicEffectBrush = effectFactory.CreateBrush();
+
+	void AddBlurEffect(SpriteVisual visual)
+	{
+		GaussianBlurEffect blurEffect;
+		blurEffect.Source(CompositionEffectSourceParameter(L"Backdrop"));
+		blurEffect.BorderMode(EffectBorderMode::Hard),
+		blurEffect.BlurAmount(30);
+
+		auto effectFactory = _compositor.CreateEffectFactory(blurEffect);
+		auto blurEffectBrush = effectFactory.CreateBrush();
 		// Set sources.
 		auto   destinationBrush = _compositor.CreateBackdropBrush();
-		acrylicEffectBrush.SetSourceParameter(L"Backdrop", destinationBrush);
-		visual.Brush(acrylicEffectBrush);
+		blurEffectBrush.SetSourceParameter(L"Backdrop", destinationBrush);
+		visual.Brush(blurEffectBrush);
 	}
 private:
 	int _rectWidth = 400;
@@ -307,11 +329,12 @@ private:
 	DesktopWindowTarget m_target { nullptr };
 	Compositor _compositor {nullptr};
 	CanvasDevice _canvasDevice;
+	IGraphicsEffect _acrylicEffect;
 };
 
 int __stdcall wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int )
 {
-	init_apartment(apartment_type::single_threaded);
+	init_apartment();
 	auto controller = CreateDispatcherQueueController();
 
 	Window window;
