@@ -2,7 +2,7 @@
 //
 // Copyright (c) Microsoft. All rights reserved.
 // This code is licensed under the MIT License (MIT).
-// THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+// THE SOFTWARE IS PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
 // INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
 // IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
@@ -17,6 +17,7 @@
 #include "SimpleCapture.h"
 #include <ShObjIdl.h>
 #include "Win32WindowEnumeration.h"
+#include "Win32MonitorEnumeration.h"
 
 using namespace winrt;
 using namespace Windows::UI;
@@ -58,6 +59,7 @@ int CALLBACK WinMain(
 
 auto g_app = std::make_shared<App>();
 auto g_windows = EnumerateWindows();
+auto g_monitors = EnumerateMonitors();
 
 LRESULT CALLBACK WndProc(
     HWND   hwnd,
@@ -127,6 +129,12 @@ int CALLBACK WinMain(
     {
         SendMessage(comboBoxHwnd, CB_ADDSTRING, 0, (LPARAM)window.Title().c_str());
     }
+
+    for (auto& monitor : g_monitors)
+    {
+      SendMessage(comboBoxHwnd, CB_ADDSTRING, 0, (LPARAM)monitor.ClassName().c_str());
+    }
+
     //SendMessage(comboBoxHwnd, CB_SETCURSEL, 0, 0);
 
     // Create a DispatcherQueue for our thread
@@ -173,8 +181,16 @@ LRESULT CALLBACK WndProc(
         if (HIWORD(wParam) == CBN_SELCHANGE)
         {
             auto index = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-            auto window = g_windows[index];
-            g_app->StartCapture(window.Hwnd());
+            if (index < g_windows.size() - 1) 
+            {
+              auto window = g_windows[index];
+              g_app->StartCapture(window.Hwnd());
+            }
+            else 
+            {
+              auto monitor = g_monitors[index - g_windows.size()];
+              g_app->StartCapture(monitor.Hmonitor());
+            }
         }
         break;
     default:
