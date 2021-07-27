@@ -149,6 +149,7 @@
     <ClInclude Include="direct3d11.interop.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SimpleCapture.h" />
+    <ClInclude Include="Win32MonitorEnumeration.h" />
     <ClInclude Include="Win32WindowEnumeration.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
