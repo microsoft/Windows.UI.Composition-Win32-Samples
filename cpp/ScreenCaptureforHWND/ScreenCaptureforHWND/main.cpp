@@ -108,7 +108,7 @@ int CALLBACK WinMain(
     UpdateWindow(hwnd);
 
     // Create combo box
-    HWND comboBoxHwnd = CreateWindow(
+   /* HWND comboBoxHwnd = CreateWindow(
         WC_COMBOBOX,
         L"",
         CBS_DROPDOWNLIST | CBS_HASSTRINGS | WS_VSCROLL | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
@@ -126,7 +126,7 @@ int CALLBACK WinMain(
     for (auto& window : g_windows)
     {
         SendMessage(comboBoxHwnd, CB_ADDSTRING, 0, (LPARAM)window.Title().c_str());
-    }
+    }*/
     //SendMessage(comboBoxHwnd, CB_SETCURSEL, 0, 0);
 
     // Create a DispatcherQueue for our thread
@@ -169,14 +169,21 @@ LRESULT CALLBACK WndProc(
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
-    case WM_COMMAND:
+    /*case WM_COMMAND:
         if (HIWORD(wParam) == CBN_SELCHANGE)
         {
             auto index = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
             auto window = g_windows[index];
             g_app->StartCapture(window.Hwnd());
         }
-        break;
+        break;*/
+    case WM_RBUTTONDOWN:
+    {
+
+        auto window = g_windows[0];
+        g_app->StartCapture(window.Hwnd(), hwnd);
+    }
+    break;
     default:
         return DefWindowProc(hwnd, msg, wParam, lParam);
         break;

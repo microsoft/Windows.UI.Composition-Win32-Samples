@@ -54,7 +54,7 @@ void App::Initialize(
     m_device = CreateDirect3DDevice(dxgiDevice.get());
 }
 
-void App::StartCapture(HWND hwnd)
+void App::StartCapture(HWND hwnd, HWND outhwnd)
 {
 	if (m_capture)
 	{
@@ -64,10 +64,10 @@ void App::StartCapture(HWND hwnd)
 
 	auto item = CreateCaptureItemForWindow(hwnd);
 
-    m_capture = std::make_unique<SimpleCapture>(m_device, item);
+    m_capture = std::make_unique<SimpleCapture>(m_device, item, outhwnd);
 
-    auto surface = m_capture->CreateSurface(m_compositor);
-    m_brush.Surface(surface);
+    //auto surface = m_capture->CreateSurface(m_compositor);
+    //m_brush.Surface(surface);
 
-    m_capture->StartCapture();
+    m_capture->StartCapture(outhwnd);
 }

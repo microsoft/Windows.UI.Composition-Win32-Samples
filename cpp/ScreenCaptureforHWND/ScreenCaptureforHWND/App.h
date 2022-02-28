@@ -11,7 +11,7 @@ public:
     void Initialize(
         winrt::Windows::UI::Composition::ContainerVisual const& root);
 
-    void StartCapture(HWND hwnd);
+    void StartCapture(HWND hwnd, HWND outhwnd);
 
 private:
     winrt::Windows::UI::Composition::Compositor m_compositor{ nullptr };
