@@ -3,7 +3,7 @@
 
 This sample demonstrates the use of [Win2D](https://microsoft.github.io/Win2D/html/Introduction.htm) effects in a WPF app. It shows how to place an [acrylic](https://docs.microsoft.com/windows/uwp/design/style/acrylic) overlay on top of a picture.
 
-![Acrylic Effect in WPF](acrylic-effect-wpf.png)
+![Acrylic Effect in WPF](https://github.com/microsoft/Windows.UI.Composition-Win32-Samples/blob/master/dotnet/WPF/AcrylicEffect/acrlyic-effect-wpf.png)
 
 
 ## Features
