@@ -46,6 +46,7 @@
 #include <winrt/Windows.UI.Composition.Desktop.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Foundation.Metadata.h>
+#include <winrt/Windows.Graphics.h>
 
 #include "winrt/Microsoft.UI.Xaml.Automation.Peers.h"
 #include "winrt/Microsoft.UI.Xaml.Controls.Primitives.h"
