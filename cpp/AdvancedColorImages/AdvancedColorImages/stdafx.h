@@ -19,6 +19,8 @@
 #include <ppltasks.h>
 
 
+#include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -30,8 +32,6 @@
 #include <winrt/Windows.Graphics.Display.h>
 #include <winrt/Windows.Graphics.DirectX.h>
 #include <winrt/Windows.Web.Syndication.h>
-
-WINRT_WARNING_PUSH
 
 #include <dxgi1_6.h>
 #include <d2d1_3.h>
