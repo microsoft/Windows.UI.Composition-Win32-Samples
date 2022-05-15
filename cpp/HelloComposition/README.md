@@ -19,7 +19,7 @@ This sample includes the following features:
 
 This sample requires:
 
-- Visual Studio 2017 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
+- Visual Studio 2022 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
 - .NET Framework 4.7.2 or later
 - Windows 10 version 1803 or later
 - Windows 10 SDK 17134 or later
