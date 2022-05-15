@@ -24,7 +24,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{6b055f75-f347-4f6d-b6a1-c4a38e2a7129}</ProjectGuid>
     <RootNamespace>HelloVectorswin32cpp</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

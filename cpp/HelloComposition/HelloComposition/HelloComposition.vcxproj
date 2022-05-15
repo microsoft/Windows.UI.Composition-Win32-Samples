@@ -24,7 +24,7 @@
     <ProjectGuid>{3719BE61-52D1-4F42-8A4C-E575BA16E65F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>HelloComposition</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
