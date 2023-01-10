@@ -74,5 +74,6 @@
     <None Include="hdr-image.jxr">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

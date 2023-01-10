@@ -10,7 +10,7 @@ This sample demonstrates how to use the Windows.Graphics.Capture APIs in a Win32
 
 This sample requires:
 
-- Visual Studio 2017 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
+- Visual Studio 2022 or later - [Get a free copy of Visual Studio](http://go.microsoft.com/fwlink/?LinkID=280676)
 - Windows 10 version 1903 or later
 - Windows 10 SDK 18362 or later - [Get the SDK](https://developer.microsoft.com/windows/downloads/windows-10-sdk)
 

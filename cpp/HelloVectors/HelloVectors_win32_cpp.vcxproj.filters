@@ -2,16 +2,16 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="desktopcompositionwindow.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="LottieLogo1.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="HelloVectors_win32.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="LottieLogo1.cpp" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HelloVectors.exe.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HelloVectors_win32.cpp" />
+    <ClCompile Include="LottieLogo1.cpp" />
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

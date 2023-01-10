@@ -141,7 +141,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	{
 		return FALSE;
 	}
-	m_winComp = new WinComp();
+	m_winComp = winrt::make_self<WinComp>().detach();
 	// Ensure that the DispatcherQueue is initialized. This is required by the Compositor. 
 	auto controller = m_winComp->EnsureDispatcherQueue();
 
