@@ -3,7 +3,7 @@
 
 This sample demonstrates the use of [Win2D](https://microsoft.github.io/Win2D/html/Introduction.htm) effects in a WPF app. It shows how to place an [acrylic](https://docs.microsoft.com/windows/uwp/design/style/acrylic) overlay on top of a picture.
 
-![Acrylic Effect in WPF](acrylic-effect-wpf.png)
+![Acrylic Effect in WPF](acrlyic-effect-wpf.png)
 
 
 ## Features
@@ -32,7 +32,7 @@ This sample requires:
 - Add an app.manifest to the project. 
    - At the bottom, add the following: 
 
-```
+``` xaml
 
 <file name="Microsoft.Graphics.Canvas.dll">
     <activatableClass
@@ -40,7 +40,8 @@ This sample requires:
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
 
-   <activatableClass      name="Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition"
+   <activatableClass      
+      name="Microsoft.Graphics.Canvas.UI.Composition.CanvasComposition"
       threadingModel="both"
       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
 
@@ -51,8 +52,8 @@ This sample requires:
 
     <activatableClass
        name="Microsoft.Graphics.Canvas.Effects.BlendEffect"
-        threadingModel="both"
-        xmlns="urn:schemas-microsoft-com:winrt.v1"/>
+       threadingModel="both"
+       xmlns="urn:schemas-microsoft-com:winrt.v1"/>
 
     <activatableClass
       name="Microsoft.Graphics.Canvas.Effects.GaussianBlurEffect"
