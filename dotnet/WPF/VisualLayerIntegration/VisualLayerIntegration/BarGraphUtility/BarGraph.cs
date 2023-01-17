@@ -221,20 +221,23 @@ namespace BarGraphUtility
             UpdateSizeAndPositions();
 
             // Update bars.
-            for (var i = 0; i < _graphData.Length; i++)
+            if (_graphData != null)
             {
-                var bar = _bars[i];
-
-                var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
-                var height = bar.Height;
-                if (oldHeight != newHeight)
+                for (var i = 0; i < _graphData.Length; i++)
                 {
-                    height = (float)GetAdjustedBarHeight(_maxBarValue, _graphData[i]);
-                }
+                    var bar = _bars[i];
 
-                bar.UpdateSize(_barWidth, height);
-                bar.Root.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
-                bar.OutlineRoot.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
+                    var xOffset = _shapeGraphOffsetX + _barSpacing + (_barWidth + _barSpacing) * i;
+                    var height = bar.Height;
+                    if (oldHeight != newHeight)
+                    {
+                        height = (float)GetAdjustedBarHeight(_maxBarValue, _graphData[i]);
+                    }
+
+                    bar.UpdateSize(_barWidth, height);
+                    bar.Root.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
+                    bar.OutlineRoot.Offset = new SnVector3(xOffset, _shapeGraphContainerHeight, 0);
+                }
             }
 
             // Scale text size.

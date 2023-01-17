@@ -22,7 +22,7 @@ This sample includes the following features:
 
 This sample requires:
 
-- Visual Studio 2017 or later - [Get a free copy of Visual Studio with support for building Universal Windows apps](http://go.microsoft.com/fwlink/?LinkID=280676)
+- Visual Studio 2022 or later - [Get a free copy of Visual Studio with support for building Universal Windows apps](http://go.microsoft.com/fwlink/?LinkID=280676)
 - Windows 10 version 1803 or later
 - Windows 10 SDK 17134 or later
 
