@@ -1,12 +1,10 @@
 #pragma once
 #include <dwmapi.h>
 
-struct Monitor
-{
+struct Monitor {
 public:
   Monitor(nullptr_t) {}
-  Monitor(HMONITOR hmonitor, std::wstring& className, bool isPrimary)
-  {
+  Monitor(HMONITOR hmonitor, std::wstring &className, bool isPrimary) {
     m_hmonitor = hmonitor;
     m_className = className;
     m_bIsPrimary = isPrimary;
@@ -22,10 +20,8 @@ private:
   bool m_bIsPrimary;
 };
 
-BOOL WINAPI EnumMonitorProc(HMONITOR hmonitor,
-  HDC hdc,
-  LPRECT lprc,
-  LPARAM data) {
+BOOL WINAPI EnumMonitorProc(HMONITOR hmonitor, HDC hdc, LPRECT lprc,
+                            LPARAM data) {
 
   MONITORINFOEX info_ex;
   info_ex.cbSize = sizeof(MONITORINFOEX);
@@ -35,17 +31,17 @@ BOOL WINAPI EnumMonitorProc(HMONITOR hmonitor,
   if (info_ex.dwFlags == DISPLAY_DEVICE_MIRRORING_DRIVER)
     return true;
 
-  auto monitors = ((std::vector<Monitor>*)data);
+  auto monitors = ((std::vector<Monitor> *)data);
   std::wstring name = info_ex.szDevice;
-  auto monitor = Monitor(hmonitor, name, info_ex.dwFlags & MONITORINFOF_PRIMARY);
+  auto monitor =
+      Monitor(hmonitor, name, info_ex.dwFlags & MONITORINFOF_PRIMARY);
 
   monitors->emplace_back(monitor);
 
   return true;
 }
 
-std::vector<Monitor> EnumerateMonitors()
-{
+std::vector<Monitor> EnumerateMonitors() {
   std::vector<Monitor> monitors;
 
   ::EnumDisplayMonitors(NULL, NULL, EnumMonitorProc, (LPARAM)&monitors);
