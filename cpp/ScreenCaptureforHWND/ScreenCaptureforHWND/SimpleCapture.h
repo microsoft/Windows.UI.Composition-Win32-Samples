@@ -26,6 +26,10 @@ private:
     }
   }
 
+  HRESULT
+  CreateMappedTexture(winrt::com_ptr<ID3D11Texture2D> src_texture,
+                      UINT width = 0, UINT height = 0);
+
 private:
   winrt::Windows::Graphics::Capture::GraphicsCaptureItem m_item{nullptr};
   winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool m_framePool{
@@ -37,6 +41,7 @@ private:
       nullptr};
   winrt::com_ptr<IDXGISwapChain1> m_swapChain{nullptr};
   winrt::com_ptr<ID3D11DeviceContext> m_d3dContext{nullptr};
+  winrt::com_ptr<ID3D11Texture2D> m_mappedTexture{nullptr};
 
   std::atomic<bool> m_closed = false;
   winrt::Windows::Graphics::Capture::Direct3D11CaptureFramePool::
